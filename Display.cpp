@@ -16,7 +16,7 @@ void Display::showTopBar(short width) const
 
 	std::string timeString = (localTime.tm_hour < 10 ? "0" + std::to_string(localTime.tm_hour) : std::to_string(localTime.tm_hour)) + ':' + (localTime.tm_min < 10 ? "0" + std::to_string(localTime.tm_min) : std::to_string(localTime.tm_min));
 	Colorizer timeColor = { 0, timeString.size(), MAGENTA };
-	std::string mid(2 * width / 5, '*');
+	std::string mid(2 * width / 5, ' ');
 	std::string fileTitle = std::string(this->wasEdited ? "*" : "") + this->fileName;
 	Colorizer fileColor = { timeString.size() + mid.size(), fileTitle.size(), BLUE };
 
@@ -42,7 +42,6 @@ void Display::show() const
 	std::vector<std::string> content = this->c.getLines();
 
 	int offset = std::max(0, this->posX - (x / 2));
-	std::cout << offset << ' ' << x << ' ' << this->posX << std::endl;
 	Colorizer lineNumberColor = { 0, 4, LINE_NUMBER };
 	Colorizer offsetLineColor = { 5, 3, WHITE };
 	int startIndex = std::max(this->posY - (y / 2), 0);

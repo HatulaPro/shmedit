@@ -21,6 +21,10 @@ void Content::setContent(std::string c)
 	while (std::getline(cc, tmp, '\n')) {
 		this->content.push_back(Helper::replace(tmp, "\t", "  "));
 	}
+
+	if (this->content.size() == 0) {
+		this->content.push_back("");
+	}
 }
 
 std::vector<std::string> Content::getLines() const

@@ -8,7 +8,7 @@
 
 int main() {
 	Helper::hideCursor();
-	Display d = Display("mytest.txt");
+	Display d = Display("README.md");
 	while (true) {
 		d.show();
 		std::this_thread::sleep_for(std::chrono::milliseconds(17));
