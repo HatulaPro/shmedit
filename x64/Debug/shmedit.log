@@ -1,0 +1,3 @@
+﻿  Helper.cpp
+C:\myProjects\shmedit\shmedit\Helper.cpp(56): warning C4715: 'Helper::colorize': not all control paths return a value
+  shmedit.vcxproj -> C:\myProjects\shmedit\x64\Debug\shmedit.exe
