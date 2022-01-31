@@ -1,3 +1,9 @@
-﻿  Helper.cpp
-C:\myProjects\shmedit\shmedit\Helper.cpp(56): warning C4715: 'Helper::colorize': not all control paths return a value
+﻿  Display.cpp
+C:\myProjects\shmedit\shmedit\Display.cpp(63,38): warning C4838: conversion from 'int' to 'size_t' requires a narrowing conversion
+C:\myProjects\shmedit\shmedit\Display.cpp(71,43): warning C4838: conversion from 'int' to 'size_t' requires a narrowing conversion
+C:\myProjects\shmedit\shmedit\Display.cpp(142,52): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Display.cpp(158,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Display.cpp(169,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Display.cpp(173,52): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Display.cpp(193,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
   shmedit.vcxproj -> C:\myProjects\shmedit\x64\Debug\shmedit.exe

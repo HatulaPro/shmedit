@@ -8,6 +8,24 @@
 #include <ctype.h>
 #include <chrono>
 
+void Display::showTopBar(short width) const
+{
+	time_t t = time(nullptr);
+	tm localTime;
+	localtime_s(&localTime, &t);
+
+	std::string timeString = (localTime.tm_hour < 10 ? "0" + std::to_string(localTime.tm_hour) : std::to_string(localTime.tm_hour)) + ':' + (localTime.tm_min < 10 ? "0" + std::to_string(localTime.tm_min) : std::to_string(localTime.tm_min));
+	Colorizer timeColor = { 0, timeString.size(), MAGENTA };
+	std::string mid(2 * width / 5, '*');
+	std::string fileTitle = std::string(this->wasEdited ? "*" : "") + this->fileName;
+	Colorizer fileColor = { timeString.size() + mid.size(), fileTitle.size(), BLUE };
+
+	Colorizers c;
+	c.push_back(timeColor);
+	c.push_back(fileColor);
+	std::cout << this->padToLine(Helper::colorize(timeString + mid + fileTitle, c), width) << std::endl << std::endl;
+}
+
 Display::Display(std::string fname) : c(fname) {
 	this->fileName = fname;
 }
@@ -18,15 +36,15 @@ void Display::show() const
 	short y = 0;
 
 	Helper::getTerminalSize(&x, &y);
-	time_t t = time(nullptr);
-	tm localTime;
-	localtime_s(&localTime, &t);
-
-	std::cout << this->padToLine(Helper::colorize((localTime.tm_hour < 10 ? "0" + std::to_string(localTime.tm_hour) : std::to_string(localTime.tm_hour)) + ':' + (localTime.tm_min < 10 ? "0" + std::to_string(localTime.tm_min) : std::to_string(localTime.tm_min)) + std::string(x / 3, ' ') + std::string(this->wasEdited ? "*" : "") + this->fileName, MAGENTA), x) << std::endl << std::endl;
+	this->showTopBar(x);
 	int count = 0;
 
 	std::vector<std::string> content = this->c.getLines();
 
+	int offset = std::max(0, this->posX - (x / 2));
+	std::cout << offset << ' ' << x << ' ' << this->posX << std::endl;
+	Colorizer lineNumberColor = { 0, 4, LINE_NUMBER };
+	Colorizer offsetLineColor = { 5, 3, WHITE };
 	int startIndex = std::max(this->posY - (y / 2), 0);
 	if (this->posY > (int)content.size() - y + 15) {
 		startIndex = std::max((int)content.size() - y + 5, 0);
@@ -36,16 +54,30 @@ void Display::show() const
 			std::string lineNumber = std::to_string(count + startIndex);
 			lineNumber.insert(lineNumber.end(), 4 - Helper::getDisplayLength(lineNumber), ' ');
 			if (count + startIndex == this->posY) {
-				int offset = std::max(0, this->posX - (x / 2));
-				if (offset > 0) {
-					std::cout << Helper::colorize(lineNumber, LINE_NUMBER) << Helper::colorize(" << ", WHITE) << this->padToLine(Helper::setCursor(i->substr(offset), this->posX - offset), x - 8);
+				if (this->posX > x - 8) {
+					std::string line = lineNumber + " << " + i->substr(offset) + ' ';
+
+					Colorizers c;
+					c.push_back(lineNumberColor);
+					c.push_back(offsetLineColor);
+					Colorizer cursorColor = { x / 2 + 8, 1, CURSOR };
+					c.push_back(cursorColor);
+					std::cout << this->padToLine(Helper::colorize(line, c), x);
 				}
 				else {
-					std::cout << this->padToLine(Helper::colorize(lineNumber, LINE_NUMBER) + ' ' + Helper::setCursor(*i, this->posX), x);
+					std::string line = lineNumber + ' ' + *i + ' ';
+					Colorizers c;
+					c.push_back(lineNumberColor);
+					Colorizer cursorColor = { this->posX + 5, 1, CURSOR };
+					c.push_back(cursorColor);
+					std::cout << this->padToLine(Helper::colorize(line, c), x);
 				}
 			}
 			else {
-				std::cout << this->padToLine(Helper::colorize(lineNumber, LINE_NUMBER) + ' ' + *i, x);
+				std::string line = lineNumber + ' ' + *i;
+				Colorizers c;
+				c.push_back(lineNumberColor);
+				std::cout << this->padToLine(Helper::colorize(line, c), x);
 			}
 		}
 		count++;
@@ -55,7 +87,13 @@ void Display::show() const
 		count++;
 	}
 
-	std::cout << this->padToLine(Helper::colorize("Command: " + this->lastKeys, MAGENTA), x);
+	std::string commandString = "Command: ";
+	Colorizer commandStringColor = { 0, commandString.size() - 1, MAGENTA };
+	Colorizer commandArgsColor = { commandString.size(), this->lastKeys.size(), WHITE };
+	Colorizers c;
+	c.push_back(commandStringColor);
+	c.push_back(commandArgsColor);
+	std::cout << this->padToLine(Helper::colorize(commandString + this->lastKeys, c), x);
 
 	std::cout << (char)27 << '[' << y << 'A';
 	std::cout << (char)27 << '[' << x - 1 << 'D';
