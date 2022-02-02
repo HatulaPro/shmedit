@@ -14,11 +14,13 @@ public:
 	std::string getContent() const;
 
 	bool actionDelete(int& posX, int& posY);
+	bool actionDeleteWord(int& posX, int& posY);
 	bool actionMoveLineUp(int& posX, int& posY);
 	bool actionMoveLineDown(int& posX, int& posY);
 	bool actionEnter(int& posX, int& posY);
 	bool actionEnterNewline(int& posX, int& posY);
 	bool actionRemove(int& posX, int& posY);
+	bool actionRemoveWord(int& posX, int& posY);
 	bool actionWrite(int& posX, int& posY, char character);
 
 };

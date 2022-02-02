@@ -65,6 +65,21 @@ bool Content::actionDelete(int& posX, int& posY)
 	return false;
 }
 
+bool Content::actionDeleteWord(int& posX, int& posY)
+{
+	if (posX == this->content[posY].size()) {
+		return this->actionDelete(posX, posY);
+	}
+	int firstType = isalnum(this->content[posY][posX]);
+	int count = 0;
+	while (isalnum(this->content[posY][posX + count]) == firstType) {
+		if (posX + count == this->content[posY].size()) break;
+		count++;
+	}
+	this->content[posY].erase(posX, count);
+	return true;
+}
+
 bool Content::actionMoveLineUp(int& posX, int& posY)
 {
 	if (posY > 0) {
@@ -127,6 +142,21 @@ bool Content::actionRemove(int& posX, int& posY)
 		posY -= 1;
 		return true;
 	}
+}
+
+bool Content::actionRemoveWord(int& posX, int& posY)
+{
+	if (posX == 0) {
+		return this->actionRemove(posX, posY);
+	}
+	int firstType = isalnum(this->content[posY][posX - 1]);
+	int count = 0;
+	while (posX - count >= 1 && isalnum(this->content[posY][posX - count - 1]) == firstType)	{
+		count++;
+	}
+	this->content[posY].erase(posX - count, count);
+	posX -= count;
+	return true;
 }
 
 bool Content::actionWrite(int& posX, int& posY, char character)

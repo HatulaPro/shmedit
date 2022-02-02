@@ -5,6 +5,8 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <chrono>
+#include <thread>
 
 #define LINE_NUMBER_SIZE 4
 #define NON_CONTENT_LINES 2
@@ -47,11 +49,8 @@ void Display::show() const
 	Colorizer offsetLineColor = { LINE_NUMBER_SIZE, sizeof(LINE_OFFSET_STR) - 1, WHITE };
 
 	// Aligning to top/bottom
-	int startIndex = std::max(this->posY - ((height - NON_CONTENT_LINES) / 2), 0);
-	if (startIndex + this->posY >= height - NON_CONTENT_LINES) {
-		startIndex = std::min(startIndex, (int)content.size() - (height - NON_CONTENT_LINES));
-	}
-
+	int startIndex = std::max(std::min(this->posY - ((height - NON_CONTENT_LINES) / 2), (int)content.size() - (height - NON_CONTENT_LINES)), 0);
+	
 	for (auto i = content.begin() + startIndex; i != content.begin() + std::min(startIndex + height, (int)content.size()); i++) {
 		if (count < height - NON_CONTENT_LINES) {
 			// For every line in content (that is inside the view)
@@ -97,6 +96,7 @@ void Display::show() const
 		count++;
 	}
 
+	// Bottom line:
 	std::string commandString = "Command: ";
 	Colorizer commandStringColor = { 0, commandString.size() - 1, MAGENTA };
 	Colorizer commandArgsColor = { commandString.size(), this->lastKeys.size(), WHITE };
@@ -105,6 +105,7 @@ void Display::show() const
 	c.push_back(commandArgsColor);
 	std::cout << this->padToLine(Helper::colorize(commandString + this->lastKeys, c), width);
 
+	// Reset cursor position
 	std::cout << (char)27 << '[' << height << 'A';
 	std::cout << (char)27 << '[' << width - 1 << 'D';
 }
@@ -119,12 +120,15 @@ std::string Display::padToLine(std::string line, short width) const
 
 void Display::callAction(char x)
 {
-
 	if (this->lastKeys.size() > 0 && this->lastKeys[0] == -32) {
 		this->lastKeys = "";
+		
 
 		if (x == 'S') { // Delete
 			this->wasEdited = this->c.actionDelete(this->posX, this->posY);
+		}
+		else if (x == -109) { // Ctrl Delete
+			this->wasEdited = this->c.actionDeleteWord(this->posX, this->posY);
 		}
 		else if (x == 'K') { // Left key
 			if (this->posX > 0) {
@@ -215,6 +219,9 @@ void Display::callAction(char x)
 	}
 	else if (x == 8) { // Remove
 		this->wasEdited = this->c.actionRemove(this->posX, this->posY);
+	}
+	else if (x == 127) { // Ctrl Remove
+		this->wasEdited = this->c.actionRemoveWord(this->posX, this->posY);
 	}
 	else if (x == -32 or x == 224 or x == 0) {
 		this->lastKeys = "a";
