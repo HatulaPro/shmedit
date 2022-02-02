@@ -35,4 +35,5 @@ public:
 	static size_t getDisplayIndex(std::string str, size_t index);
 	static void getTerminalSize(short* x, short* y);
 	static std::string replace(std::string subject, const std::string& search, const std::string& replace);
+	static std::string getTimeString();
 };

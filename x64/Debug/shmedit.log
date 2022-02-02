@@ -1,9 +1,5 @@
-﻿  Display.cpp
-C:\myProjects\shmedit\shmedit\Display.cpp(62,38): warning C4838: conversion from 'int' to 'size_t' requires a narrowing conversion
-C:\myProjects\shmedit\shmedit\Display.cpp(70,43): warning C4838: conversion from 'int' to 'size_t' requires a narrowing conversion
-C:\myProjects\shmedit\shmedit\Display.cpp(141,52): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\myProjects\shmedit\shmedit\Display.cpp(157,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\myProjects\shmedit\shmedit\Display.cpp(168,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\myProjects\shmedit\shmedit\Display.cpp(172,52): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\myProjects\shmedit\shmedit\Display.cpp(192,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+﻿  Content.cpp
+C:\myProjects\shmedit\shmedit\Content.cpp(124,40): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Content.cpp(89): warning C4715: 'Content::actionMoveLineDown': not all control paths return a value
+C:\myProjects\shmedit\shmedit\Content.cpp(130): warning C4715: 'Content::actionRemove': not all control paths return a value
   shmedit.vcxproj -> C:\myProjects\shmedit\x64\Debug\shmedit.exe

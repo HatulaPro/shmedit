@@ -8,10 +8,11 @@
 
 int main() {
 	Helper::hideCursor();
-	Display d = Display("README.md");
+	//Display d = Display("README.md");
+	Display d = Display("mytest.txt");
 	while (true) {
 		d.show();
-		std::this_thread::sleep_for(std::chrono::milliseconds(17));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		d.callAction(_getch());
 		//std::cout << _getch();
 	}

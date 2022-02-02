@@ -51,84 +51,94 @@ std::string Content::getContent() const
 	return result;
 }
 
-bool Content::actionDelete(int* posX, int* posY)
+bool Content::actionDelete(int& posX, int& posY)
 {
-	if (*posX < this->content[*posY].size()) {
-		this->content[*posY] = this->content[*posY].substr(0, *posX) + this->content[*posY].substr(*posX + 1);
+	if (posX < this->content[posY].size()) {
+		this->content[posY] = this->content[posY].substr(0, posX) + this->content[posY].substr(posX + 1);
 		return true;
 	}
-	else if (*posY + 1 < this->content.size()) {
-		this->content[*posY] += this->content[*posY + 1];
-		this->content.erase(this->content.begin() + (*posY) + 1);
-		return true;
-	}
-	return false;
-}
-
-bool Content::actionMoveLineUp(int* posX, int* posY)
-{
-	if (*posY > 0) {
-		std::string tmp = this->content[*posY];
-		this->content.erase(this->content.begin() + (*posY));
-		this->content.insert(this->content.begin() + (*posY) - 1, tmp);
-		(*posY)--;
+	else if (posY + 1 < this->content.size()) {
+		this->content[posY] += this->content[posY + 1];
+		this->content.erase(this->content.begin() + (posY) + 1);
 		return true;
 	}
 	return false;
 }
 
-bool Content::actionMoveLineDown(int* posX, int* posY)
+bool Content::actionMoveLineUp(int& posX, int& posY)
 {
-	if (*posY < this->content.size() - 1) {
-		std::string tmp = this->content[*posY];
-		this->content.erase(this->content.begin() + (*posY));
-		this->content.insert(this->content.begin() + (*posY) + 1, tmp);
-		(*posY)++;
+	if (posY > 0) {
+		std::string tmp = this->content[posY];
+		this->content.erase(this->content.begin() + (posY));
+		this->content.insert(this->content.begin() + (posY) - 1, tmp);
+		(posY)--;
+		return true;
+	}
+	return false;
+}
+
+bool Content::actionMoveLineDown(int& posX, int& posY)
+{
+	if (posY < this->content.size() - 1) {
+		std::string tmp = this->content[posY];
+		this->content.erase(this->content.begin() + (posY));
+		this->content.insert(this->content.begin() + (posY) + 1, tmp);
+		(posY)++;
 		return true;
 	}
 }
 
-bool Content::actionEnter(int* posX, int* posY)
+bool Content::actionEnter(int& posX, int& posY)
 {
-	std::string beforeEnter = this->content[*posY].substr(0, *posX);
+	std::string beforeEnter = this->content[posY].substr(0, posX);
 	int spaceCount = 0;
 	while (spaceCount < beforeEnter.size() && beforeEnter[spaceCount] == ' ') spaceCount += 2;
-	std::string afterEnter = this->content[*posY].substr(*posX);
-	this->content[*posY] = beforeEnter;
-	*posY += 1;
-	this->content.insert(this->content.begin() + *posY, std::string(spaceCount, ' ') + afterEnter);
-	*posX = spaceCount;
+	std::string afterEnter = this->content[posY].substr(posX);
+	this->content[posY] = beforeEnter;
+	posY += 1;
+	this->content.insert(this->content.begin() + posY, std::string(spaceCount, ' ') + afterEnter);
+	posX = spaceCount;
 	return true;
 }
 
-bool Content::actionRemove(int* posX, int* posY)
+bool Content::actionEnterNewline(int& posX, int& posY)
 {
-	if (*posX > 0) {
-		std::string beforeRemove = this->content[*posY].substr(0, *posX - 1);
-		std::string afterRemove = this->content[*posY].substr(*posX);
-		this->content[*posY] = beforeRemove + afterRemove;
-		*posX -= 1;
+	int spaceCount = 0;
+	while (spaceCount < this->content[posY].size() && this->content[posY][spaceCount] == ' ') spaceCount += 2;
+	posY += 1;
+	this->content.insert(this->content.begin() + posY, std::string(spaceCount, ' '));
+	posX = spaceCount;
+	return true;
+}
+
+bool Content::actionRemove(int& posX, int& posY)
+{
+	if (posX > 0) {
+		std::string beforeRemove = this->content[posY].substr(0, posX - 1);
+		std::string afterRemove = this->content[posY].substr(posX);
+		this->content[posY] = beforeRemove + afterRemove;
+		posX -= 1;
 		return true;
 	}
-	else if (*posY > 0) {
-		this->content[*posY - 1] += this->content[*posY];
-		this->content.erase(this->content.begin() + *posY);
-		*posX = this->content[*posY - 1].size();
-		*posY -= 1;
+	else if (posY > 0) {
+		posX = this->content[posY - 1].size();
+		this->content[posY - 1] += this->content[posY];
+		this->content.erase(this->content.begin() + posY);
+		posY -= 1;
 		return true;
 	}
 }
 
-bool Content::actionWrite(int* posX, int* posY, char character)
+bool Content::actionWrite(int& posX, int& posY, char character)
 {
 	if (character == '\t') {
 		for (int i = 0; i < TAB_SIZE; i++) {
-			this->content[*posY].insert(this->content[*posY].begin() + *posX, ' ');
+			this->content[posY].insert(this->content[posY].begin() + posX, ' ');
 		}
-		*posX += TAB_SIZE;
+		posX += TAB_SIZE;
 		return true;
 	}
-	this->content[*posY].insert(this->content[*posY].begin() + *posX, character);
-	*posX += 1;
+	this->content[posY].insert(this->content[posY].begin() + posX, character);
+	posX += 1;
 	return true;
 }

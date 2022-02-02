@@ -1,6 +1,9 @@
+#include "Helper.h"
+
+#include <ctype.h>
+#include <chrono>
 #include <Windows.h>
 #include <iostream>
-#include "Helper.h"
 
 
 void Helper::hideCursor()
@@ -156,4 +159,13 @@ std::string Helper::replace(std::string subject, const std::string& search, cons
 		pos += replace.length();
 	}
 	return subject;
+}
+
+std::string Helper::getTimeString()
+{
+	time_t t = time(nullptr);
+	tm localTime;
+	localtime_s(&localTime, &t);
+
+	return (localTime.tm_hour < 10 ? "0" + std::to_string(localTime.tm_hour) : std::to_string(localTime.tm_hour)) + ':' + (localTime.tm_min < 10 ? "0" + std::to_string(localTime.tm_min) : std::to_string(localTime.tm_min));
 }
