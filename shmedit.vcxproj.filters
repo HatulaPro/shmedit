@@ -38,6 +38,9 @@
     <ClInclude Include="Content.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="KeyBinds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="mytest.txt">

@@ -12,7 +12,8 @@ int main() {
 	Display d = Display("mytest.txt");
 	while (true) {
 		d.show();
-		d.callAction(_getch());
+		d.callAction(_getch()); 
+		//std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		//std::cout << _getch();
 	}
 

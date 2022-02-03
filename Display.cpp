@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <chrono>
+#include <map>
 #include <thread>
 
 #define LINE_NUMBER_SIZE 4
@@ -50,7 +51,7 @@ void Display::show() const
 
 	// Aligning to top/bottom
 	int startIndex = std::max(std::min(this->posY - ((height - NON_CONTENT_LINES) / 2), (int)content.size() - (height - NON_CONTENT_LINES)), 0);
-	
+
 	for (auto i = content.begin() + startIndex; i != content.begin() + std::min(startIndex + height, (int)content.size()); i++) {
 		if (count < height - NON_CONTENT_LINES) {
 			// For every line in content (that is inside the view)
@@ -58,7 +59,7 @@ void Display::show() const
 			lineNumber.insert(lineNumber.end(), LINE_NUMBER_SIZE - Helper::getDisplayLength(lineNumber), ' ');
 
 			// If cursor in line
-			if (count + startIndex == this->posY) { 
+			if (count + startIndex == this->posY) {
 				// If line is offset
 				if (this->posX > width - LINE_NUMBER_SIZE - sizeof(LINE_OFFSET_STR) + 1) {
 					std::string line = lineNumber + LINE_OFFSET_STR + i->substr(offset) + ' ';
@@ -120,116 +121,24 @@ std::string Display::padToLine(std::string line, short width) const
 
 void Display::callAction(char x)
 {
-	if (this->lastKeys.size() > 0 && this->lastKeys[0] == -32) {
+	if (Content::oneClickActions.count(x)) {
+		auto f = Content::oneClickActions.find(x);
+		this->wasEdited = (this->c.*(f->second))(this->posX, this->posY);
+	}
+	else if (this->lastKeys.size() > 0 && this->lastKeys[0] == NEXT_IS_UTILS) {
 		this->lastKeys = "";
-		
-
-		if (x == 'S') { // Delete
-			this->wasEdited = this->c.actionDelete(this->posX, this->posY);
-		}
-		else if (x == -109) { // Ctrl Delete
-			this->wasEdited = this->c.actionDeleteWord(this->posX, this->posY);
-		}
-		else if (x == 'K') { // Left key
-			if (this->posX > 0) {
-				this->posX -= 1;
-			}
-			else if (this->posY > 0) {
-				this->posY -= 1;
-				this->posX = this->c.getLine(this->posY).size();
-			}
-		}
-		else if (x == 'M') { // Right key
-			if (this->posX < this->c.getLine(this->posY).size()) {
-				this->posX += 1;
-			}
-			else if (this->posY < this->c.size() - 1) {
-				this->posY += 1;
-				this->posX = 0;
-			}
-		}
-		else if (x == 'H') { // Up key
-			if (this->posY > 0) {
-				this->posY -= 1;
-				if (this->c.getLine(this->posY).size() < this->posX) {
-					this->posX = this->c.getLine(this->posY).size();
-				}
-			}
-			else {
-				this->posX = 0;
-			}
-		}
-		else if (x == 'P') { // Down key
-			if (this->posY < this->c.size() - 1) {
-				this->posY += 1;
-				if (this->c.getLine(this->posY).size() < this->posX) {
-					this->posX = this->c.getLine(this->posY).size();
-				}
-			}
-			else {
-				this->posX = this->c.getLine(this->posY).size();
-			}
-		}
-		else if (x == 't') { // Ctrl + Right
-			if (this->posX == this->c.getLine(this->posY).size() && this->posY < this->c.size() - 1) {
-				this->posX = 0;
-				this->posY++;
-			}
-			else {
-				int firstType = isalnum(this->c.getLine(this->posY)[this->posX]);
-				while (isalnum(this->c.getLine(this->posY)[this->posX]) == firstType) {
-					if (this->posX == this->c.getLine(this->posY).size()) break;
-					this->posX++;
-				}
-			}
-		}
-		else if (x == 's') { // Ctrl + Left
-			if (this->posX == 0) {
-				if (this->posY > 0) {
-					this->posY--;
-					this->posX = this->c.getLine(this->posY).size();
-				}
-			}
-			else {
-				int firstType = isalnum(this->c.getLine(this->posY)[this->posX - 1]);
-				do {
-					this->posX--;
-				} while (this->posX > 1 && isalnum(this->c.getLine(this->posY)[this->posX - 1]) == firstType);
-			}
+		if (Content::utilActions.count(x)) {
+			auto f = Content::utilActions.find(x);
+			this->wasEdited = (this->c.*(f->second))(this->posX, this->posY);
 		}
 	}
-	else if (this->lastKeys.size() > 0 && this->lastKeys[0] == 0) {
-		this->lastKeys = "";
-		if (x == -104) { // Alt Up
-			this->wasEdited = this->c.actionMoveLineUp(this->posX, this->posY);
-		}
-		else if (x == -96) { // Alt Down
-			this->wasEdited = this->c.actionMoveLineDown(this->posX, this->posY);
-		}
-	}
-	else if (x == 19) { // Ctrl + S
+	else if (x == ACTION_CTRL_S) { // Ctrl + S
 		this->wasEdited = false;
 		Helper::writeFile(this->fileName, this->c.getContent());
 	}
-	else if (x == '\r') { // Enter
-		this->wasEdited = this->c.actionEnter(this->posX, this->posY);
-	}
-	else if (x == '\n') {
-		this->wasEdited = this->c.actionEnterNewline(this->posX, this->posY);
-	}
-	else if (x == 8) { // Remove
-		this->wasEdited = this->c.actionRemove(this->posX, this->posY);
-	}
-	else if (x == 127) { // Ctrl Remove
-		this->wasEdited = this->c.actionRemoveWord(this->posX, this->posY);
-	}
 	else if (x == -32 or x == 224 or x == 0) {
 		this->lastKeys = "a";
-		this->lastKeys[0] = x;
-	}
-	else if (x == 6) {
-		this->lastKeys = "";
-		this->state = FIND;
+		this->lastKeys[0] = NEXT_IS_UTILS;
 	}
 	else {
 		this->wasEdited = this->c.actionWrite(this->posX, this->posY, x);

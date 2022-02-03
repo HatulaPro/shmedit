@@ -147,6 +147,7 @@
     <ClInclude Include="Content.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Helper.h" />
+    <ClInclude Include="KeyBinds.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="mytest.txt" />

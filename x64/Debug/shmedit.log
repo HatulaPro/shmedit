@@ -1,8 +1,5 @@
 ﻿  Display.cpp
-C:\myProjects\shmedit\shmedit\Display.cpp(81,62): warning C4838: conversion from 'int' to 'size_t' requires a narrowing conversion
-C:\myProjects\shmedit\shmedit\Display.cpp(141,52): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\myProjects\shmedit\shmedit\Display.cpp(157,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\myProjects\shmedit\shmedit\Display.cpp(168,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\myProjects\shmedit\shmedit\Display.cpp(172,52): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\myProjects\shmedit\shmedit\Display.cpp(192,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Display.cpp(79,62): warning C4838: conversion from 'int' to 'size_t' requires a narrowing conversion
+  main.cpp
+  Generating Code...
   shmedit.vcxproj -> C:\myProjects\shmedit\x64\Debug\shmedit.exe

@@ -1,0 +1,18 @@
+#pragma once
+#define ACTION_DELETE 'S'
+#define ACTION_CTRL_DELETE -109
+#define ACTION_LEFT_KEY 'K'
+#define ACTION_RIGHT_KEY 'M'
+#define ACTION_UP_KEY 'H'
+#define ACTION_DOWN_KEY 'P'
+#define ACTION_CTRL_RIGHT_KEY 't'
+#define ACTION_CTRL_LEFT_KEY 's'
+#define ACTION_ALT_UP 152
+#define ACTION_ALT_DOWN 160
+#define ACTION_CTRL_S 19
+#define ACTION_ENTER '\r'
+#define ACTION_CTRL_ENTER '\n'
+#define ACTION_REMOVE 8
+#define ACTION_CTRL_REMOVE 127
+
+#define NEXT_IS_UTILS -32

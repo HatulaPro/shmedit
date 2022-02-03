@@ -8,6 +8,26 @@
 #include <ctype.h>
 #include <chrono>
 
+const std::map<char, bool (Content::*)(int&, int&)> Content::utilActions = {
+	{ACTION_DELETE, &Content::actionDelete},
+	{ ACTION_CTRL_DELETE, &Content::actionDeleteWord },
+	{ ACTION_LEFT_KEY, &Content::actionLeftKey },
+	{ ACTION_RIGHT_KEY, &Content::actionRightKey },
+	{ ACTION_UP_KEY, &Content::actionUpKey },
+	{ ACTION_DOWN_KEY, &Content::actionDownKey },
+	{ ACTION_CTRL_RIGHT_KEY, &Content::actionWordRight },
+	{ ACTION_CTRL_LEFT_KEY, &Content::actionWordLeft },
+	{ ACTION_ALT_UP, &Content::actionMoveLineUp },
+	{ ACTION_ALT_DOWN, &Content::actionMoveLineDown },
+};
+
+const std::map<char, bool (Content::*)(int&, int&)> Content::oneClickActions = {
+	{ ACTION_ENTER, &Content::actionEnter },
+	{ ACTION_CTRL_ENTER, &Content::actionEnterNewline },
+	{ ACTION_REMOVE, &Content::actionRemove },
+	{ ACTION_CTRL_REMOVE, &Content::actionRemoveWord },
+};
+
 Content::Content(std::string c)
 {
 	setContent(c);
@@ -171,4 +191,89 @@ bool Content::actionWrite(int& posX, int& posY, char character)
 	this->content[posY].insert(this->content[posY].begin() + posX, character);
 	posX += 1;
 	return true;
+}
+
+bool Content::actionLeftKey(int& posX, int& posY)
+{
+	if (posX > 0) {
+		posX -= 1;
+	}
+	else if (posY > 0) {
+		posY -= 1;
+		posX = this->content[posY].size();
+	}
+	return false;
+}
+
+bool Content::actionRightKey(int& posX, int& posY)
+{
+	if (posX < this->content[posY].size()) {
+		posX += 1;
+	}
+	else if (posY < this->content.size() - 1) {
+		posY += 1;
+		posX = 0;
+	}
+	return false;
+}
+
+bool Content::actionUpKey(int& posX, int& posY)
+{
+	if (posY > 0) {
+		posY -= 1;
+		if (this->content[posY].size() < posX) {
+			posX = this->content[posY].size();
+		}
+	}
+	else {
+		posX = 0;
+	}
+	return false;
+}
+
+bool Content::actionDownKey(int& posX, int& posY)
+{
+	if (posY < this->content.size() - 1) {
+		posY += 1;
+		if (this->content[posY].size() < posX) {
+			posX = this->content[posY].size();
+		}
+	}
+	else {
+		posX = this->content[posY].size();
+	}
+	return false;
+}
+
+bool Content::actionWordRight(int& posX, int& posY)
+{
+	if (posX == this->content[posY].size() && posY < this->content.size() - 1) {
+		posX = 0;
+		posY++;
+	}
+	else {
+		int firstType = isalnum(this->content[posY][posX]);
+		while (isalnum(this->content[posY][posX]) == firstType) {
+			if (posX == this->content[posY].size()) break;
+			posX++;
+		}
+	}
+	return false;
+}
+
+bool Content::actionWordLeft(int& posX, int& posY)
+{
+	if (posX == 0) {
+		if (posY > 0) {
+			posY--;
+			posX = this->content[posY].size();
+		}
+	}
+	else {
+		int firstType = isalnum(this->content[posY][posX - 1]);
+		do {
+			posX--;
+		} while (posX > 1 && isalnum(this->content[posY][posX - 1]) == firstType);
+	}
+	return false;
 }

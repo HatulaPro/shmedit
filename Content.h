@@ -1,5 +1,8 @@
+#pragma once
 #include <vector>
 #include <string>
+#include <map>
+#include "KeyBinds.h"
 #define TAB_SIZE 4
 
 class Content {
@@ -22,5 +25,15 @@ public:
 	bool actionRemove(int& posX, int& posY);
 	bool actionRemoveWord(int& posX, int& posY);
 	bool actionWrite(int& posX, int& posY, char character);
+	bool actionLeftKey(int& posX, int& posY);
+	bool actionRightKey(int& posX, int& posY);
+	bool actionUpKey(int& posX, int& posY);
+	bool actionDownKey(int& posX, int& posY);
+	bool actionWordRight(int& posX, int& posY);
+	bool actionWordLeft(int& posX, int& posY);
 
+
+	static const std::map<char, bool (Content::*)(int&, int&)> utilActions; 
+	static const std::map<char, bool (Content::*)(int&, int&)> oneClickActions; 
+	//{ACTION_CTRL_S, Content::actionSave},
 };
