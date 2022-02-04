@@ -24,8 +24,7 @@ void Display::showTopBar(short width, bool wasEdited) const
 	Colorizers c;
 	c.push_back(timeColor);
 	c.push_back(fileColor);
-	//std::cout << this->padToLine(" ", width);
-	std::cout << this->padToLine(Helper::colorize(timeString + mid + fileTitle, c), width);// << std::endl;
+	std::cout << this->padToLine(Helper::colorize(timeString + mid + fileTitle, c), width);
 }
 
 Display::Display(std::string fname) : c(fname) {

@@ -352,11 +352,18 @@ std::string Content::commandOpen(std::string command, int& posX, int& posY)
 
 std::string Content::commandPaste(std::string command, int& posX, int& posY)
 {
-	for (size_t i = 0; i < this->commandInfo.size(); i++) {
-		this->content[posY].insert(this->content[posY].begin() + posX + i, this->commandInfo[i]);
+	if (!this->commandInfo.size()) return "Nothing to paste";
+
+	if (this->commandInfo[this->commandInfo.size() - 1] == '\n') {
+		this->content.insert(this->content.begin() + posY, this->commandInfo.substr(0, this->commandInfo.size() - 1));
+	}
+	else {
+		for (size_t i = 0; i < this->commandInfo.size(); i++) {
+			this->content[posY].insert(this->content[posY].begin() + posX + i, this->commandInfo[i]);
+		}
 	}
 	this->wasEdited = true;
-	return "Word pasted";
+	return "Pasted";
 }
 
 std::string Content::commandDeleteWord(std::string command, int& posX, int& posY)
@@ -371,7 +378,7 @@ std::string Content::commandDeleteLine(std::string command, int& posX, int& posY
 		this->content[0] = "";
 		posX = 0;
 	}
-	this->commandInfo = this->content[posY];
+	this->commandInfo = this->content[posY] + '\n';
 	this->content.erase(this->content.begin() + posY);
 	posY = std::min((int)posY, (int)this->content.size() - 1);
 
