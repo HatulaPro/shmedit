@@ -30,9 +30,12 @@ const std::map<char, void (Content::*)(int&, int&)> Content::oneClickActions = {
 	{ ACTION_CTRL_D, &Content::actionCopyLine },
 };
 
-const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Content::commands = {
-	{COMMAND_SAVE, &Content::commandSaveFile},
+const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Content::calledCommands = {
 	{COMMAND_OPEN, &Content::commandOpen},
+};
+
+const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Content::instantCommands = {
+	{COMMAND_SAVE, &Content::commandSaveFile},
 	{COMMAND_QUIT, &Content::commandQuit},
 	{COMMAND_QUIT_AND_SAVE, &Content::commandQuitAndSave},
 	{COMMAND_PASTE, &Content::commandPaste},
@@ -382,11 +385,17 @@ std::string Content::runCommand(std::string command, int& posX, int& posY)
 		return "";
 	}
 
+	if (Content::instantCommands.count(command)) {
+		auto f = Content::instantCommands.find(command);
+		return (this->*(f->second))(command, posX, posY);
+	}
+	
 	std::string commandName = command.substr(0, command.find_first_of(' '));
 	std::string afterSpace =  Helper::trim(command.substr(commandName.size()));
 
-	if (Content::commands.count(commandName)) {
-		auto f = Content::commands.find(commandName);
+
+	if (Content::calledCommands.count(commandName)) {
+		auto f = Content::calledCommands.find(commandName);
 		return (this->*(f->second))(afterSpace, posX, posY);
 	}
 	return "Command not found";

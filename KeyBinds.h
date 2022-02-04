@@ -19,6 +19,7 @@
 
 #define NEXT_IS_UTILS -32
 
+#define BEGIN_CALLED_COMMAND ':'
 
 #define COMMAND_SAVE "s"
 #define COMMAND_OPEN "o"

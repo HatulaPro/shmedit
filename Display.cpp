@@ -99,7 +99,7 @@ void Display::show() const
 	// Bottom line:
 	std::string commandString = this->state == COMMAND ? "cmd| " : "key| ";
 	Colorizer commandStringColor = { 0, commandString.size() - 1, MAGENTA };
-	Colorizer commandArgsColor = { commandString.size(), this->lastKeys.size(), BACKGROUND };
+	Colorizer commandArgsColor = { commandString.size(), this->lastKeys.size(), this->lastKeys.size() && this->lastKeys[0] == BEGIN_CALLED_COMMAND ? WHITE : BACKGROUND };
 	Colorizers c;
 	c.push_back(commandStringColor);
 	c.push_back(commandArgsColor);
@@ -124,25 +124,45 @@ std::string Display::padToLine(std::string line, short width) const
 void Display::callAction(char x)
 {
 	if (this->state == COMMAND) { // Ctrl C
-		if (this->lastKeys.size() > 0 && this->lastKeys[this->lastKeys.size() - 1] == NEXT_IS_UTILS) {
+		// let the program know that a weird key was pressed
+		if (this->lastKeys.size() > 0 && this->lastKeys[this->lastKeys.size() - 1] == NEXT_IS_UTILS) { 
 			this->lastKeys = this->lastKeys.substr(0, this->lastKeys.size() - 1);
 		}
+		// Ctrl + C for reset
 		else if (x == ACTION_START_COMMAND) {
 			this->lastKeys = "";
 		}
 		else if (x == ACTION_ENTER) {
 			this->state = DEAFULT;
-			this->commandOutput = this->c.runCommand(this->lastKeys, this->posX, this->posY);
-			this->lastKeys = "";
+			// No command
+			if (!this->lastKeys.size()) return;
+			
+			// Called command was... called
+			if (this->lastKeys[0] == BEGIN_CALLED_COMMAND) {
+				this->commandOutput = this->c.runCommand(this->lastKeys.substr(1), this->posX, this->posY);
+			}
+			// Command does not exist
+			else {
+				this->commandOutput = "`" + this->lastKeys + "` is not a called command";
+			}
+            this->lastKeys = "";
 		}
+		// Remove last character
 		else if (x == ACTION_REMOVE && this->lastKeys.size() > 0) {
 			this->lastKeys = this->lastKeys.substr(0, this->lastKeys.size() - 1);
 		}
+		// let the program know that a weird key was pressed 
 		else if (x == NEXT_IS_UTILS || x == NULL) {
 			this->lastKeys += NEXT_IS_UTILS;
 		}
+		// Normal character
 		else if (Helper::isPrintable(x)) {
 			this->lastKeys += x;
+			// Check if instant command
+			if (Content::instantCommands.count(this->lastKeys)) {
+				this->commandOutput = this->c.runCommand(this->lastKeys, this->posX, this->posY);
+				this->lastKeys = "";
+			}
 		}
 		return;
 	}

@@ -56,6 +56,7 @@ public:
 
 
 
-	static const std::map<std::string, std::string (Content::*)(std::string, int&, int&)> commands; 
+	static const std::map<std::string, std::string (Content::*)(std::string, int&, int&)> instantCommands; 
+	static const std::map<std::string, std::string (Content::*)(std::string, int&, int&)> calledCommands; 
 	//{ACTION_CTRL_S, Content::actionSave},
 };

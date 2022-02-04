@@ -32,14 +32,22 @@ A text editor program for windows.
   
   - Commands:
     After starting command mode (`Ctrl + C`), you can start writing commands. The editor will parse and run them.
-    Press `Enter` to start running the command, or `Ctrl + C` to cancel it.
+    Press `Ctrl + C` to cancel your command, or `Enter` to exit `cmd` mode.
+    There are two kinds of commands. `Called commands` and `Instant commands`.
+      - `Called commands`: Always start with a colon (`:`), and are only called once `Enter` is pressed. Called commands may take parameters as well.
+      - `Instant commands`: Are called as soon as they are detected.
     
+    
+    ### Called commands:    
+    - `o <file name>`: Opens the requested file.
+    
+      `cmd| :o myfile.txt`
+    
+      
+    ### Instant commands:    
     - `s`: Save file.
       
       `cmd| s`
-    - `o <file name>`: Opens the requested file.
-      
-      `cmd| o myfile.txt`
     - `q`: Quits the editor. Warning: This command does not save the contents of the file.
     - `wq`: Saves and quits the editor. 
     - `dw`: Deletes the next word and saves its contents in `mem`. 
