@@ -27,6 +27,7 @@ const std::map<char, bool (Content::*)(int&, int&)> Content::oneClickActions = {
 	{ ACTION_REMOVE, &Content::actionRemove },
 	{ ACTION_CTRL_REMOVE, &Content::actionRemoveWord },
 	{ ACTION_CTRL_S, &Content::actionSaveFile },
+	{ ACTION_CTRL_D, &Content::actionCopyLine },
 };
 
 Content::Content(std::string c)
@@ -97,9 +98,9 @@ bool Content::actionDeleteWord(int& posX, int& posY)
 	if (posX == this->content[posY].size()) {
 		return this->actionDelete(posX, posY);
 	}
-	int firstType = isalnum(this->content[posY][posX]);
+	int firstType = Helper::isAlphanumeric(this->content[posY][posX]);
 	int count = 0;
-	while (isalnum(this->content[posY][posX + count]) == firstType) {
+	while (Helper::isAlphanumeric(this->content[posY][posX + count]) == firstType) {
 		if (posX + count == this->content[posY].size()) break;
 		count++;
 	}
@@ -178,7 +179,7 @@ bool Content::actionRemoveWord(int& posX, int& posY)
 	}
 	int firstType = isalnum(this->content[posY][posX - 1]);
 	int count = 0;
-	while (posX - count >= 1 && isalnum(this->content[posY][posX - count - 1]) == firstType) {
+	while (posX - count >= 1 && Helper::isAlphanumeric(this->content[posY][posX - count - 1]) == firstType) {
 		count++;
 	}
 	this->content[posY].erase(posX - count, count);
@@ -259,13 +260,20 @@ bool Content::actionWordRight(int& posX, int& posY)
 		posY++;
 	}
 	else {
-		int firstType = isalnum(this->content[posY][posX]);
-		while (isalnum(this->content[posY][posX]) == firstType) {
+		int firstType = Helper::isAlphanumeric(this->content[posY][posX]);
+		while (Helper::isAlphanumeric(this->content[posY][posX]) == firstType) {
 			if (posX == this->content[posY].size()) break;
 			posX++;
 		}
 	}
 	return false;
+}
+
+bool Content::actionCopyLine(int& posX, int& posY)
+{
+	this->content.insert(this->content.begin() + posY, this->content[posY]);
+	posY++;
+	return true;
 }
 
 bool Content::actionSaveFile(int& posX, int& posY)
@@ -283,10 +291,10 @@ bool Content::actionWordLeft(int& posX, int& posY)
 		}
 	}
 	else {
-		int firstType = isalnum(this->content[posY][posX - 1]);
+		int firstType = Helper::isAlphanumeric(this->content[posY][posX - 1]);
 		do {
 			posX--;
-		} while (posX > 1 && isalnum(this->content[posY][posX - 1]) == firstType);
+		} while (posX > 1 && Helper::isAlphanumeric(this->content[posY][posX - 1]) == firstType);
 	}
 	return false;
 }

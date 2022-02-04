@@ -178,6 +178,11 @@ bool Helper::isPrintable(char c)
 	return c >= 32 && c <= 126;
 }
 
+bool Helper::isAlphanumeric(char c)
+{
+	return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
 std::string Helper::trim(std::string s)
 {
 	std::string copy = s;

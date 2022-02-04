@@ -10,6 +10,7 @@
 #define ACTION_ALT_UP 152
 #define ACTION_ALT_DOWN 160
 #define ACTION_CTRL_S 19
+#define ACTION_CTRL_D 4
 #define ACTION_ENTER '\r'
 #define ACTION_CTRL_ENTER '\n'
 #define ACTION_REMOVE 8

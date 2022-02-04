@@ -26,6 +26,7 @@ A text editor program for windows.
     - `Ctrl + S`: Save file.
     - `Ctrl + Enter`: Leave current line and start a new one.
     - `Ctrl + C`: Start command mode
+    - `Ctrl + D`: Duplicate current line
   
   - Commands:
     After starting command mode (`Ctrl + C`), you can start writing commands. The editor will parse and run them.

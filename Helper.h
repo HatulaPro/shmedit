@@ -37,5 +37,6 @@ public:
 	static std::string replace(std::string subject, const std::string& search, const std::string& replace);
 	static std::string getTimeString();
 	static bool isPrintable(char c);
+	static bool isAlphanumeric(char c);
 	static std::string trim(std::string s);
 };

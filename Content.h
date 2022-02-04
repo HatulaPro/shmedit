@@ -32,6 +32,7 @@ public:
 	bool actionUpKey(int& posX, int& posY);
 	bool actionDownKey(int& posX, int& posY);
 	bool actionWordRight(int& posX, int& posY);
+	bool actionCopyLine(int& posX, int& posY);
 	bool actionSaveFile(int& posX, int& posY);
 	bool actionWordLeft(int& posX, int& posY);
 
