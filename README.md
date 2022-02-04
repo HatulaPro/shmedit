@@ -29,6 +29,7 @@ A text editor program for windows.
     - `Ctrl + Enter`: Leave current line and start a new one.
     - `Ctrl + C`: Start command mode.
     - `Ctrl + D`: Duplicate current line.
+    - `Ctrl + L`: Delete current line.
     - `FN + Right`, `FN + LEFT`: Jump to the end/start of the line.
   
   - ### Commands:

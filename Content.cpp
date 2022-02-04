@@ -30,6 +30,7 @@ const std::map<char, void (Content::*)(int&, int&)> Content::oneClickActions = {
 	{ ACTION_CTRL_REMOVE, &Content::actionRemoveWord },
 	{ ACTION_CTRL_S, &Content::actionSaveFile },
 	{ ACTION_CTRL_D, &Content::actionCopyLine },
+	{ ACTION_CTRL_L, &Content::actionDeleteLine },
 };
 
 const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Content::calledCommands = {
