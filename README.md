@@ -17,7 +17,7 @@ A text editor program for windows.
   
   - `mem`: The editor's memory. 
   
-  - Keys:
+  - ### Keys:
     - You can write by simply typing letters and numbers. Pretty normal.
     - `Delete`, `Remove` keys - Just like you'd expect.
     - `Ctrl + Delete`: Remove the word to the right of your cursor and saves its contents in `mem`. 
@@ -31,26 +31,35 @@ A text editor program for windows.
     - `Ctrl + D`: Duplicate current line.
     - `FN + Right`, `FN + LEFT`: Jump to the end/start of the line.
   
-  - Commands:
+  - ### Commands:
     After starting command mode (`Ctrl + C`), you can start writing commands. The editor will parse and run them.
     Press `Ctrl + C` to cancel your command, or `Enter` to exit `cmd` mode.
     There are two kinds of commands. `Called commands` and `Instant commands`.
       - `Called commands`: Always start with a colon (`:`), and are only called once `Enter` is pressed. Called commands may take parameters as well.
-      - `Instant commands`: Are called as soon as they are detected.
+      - `Instant commands`: Are called as soon as they are detected. Can be prefixed by a number to tell the parser the amount of times it should be run.
+        + Example:
+        ```
+          cmd| 12dw
+        ```
+        Would delete 12 words. Keep in mind that only the last word deleted will be saved in `mem`.
     
     
-    ### Called commands:    
+    #### Called commands:    
     - `o <file name>`: Opens the requested file.
     
-      `cmd| :o myfile.txt`
+      ```
+      cmd| :o myfile.txt
+      ```
     
       
-    ### Instant commands:    
+    #### Instant commands:    
     - `s`: Save file.
       
-      `cmd| s`
-    - `q`: Quits the editor. Warning: This command does not save the contents of the file.
-    - `wq`: Saves and quits the editor. 
+      ```
+        cmd| s
+      ```
+    - `q`: Saves and quits the editor. 
+    - `Q`: Quits the editor. Warning: This command does not save the contents of the file.
     - `dw`: Deletes the next word and saves its contents in `mem`. 
     - `dl`: Deletes the current line and saves its contents in `mem`. 
     - `db`: Removes the last word and saves its contents in `mem`. 

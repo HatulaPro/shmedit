@@ -124,7 +124,7 @@ void Display::callAction(char x)
 {
 	if (this->state == COMMAND) { // Ctrl C
 		// let the program know that a weird key was pressed
-		if (this->lastKeys.size() > 0 && this->lastKeys[this->lastKeys.size() - 1] == NEXT_IS_UTILS) { 
+		if (this->lastKeys.size() > 0 && this->lastKeys[this->lastKeys.size() - 1] == NEXT_IS_UTILS) {
 			this->lastKeys = this->lastKeys.substr(0, this->lastKeys.size() - 1);
 		}
 		// Ctrl + C for reset
@@ -135,7 +135,7 @@ void Display::callAction(char x)
 			this->state = DEAFULT;
 			// No command
 			if (!this->lastKeys.size()) return;
-			
+
 			// Called command was... called
 			if (this->lastKeys[0] == BEGIN_CALLED_COMMAND) {
 				this->commandOutput = this->c.runCommand(this->lastKeys.substr(1), this->posX, this->posY);
@@ -144,7 +144,7 @@ void Display::callAction(char x)
 			else {
 				this->commandOutput = "`" + this->lastKeys + "` is not a called command";
 			}
-            this->lastKeys = "";
+			this->lastKeys = "";
 		}
 		// Remove last character
 		else if (x == ACTION_REMOVE && this->lastKeys.size() > 0) {
@@ -157,10 +157,21 @@ void Display::callAction(char x)
 		// Normal character
 		else if (Helper::isPrintable(x)) {
 			this->lastKeys += x;
-			// Check if instant command
-			if (Content::instantCommands.count(this->lastKeys)) {
-				this->commandOutput = this->c.runCommand(this->lastKeys, this->posX, this->posY);
-				this->lastKeys = "";
+			int count = 1; // Number of times to run
+			std::string command;
+			std::stringstream tmp(this->lastKeys);
+			if (isdigit(this->lastKeys[0])) {
+				tmp >> count;
+				count = std::max(1, count);
+			}
+			std::getline(tmp, command);
+
+
+			if (Content::instantCommands.count(command)) {
+				for (int i = 0; i < count; i++) {
+					this->commandOutput = this->c.runCommand(command, this->posX, this->posY);
+					this->lastKeys = "";
+				}
 			}
 		}
 		return;

@@ -25,8 +25,8 @@
 
 #define COMMAND_SAVE "s"
 #define COMMAND_OPEN "o"
-#define COMMAND_QUIT "q"
-#define COMMAND_QUIT_AND_SAVE "wq"
+#define COMMAND_QUIT "Q"
+#define COMMAND_QUIT_AND_SAVE "q"
 #define COMMAND_PASTE "p"
 #define COMMAND_DELETE_WORD "dw"
 #define COMMAND_DELETE_LINE "dl"
