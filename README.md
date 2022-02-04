@@ -41,17 +41,17 @@ A text editor program for windows.
       
       `cmd| o myfile.txt`
     - `q`: Quits the editor. Warning: This command does not save the contents of the file.
-    - `qs`: Saves and quits the editor. 
+    - `wq`: Saves and quits the editor. 
     - `dw`: Deletes the next word and saves its contents in `mem`. 
     - `dl`: Deletes the current line and saves its contents in `mem`. 
     - `p`: Pastes the last word from `mem`.
       
 ## Future Features:
-  [X] A working text editor
-  [ ] Find & Replace
-  [ ] Copy & Paste
-  [ ] Custom keybindings
-  [ ] Highlighting
-  [ ] Custom commands
-  [ ] Making each user a millionaire
+  - [X] A working text editor
+  - [ ] Find & Replace
+  - [ ] Copy & Paste
+  - [ ] Custom keybindings
+  - [ ] Highlighting
+  - [ ] Custom commands
+  - [ ] Making each user a millionaire
   
