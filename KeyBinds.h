@@ -15,6 +15,8 @@
 #define ACTION_CTRL_ENTER '\n'
 #define ACTION_REMOVE 8
 #define ACTION_CTRL_REMOVE 127
+#define ACTION_FN_RIGHT 79
+#define ACTION_FN_LEFT 71
 #define ACTION_START_COMMAND 3
 
 #define NEXT_IS_UTILS -32
@@ -28,3 +30,6 @@
 #define COMMAND_PASTE "p"
 #define COMMAND_DELETE_WORD "dw"
 #define COMMAND_DELETE_LINE "dl"
+#define COMMAND_REMOVE_WORD "db"
+#define COMMAND_MOVE_WORD "w"
+#define COMMAND_BACK_WORD "b"

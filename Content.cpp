@@ -19,6 +19,8 @@ const std::map<char, void (Content::*)(int&, int&)> Content::utilActions = {
 	{ ACTION_CTRL_LEFT_KEY, &Content::actionWordLeft },
 	{ ACTION_ALT_UP, &Content::actionMoveLineUp },
 	{ ACTION_ALT_DOWN, &Content::actionMoveLineDown },
+	{ ACTION_FN_RIGHT, &Content::actionJumpToLineEnd },
+	{ ACTION_FN_LEFT, &Content::actionJumpToLineStart },
 };
 
 const std::map<char, void (Content::*)(int&, int&)> Content::oneClickActions = {
@@ -34,13 +36,16 @@ const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Co
 	{COMMAND_OPEN, &Content::commandOpen},
 };
 
-const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Content::instantCommands = {
-	{COMMAND_SAVE, &Content::commandSaveFile},
-	{COMMAND_QUIT, &Content::commandQuit},
-	{COMMAND_QUIT_AND_SAVE, &Content::commandQuitAndSave},
-	{COMMAND_PASTE, &Content::commandPaste},
-	{COMMAND_DELETE_WORD, &Content::commandDeleteWord},
-	{COMMAND_DELETE_LINE, &Content::commandDeleteLine},
+const std::map<std::string, void(Content::*)(int&, int&)> Content::instantCommands = {
+	{COMMAND_SAVE, &Content::actionSaveFile},
+	{COMMAND_QUIT, &Content::actionQuit},
+	{COMMAND_QUIT_AND_SAVE, &Content::actionQuitAndSave},
+	{COMMAND_PASTE, &Content::actionPaste},
+	{COMMAND_DELETE_WORD, &Content::actionDeleteWord},
+	{COMMAND_REMOVE_WORD, &Content::actionRemoveWord},
+	{COMMAND_DELETE_LINE, &Content::actionDeleteLine},
+	{COMMAND_MOVE_WORD, &Content::actionWordRight},
+	{COMMAND_BACK_WORD, &Content::actionWordLeft},
 };
 
 Content::Content(std::string c)
@@ -301,6 +306,16 @@ void Content::actionCopyLine(int& posX, int& posY)
 	this->wasEdited = true;
 }
 
+void Content::actionJumpToLineEnd(int& posX, int& posY)
+{
+	posX = this->content[posY].size();
+}
+
+void Content::actionJumpToLineStart(int& posX, int& posY)
+{
+	posX = 0;
+}
+
 void Content::actionSaveFile(int& posX, int& posY)
 {
 	Helper::writeFile(this->fileName, this->getContent());
@@ -324,19 +339,13 @@ void Content::actionWordLeft(int& posX, int& posY)
 	this->wasEdited = false;
 }
 
-std::string Content::commandSaveFile(std::string command, int& posX, int& posY)
-{
-	this->actionSaveFile(posX, posY);
-	return "File Saved.";
-}
-
-std::string Content::commandQuit(std::string command, int& posX, int& posY)
+void Content::actionQuit(int& posX, int& posY)
 {
 	system("cls");
 	exit(0);
 }
 
-std::string Content::commandQuitAndSave(std::string command, int& posX, int& posY)
+void Content::actionQuitAndSave(int& posX, int& posY)
 {
 	this->actionSaveFile(posX, posY);
 	system("cls");
@@ -350,9 +359,9 @@ std::string Content::commandOpen(std::string command, int& posX, int& posY)
 	return "Opened " + command;
 }
 
-std::string Content::commandPaste(std::string command, int& posX, int& posY)
+void Content::actionPaste(int& posX, int& posY)
 {
-	if (!this->commandInfo.size()) return "Nothing to paste";
+	if (!this->commandInfo.size()) return;// "Nothing to paste";
 
 	if (this->commandInfo[this->commandInfo.size() - 1] == '\n') {
 		this->content.insert(this->content.begin() + posY, this->commandInfo.substr(0, this->commandInfo.size() - 1));
@@ -363,16 +372,10 @@ std::string Content::commandPaste(std::string command, int& posX, int& posY)
 		}
 	}
 	this->wasEdited = true;
-	return "Pasted";
+	//return "Pasted";
 }
 
-std::string Content::commandDeleteWord(std::string command, int& posX, int& posY)
-{
-	this->actionDeleteWord(posX, posY);
-	return "Word deleted";
-}
-
-std::string Content::commandDeleteLine(std::string command, int& posX, int& posY)
+void Content::actionDeleteLine(int& posX, int& posY)
 {
 	if (this->content.size() == 1) {
 		this->content[0] = "";
@@ -382,7 +385,7 @@ std::string Content::commandDeleteLine(std::string command, int& posX, int& posY
 	this->content.erase(this->content.begin() + posY);
 	posY = std::min((int)posY, (int)this->content.size() - 1);
 
-	return "Line deleted";
+	//return "Line deleted";
 }
 
 std::string Content::runCommand(std::string command, int& posX, int& posY)
@@ -394,11 +397,12 @@ std::string Content::runCommand(std::string command, int& posX, int& posY)
 
 	if (Content::instantCommands.count(command)) {
 		auto f = Content::instantCommands.find(command);
-		return (this->*(f->second))(command, posX, posY);
+		(this->*(f->second))(posX, posY);
+		return "";
 	}
-	
+
 	std::string commandName = command.substr(0, command.find_first_of(' '));
-	std::string afterSpace =  Helper::trim(command.substr(commandName.size()));
+	std::string afterSpace = Helper::trim(command.substr(commandName.size()));
 
 
 	if (Content::calledCommands.count(commandName)) {

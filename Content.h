@@ -37,16 +37,18 @@ public:
 	void actionDownKey(int& posX, int& posY);
 	void actionWordRight(int& posX, int& posY);
 	void actionCopyLine(int& posX, int& posY);
+	void actionJumpToLineEnd(int& posX, int& posY);
+	void actionJumpToLineStart(int& posX, int& posY);
+
 	void actionSaveFile(int& posX, int& posY);
 	void actionWordLeft(int& posX, int& posY);
 
-	std::string commandSaveFile(std::string command, int& posX, int& posY);
-	std::string commandQuit(std::string command, int& posX, int& posY);
-	std::string commandQuitAndSave(std::string command, int& posX, int& posY);
 	std::string commandOpen(std::string command, int& posX, int& posY);
-	std::string commandPaste(std::string command, int& posX, int& posY);
-	std::string commandDeleteWord(std::string command, int& posX, int& posY);
-	std::string commandDeleteLine(std::string command, int& posX, int& posY);
+
+	void actionQuit(int& posX, int& posY);
+	void actionQuitAndSave(int& posX, int& posY);
+	void actionPaste(int& posX, int& posY);
+	void actionDeleteLine(int& posX, int& posY);
 
 	std::string runCommand(std::string command, int& posX, int& posY);
 
@@ -54,9 +56,7 @@ public:
 	static const std::map<char, void (Content::*)(int&, int&)> utilActions; 
 	static const std::map<char, void (Content::*)(int&, int&)> oneClickActions; 
 
-
-
-	static const std::map<std::string, std::string (Content::*)(std::string, int&, int&)> instantCommands; 
+	static const std::map<std::string, void(Content::*)(int&, int&)> instantCommands;
 	static const std::map<std::string, std::string (Content::*)(std::string, int&, int&)> calledCommands; 
 	//{ACTION_CTRL_S, Content::actionSave},
 };

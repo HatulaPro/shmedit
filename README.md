@@ -27,8 +27,9 @@ A text editor program for windows.
     - `Alt + Up`, `Alt + Down`: Move current line up/down.
     - `Ctrl + S`: Save file.
     - `Ctrl + Enter`: Leave current line and start a new one.
-    - `Ctrl + C`: Start command mode
-    - `Ctrl + D`: Duplicate current line
+    - `Ctrl + C`: Start command mode.
+    - `Ctrl + D`: Duplicate current line.
+    - `FN + Right`, `FN + LEFT`: Jump to the end/start of the line.
   
   - Commands:
     After starting command mode (`Ctrl + C`), you can start writing commands. The editor will parse and run them.
@@ -52,7 +53,10 @@ A text editor program for windows.
     - `wq`: Saves and quits the editor. 
     - `dw`: Deletes the next word and saves its contents in `mem`. 
     - `dl`: Deletes the current line and saves its contents in `mem`. 
+    - `db`: Removes the last word and saves its contents in `mem`. 
     - `p`: Pastes the last word from `mem`.
+    - `w`: Moves one word to the left.
+    - `b`: Moves one word to the right.
       
 ## Future Features:
   - [X] A working text editor
