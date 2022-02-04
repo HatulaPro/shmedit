@@ -15,10 +15,12 @@ A text editor program for windows.
   
   - Notice that Shmedit is still in development, so many useful features (such as copy & paste) do not exist yet.
   
+  - `mem`: The editor's memory. 
+  
   - Keys:
     - You can write by simply typing letters and numbers. Pretty normal.
     - `Delete`, `Remove` keys - Just like you'd expect.
-    - `Ctrl + Delete`: Remove the word to the right of your cursor.
+    - `Ctrl + Delete`: Remove the word to the right of your cursor and saves its contents in `mem`. 
     - `Ctrl + Remove`: Remove the word to the left of your cursor.
     - `Left`, `Right`, `Up`, `Down` keys: Standard navigation. 
     - `Ctrl + Left`, `Ctrl + Right`: Move one whole word to that direction.
@@ -40,6 +42,9 @@ A text editor program for windows.
       `cmd| o myfile.txt`
     - `q`: Quits the editor. Warning: This command does not save the contents of the file.
     - `qs`: Saves and quits the editor. 
+    - `dw`: Deletes the next word and saves its contents in `mem`. 
+    - `dl`: Deletes the current line and saves its contents in `mem`. 
+    - `p`: Pastes the last word from `mem`.
       
 ## Future Features:
   [X] A working text editor

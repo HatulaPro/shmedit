@@ -9,6 +9,9 @@ class Content {
 private:
 	std::vector<std::string> content;
 	std::string fileName;
+	bool wasEdited = false;
+
+	std::string commandInfo;
 public:
 	Content(std::string c);
 	void setContent(std::string c);
@@ -17,29 +20,42 @@ public:
 	size_t size() const;
 	std::string getContent() const;
 	std::string getFileName() const;
+	bool getEditStatus() const;
 
-	bool actionDelete(int& posX, int& posY);
-	bool actionDeleteWord(int& posX, int& posY);
-	bool actionMoveLineUp(int& posX, int& posY);
-	bool actionMoveLineDown(int& posX, int& posY);
-	bool actionEnter(int& posX, int& posY);
-	bool actionEnterNewline(int& posX, int& posY);
-	bool actionRemove(int& posX, int& posY);
-	bool actionRemoveWord(int& posX, int& posY);
-	bool actionWrite(int& posX, int& posY, char character);
-	bool actionLeftKey(int& posX, int& posY);
-	bool actionRightKey(int& posX, int& posY);
-	bool actionUpKey(int& posX, int& posY);
-	bool actionDownKey(int& posX, int& posY);
-	bool actionWordRight(int& posX, int& posY);
-	bool actionCopyLine(int& posX, int& posY);
-	bool actionSaveFile(int& posX, int& posY);
-	bool actionWordLeft(int& posX, int& posY);
+	void actionDelete(int& posX, int& posY);
+	void actionDeleteWord(int& posX, int& posY);
+	void actionMoveLineUp(int& posX, int& posY);
+	void actionMoveLineDown(int& posX, int& posY);
+	void actionEnter(int& posX, int& posY);
+	void actionEnterNewline(int& posX, int& posY);
+	void actionRemove(int& posX, int& posY);
+	void actionRemoveWord(int& posX, int& posY);
+	void actionWrite(int& posX, int& posY, char character);
+	void actionLeftKey(int& posX, int& posY);
+	void actionRightKey(int& posX, int& posY);
+	void actionUpKey(int& posX, int& posY);
+	void actionDownKey(int& posX, int& posY);
+	void actionWordRight(int& posX, int& posY);
+	void actionCopyLine(int& posX, int& posY);
+	void actionSaveFile(int& posX, int& posY);
+	void actionWordLeft(int& posX, int& posY);
 
-	std::string runCommand(std::string command, int& posX, int& posY, void* arg);
+	std::string commandSaveFile(std::string command, int& posX, int& posY);
+	std::string commandQuit(std::string command, int& posX, int& posY);
+	std::string commandQuitAndSave(std::string command, int& posX, int& posY);
+	std::string commandOpen(std::string command, int& posX, int& posY);
+	std::string commandPaste(std::string command, int& posX, int& posY);
+	std::string commandDeleteWord(std::string command, int& posX, int& posY);
+	std::string commandDeleteLine(std::string command, int& posX, int& posY);
+
+	std::string runCommand(std::string command, int& posX, int& posY);
 
 
-	static const std::map<char, bool (Content::*)(int&, int&)> utilActions; 
-	static const std::map<char, bool (Content::*)(int&, int&)> oneClickActions; 
+	static const std::map<char, void (Content::*)(int&, int&)> utilActions; 
+	static const std::map<char, void (Content::*)(int&, int&)> oneClickActions; 
+
+
+
+	static const std::map<std::string, std::string (Content::*)(std::string, int&, int&)> commands; 
 	//{ACTION_CTRL_S, Content::actionSave},
 };

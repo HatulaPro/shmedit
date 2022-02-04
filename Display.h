@@ -15,15 +15,11 @@ private:
 	int posX;
 	int posY;
 
-	short cacheWidth;
-	short cacheHeight;
-
 	std::string commandOutput;
 	std::string lastKeys;
-	bool wasEdited = false;
 	int state = DEAFULT;
 
-	void showTopBar(short width) const;
+	void showTopBar(short width, bool wasEdited) const;
 public:
 	Display(std::string fname);
 	void show() const;

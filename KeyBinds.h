@@ -18,3 +18,12 @@
 #define ACTION_START_COMMAND 3
 
 #define NEXT_IS_UTILS -32
+
+
+#define COMMAND_SAVE "s"
+#define COMMAND_OPEN "o"
+#define COMMAND_QUIT "q"
+#define COMMAND_QUIT_AND_SAVE "wq"
+#define COMMAND_PASTE "p"
+#define COMMAND_DELETE_WORD "dw"
+#define COMMAND_DELETE_LINE "dl"

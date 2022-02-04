@@ -13,12 +13,12 @@
 #define NON_CONTENT_LINES 3
 #define LINE_OFFSET_STR " << "
 
-void Display::showTopBar(short width) const
+void Display::showTopBar(short width, bool wasEdited) const
 {
 	std::string timeString = Helper::getTimeString();
 	Colorizer timeColor = { 0, timeString.size(), MAGENTA };
 	std::string mid(2 * width / 5, ' ');
-	std::string fileTitle = std::string(this->wasEdited ? "*" : "") + this->c.getFileName();
+	std::string fileTitle = std::string(wasEdited ? "*" : "") + this->c.getFileName();
 	Colorizer fileColor = { timeString.size() + mid.size(), fileTitle.size(), BLUE };
 
 	Colorizers c;
@@ -42,7 +42,7 @@ void Display::show() const
 	Helper::getTerminalSize(&width, &height);
 	short effectiveHeight = height - NON_CONTENT_LINES;
 
-	this->showTopBar(width);
+	this->showTopBar(width, this->c.getEditStatus());
 
 	int offset = std::max(0, this->posX - (width / 2));
 	Colorizer lineNumberColor = { 0, LINE_NUMBER_SIZE, LINE_NUMBER };
@@ -132,7 +132,7 @@ void Display::callAction(char x)
 		}
 		else if (x == ACTION_ENTER) {
 			this->state = DEAFULT;
-			this->commandOutput = this->c.runCommand(this->lastKeys, this->posX, this->posY, &this->wasEdited);
+			this->commandOutput = this->c.runCommand(this->lastKeys, this->posX, this->posY);
 			this->lastKeys = "";
 		}
 		else if (x == ACTION_REMOVE && this->lastKeys.size() > 0) {
@@ -144,16 +144,18 @@ void Display::callAction(char x)
 		else if (Helper::isPrintable(x)) {
 			this->lastKeys += x;
 		}
+		return;
 	}
-	else if (Content::oneClickActions.count(x)) { // One click actions
+	this->commandOutput = "";
+	if (Content::oneClickActions.count(x)) { // One click actions
 		auto f = Content::oneClickActions.find(x);
-		this->wasEdited = (this->c.*(f->second))(this->posX, this->posY);
+		(this->c.*(f->second))(this->posX, this->posY);
 	}
 	else if (this->lastKeys.size() > 0 && this->lastKeys[0] == NEXT_IS_UTILS) { // Util actions
 		this->lastKeys = "";
 		if (Content::utilActions.count(x)) {
 			auto f = Content::utilActions.find(x);
-			this->wasEdited = (this->c.*(f->second))(this->posX, this->posY);
+			(this->c.*(f->second))(this->posX, this->posY);
 		}
 	}
 	else if (x == -32 or x == 224 or x == 0) { // Next is utils
@@ -164,7 +166,7 @@ void Display::callAction(char x)
 		this->state = COMMAND;
 	}
 	else if (Helper::isPrintable(x)) { // A normal character
-		this->wasEdited = this->c.actionWrite(this->posX, this->posY, x);
+		this->c.actionWrite(this->posX, this->posY, x);
 	}
 }
 
