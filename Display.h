@@ -5,7 +5,7 @@
 enum STATE
 {
 	DEAFULT,
-	FIND,
+	COMMAND,
 };
 
 
@@ -14,8 +14,12 @@ private:
 	Content c;
 	int posX;
 	int posY;
+
+	short cacheWidth;
+	short cacheHeight;
+
+	std::string commandOutput;
 	std::string lastKeys;
-	std::string fileName;
 	bool wasEdited = false;
 	int state = DEAFULT;
 
@@ -25,4 +29,6 @@ public:
 	void show() const;
 	std::string padToLine(std::string line, short width) const;
 	void callAction(char x);
+
+
 };

@@ -8,6 +8,7 @@
 class Content {
 private:
 	std::vector<std::string> content;
+	std::string fileName;
 public:
 	Content(std::string c);
 	void setContent(std::string c);
@@ -15,6 +16,7 @@ public:
 	std::string getLine(size_t index) const;
 	size_t size() const;
 	std::string getContent() const;
+	std::string getFileName() const;
 
 	bool actionDelete(int& posX, int& posY);
 	bool actionDeleteWord(int& posX, int& posY);
@@ -30,7 +32,10 @@ public:
 	bool actionUpKey(int& posX, int& posY);
 	bool actionDownKey(int& posX, int& posY);
 	bool actionWordRight(int& posX, int& posY);
+	bool actionSaveFile(int& posX, int& posY);
 	bool actionWordLeft(int& posX, int& posY);
+
+	std::string runCommand(std::string command, int& posX, int& posY, void* arg);
 
 
 	static const std::map<char, bool (Content::*)(int&, int&)> utilActions; 

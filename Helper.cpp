@@ -1,9 +1,11 @@
 #include "Helper.h"
 
-#include <ctype.h>
+#include <algorithm>
 #include <chrono>
-#include <Windows.h>
 #include <iostream>
+#include <string>
+#include <ctype.h>
+#include <Windows.h>
 
 
 void Helper::hideCursor()
@@ -53,7 +55,7 @@ std::string Helper::colorize(std::string text, int style)
 	case CURSOR:
 		return "\033[42m" + text + "\033[0m";
 	case BACKGROUND:
-		return "\033[43m" + text + "\033[0m";
+		return "\033[46m" + text + "\033[0m";
 	case LINE_NUMBER:
 		return "\033[46m\033[34m" + text + "\033[0m";
 	}
@@ -99,11 +101,12 @@ std::string Helper::setCursor(std::string line, int x)
 }
 
 
-size_t Helper::getDisplayLength(std::string str)
+size_t Helper::getDisplayLength(std::string str, size_t begin, size_t end)
 {
 	size_t s = 0;
 	bool inStyle = false;
-	for (size_t i = 0; i < str.size(); i++) {
+	size_t finishLine = min(end, str.size());
+	for (size_t i = begin; i < finishLine; i++) {
 		if (str[i] == '\033') {
 			inStyle = true;
 		}
@@ -168,4 +171,17 @@ std::string Helper::getTimeString()
 	localtime_s(&localTime, &t);
 
 	return (localTime.tm_hour < 10 ? "0" + std::to_string(localTime.tm_hour) : std::to_string(localTime.tm_hour)) + ':' + (localTime.tm_min < 10 ? "0" + std::to_string(localTime.tm_min) : std::to_string(localTime.tm_min));
+}
+
+bool Helper::isPrintable(char c)
+{
+	return c >= 32 && c <= 126;
+}
+
+std::string Helper::trim(std::string s)
+{
+	std::string copy = s;
+	copy.erase(copy.find_last_not_of(" \t\n\r\f\v") + 1);
+	copy.erase(0, copy.find_first_not_of(" \t\n\r\f\v"));
+	return copy;
 }

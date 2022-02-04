@@ -26,10 +26,12 @@ const std::map<char, bool (Content::*)(int&, int&)> Content::oneClickActions = {
 	{ ACTION_CTRL_ENTER, &Content::actionEnterNewline },
 	{ ACTION_REMOVE, &Content::actionRemove },
 	{ ACTION_CTRL_REMOVE, &Content::actionRemoveWord },
+	{ ACTION_CTRL_S, &Content::actionSaveFile },
 };
 
 Content::Content(std::string c)
 {
+	this->fileName = c;
 	setContent(c);
 }
 
@@ -71,6 +73,11 @@ std::string Content::getContent() const
 	return result;
 }
 
+std::string Content::getFileName() const
+{
+	return this->fileName;
+}
+
 bool Content::actionDelete(int& posX, int& posY)
 {
 	if (posX < this->content[posY].size()) {
@@ -79,7 +86,7 @@ bool Content::actionDelete(int& posX, int& posY)
 	}
 	else if (posY + 1 < this->content.size()) {
 		this->content[posY] += this->content[posY + 1];
-		this->content.erase(this->content.begin() + (posY) + 1);
+		this->content.erase(this->content.begin() + (posY)+1);
 		return true;
 	}
 	return false;
@@ -105,7 +112,7 @@ bool Content::actionMoveLineUp(int& posX, int& posY)
 	if (posY > 0) {
 		std::string tmp = this->content[posY];
 		this->content.erase(this->content.begin() + (posY));
-		this->content.insert(this->content.begin() + (posY) - 1, tmp);
+		this->content.insert(this->content.begin() + (posY)-1, tmp);
 		(posY)--;
 		return true;
 	}
@@ -117,7 +124,7 @@ bool Content::actionMoveLineDown(int& posX, int& posY)
 	if (posY < this->content.size() - 1) {
 		std::string tmp = this->content[posY];
 		this->content.erase(this->content.begin() + (posY));
-		this->content.insert(this->content.begin() + (posY) + 1, tmp);
+		this->content.insert(this->content.begin() + (posY)+1, tmp);
 		(posY)++;
 		return true;
 	}
@@ -171,7 +178,7 @@ bool Content::actionRemoveWord(int& posX, int& posY)
 	}
 	int firstType = isalnum(this->content[posY][posX - 1]);
 	int count = 0;
-	while (posX - count >= 1 && isalnum(this->content[posY][posX - count - 1]) == firstType)	{
+	while (posX - count >= 1 && isalnum(this->content[posY][posX - count - 1]) == firstType) {
 		count++;
 	}
 	this->content[posY].erase(posX - count, count);
@@ -261,6 +268,12 @@ bool Content::actionWordRight(int& posX, int& posY)
 	return false;
 }
 
+bool Content::actionSaveFile(int& posX, int& posY)
+{
+	Helper::writeFile(this->fileName, this->getContent());
+	return false;
+}
+
 bool Content::actionWordLeft(int& posX, int& posY)
 {
 	if (posX == 0) {
@@ -276,4 +289,38 @@ bool Content::actionWordLeft(int& posX, int& posY)
 		} while (posX > 1 && isalnum(this->content[posY][posX - 1]) == firstType);
 	}
 	return false;
+}
+
+#define COMMAND_SAVE "s"
+#define COMMAND_OPEN "o"
+#define COMMAND_QUIT "q"
+#define COMMAND_QUIT_AND_SAVE "qs"
+std::string Content::runCommand(std::string command, int& posX, int& posY, void* arg)
+{
+	command = Helper::trim(command);
+	if (command.size() == 0) {
+		return "";
+	}
+
+	std::string commandName = command.substr(0, command.find_first_of(' '));
+	std::string afterSpace =  Helper::trim(command.substr(commandName.size()));
+
+	if (commandName == COMMAND_SAVE) {
+		*(bool*)arg = this->actionSaveFile(posX, posY);
+		return "File Saved.";
+	}
+	else if (commandName == COMMAND_QUIT) {
+		system("cls");
+		exit(0);
+	}
+	else if (commandName == "qs") {
+		this->actionSaveFile(posX, posY);
+		system("cls");
+		exit(0);
+	}
+	else if (commandName == COMMAND_OPEN) {
+		*this = Content(afterSpace);
+		return "Opened " + afterSpace;
+	}
+	return "Command not found.";
 }

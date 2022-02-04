@@ -1,5 +1,17 @@
-﻿  Display.cpp
-C:\myProjects\shmedit\shmedit\Display.cpp(79,62): warning C4838: conversion from 'int' to 'size_t' requires a narrowing conversion
+﻿  Content.cpp
+C:\myProjects\shmedit\shmedit\Content.cpp(166,40): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Content.cpp(210,36): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Content.cpp(232,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Content.cpp(246,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Content.cpp(250,36): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\myProjects\shmedit\shmedit\Content.cpp(282,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  Display.cpp
+C:\myProjects\shmedit\shmedit\Display.cpp(78,62): warning C4838: conversion from 'int' to 'size_t' requires a narrowing conversion
+  Helper.cpp
+C:\myProjects\shmedit\shmedit\Helper.cpp(71,33): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   main.cpp
   Generating Code...
+C:\myProjects\shmedit\shmedit\Helper.cpp(62): warning C4715: 'Helper::colorize': not all control paths return a value
+C:\myProjects\shmedit\shmedit\Content.cpp(131): warning C4715: 'Content::actionMoveLineDown': not all control paths return a value
+C:\myProjects\shmedit\shmedit\Content.cpp(172): warning C4715: 'Content::actionRemove': not all control paths return a value
   shmedit.vcxproj -> C:\myProjects\shmedit\x64\Debug\shmedit.exe
