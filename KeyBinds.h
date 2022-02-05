@@ -42,3 +42,5 @@
 #define COMMAND_RIGHT_KEY "l"
 #define COMMAND_UP_KEY "k"
 #define COMMAND_DOWN_KEY "j"
+
+#define EXIT_CMD_MODE 'i'

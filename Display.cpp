@@ -123,8 +123,12 @@ std::string Display::padToLine(std::string line, short width) const
 void Display::callAction(char x)
 {
 	if (this->state == COMMAND) { // Ctrl C
+		// Leave cmd mode
+		if (this->lastKeys.size() == 0 && x == EXIT_CMD_MODE) {
+			this->state = DEAFULT;
+		}
 		// let the program know that a weird key was pressed
-		if (this->lastKeys.size() > 0 && this->lastKeys[this->lastKeys.size() - 1] == NEXT_IS_UTILS) {
+		else if (this->lastKeys.size() > 0 && this->lastKeys[this->lastKeys.size() - 1] == NEXT_IS_UTILS) {
 			this->lastKeys = this->lastKeys.substr(0, this->lastKeys.size() - 1);
 		}
 		// Ctrl + C for reset
