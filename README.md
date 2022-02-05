@@ -34,6 +34,7 @@ A text editor program for windows.
     - `Ctrl + ]`: Tabify line.
     - `Ctrl + [`: Untabify line.
     - `Ctrl + F`: The command 'f: ' will be set, to allow users to get to `find` mode more easily.
+    - `Ctrl + R`: The command 'fr: ' will be set, to allow users to get to `find&rep` mode more easily.
   
   - ### Commands:
     After starting command mode (`Ctrl + C`), you can start writing commands. The editor will parse and run them.
@@ -60,6 +61,12 @@ A text editor program for windows.
        ```
        cmd| :f StrToLookFor
        ```
+    
+    - `fr <str>~<str>`: Starts `find&rep` mode. Press `Enter` or `n` to find the next instance of the first argument (the one before the `~`), and press them again to replace. Pressing `s` will skip the current instance. Press any other key to go back to deafult mode.
+      
+      ```
+      cmd| :fr StrToLookFor~StrToBeReplacedWith
+      ```
       
     #### Instant commands:    
     - `s`: Save file.
@@ -84,8 +91,9 @@ A text editor program for windows.
     
 ## Future Features:
   - [X] A working text editor
-  - [ ] Find & Replace
+  - [X] Find & Replace
   - [ ] Copy & Paste
+  - [ ] Visual mode 
   - [ ] Custom keybindings
   - [ ] Highlighting
   - [ ] Custom commands

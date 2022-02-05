@@ -10,6 +10,8 @@ enum STATE
 	DEAFULT,
 	COMMAND,
 	FIND,
+	FIND_AND_REPLACE_F,
+	FIND_AND_REPLACE_R,
 };
 
 
@@ -22,6 +24,7 @@ private:
 	int state = DEAFULT;
 
 	std::string commandInfo;
+	std::string commandInfo2;
 public:
 	Content(std::string c);
 	void setContent(std::string c);
@@ -31,7 +34,10 @@ public:
 	std::string getContent() const;
 	std::string getFileName() const;
 	std::string getCommandInfo() const;
+	std::string getCommandArgs(std::string lastKeys) const;
+
 	int getState() const;
+	bool isInFindState() const;
 	std::string getStateString() const;
 	void setState(int state);
 	bool getEditStatus() const;
@@ -71,6 +77,7 @@ public:
 
 	std::string commandOpen(std::string command, int& posX, int& posY);
 	std::string commandFind(std::string command, int& posX, int& posY);
+	std::string commandFindAndReplace(std::string command, int& posX, int& posY);
 	std::string runCommand(std::string command, int& posX, int& posY);
 
 

@@ -57,7 +57,7 @@ std::string Helper::colorize(std::string text, int style)
 	case BACKGROUND:
 		return "\033[46m" + text + "\033[0m";
 	case FIND_HIGHLIGHTING:
-		return "\033[41m\033[34m" + text + "\033[0m";
+		return "\033[45m\033[37m" + text + "\033[0m";
 	case LINE_NUMBER:
 		return "\033[46m\033[34m" + text + "\033[0m";
 	}

@@ -79,7 +79,7 @@ void Display::show() const
 					Colorizers c;
 					c.push_back(lineNumberColor);
 					Colorizer cursorColor = { this->posX + LINE_NUMBER_SIZE + 1, 1, CURSOR };
-					if (this->c.getState() == FIND) {
+					if (this->c.isInFindState()) {
 						cursorColor.style = FIND_HIGHLIGHTING;
 						cursorColor.count = this->c.getCommandInfo().size();
 					}
@@ -106,12 +106,12 @@ void Display::show() const
 	// Bottom line:
 	std::string commandString = this->c.getStateString();
 	Colorizer commandStringColor = { 0, commandString.size() - 1, MAGENTA };
-	std::string commandData = this->lastKeys;
+	std::string commandData = this->c.getCommandArgs(lastKeys);
 	Style commandArgsStyle = commandData.size() && commandData[0] == BEGIN_CALLED_COMMAND ? WHITE : BACKGROUND;
-	if (this->c.getState() == FIND) {
-		commandData = this->c.getCommandInfo();
-		commandArgsStyle = FIND_HIGHLIGHTING;
+	if (this->c.isInFindState()) {
+		commandArgsStyle = WHITE;
 	}
+
 	Colorizer commandArgsColor = { commandString.size(), commandData.size(),  commandArgsStyle};
 	Colorizers c;
 	c.push_back(commandStringColor);
@@ -136,11 +136,24 @@ std::string Display::padToLine(std::string line, short width) const
 
 void Display::callAction(char x)
 {
-	if (this->c.getState() == FIND) {
+	if (this->c.getState() == FIND) { // Find
 		if (x == FIND_NEXT || x == ACTION_ENTER) {
 			this->commandOutput = this->c.runCommand(COMMAND_FIND, this->posX, this->posY);
 		}
 		else if(x != NEXT_IS_UTILS && x != NULL){
+			this->c.setState(DEAFULT);
+		}
+		return;
+	}
+	if (this->c.isInFindState()) { // Find and replace
+		if (x == FIND_NEXT || x == ACTION_ENTER) {
+			this->commandOutput = this->c.runCommand(COMMAND_FIND_AND_REPLACE, this->posX, this->posY);
+		}
+		else if (x == FIND_AND_REPLACE_SKIP){
+			this->c.setState(FIND_AND_REPLACE_F);
+			this->commandOutput = this->c.runCommand(COMMAND_FIND_AND_REPLACE, this->posX, this->posY);
+		}
+		else if (x != NEXT_IS_UTILS && x != NULL) {
 			this->c.setState(DEAFULT);
 		}
 		return;
@@ -219,8 +232,12 @@ void Display::callAction(char x)
 		this->lastKeys = "a";
 		this->lastKeys[0] = NEXT_IS_UTILS;
 	}
-	else if (x == ACTION_START_FIND) {
+	else if (x == ACTION_START_FIND) { // Ctrl + F for find
 		this->lastKeys = std::string(1, BEGIN_CALLED_COMMAND) + COMMAND_FIND + ' ';
+		this->c.setState(COMMAND);
+	}
+	else if (x == ACTION_START_FIND_AND_REPLACE) { // Ctrl + R for find and replace 
+		this->lastKeys = std::string(1, BEGIN_CALLED_COMMAND) + COMMAND_FIND_AND_REPLACE + ' ';
 		this->c.setState(COMMAND);
 	}
 	else if (x == ACTION_START_COMMAND) { // Starting command

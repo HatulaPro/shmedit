@@ -20,6 +20,7 @@
 #define ACTION_FN_LEFT 71
 #define ACTION_START_COMMAND 3
 #define ACTION_START_FIND 6
+#define ACTION_START_FIND_AND_REPLACE 18
 #define ACTION_TABIFY 29
 #define ACTION_UNTABIFY 27
 
@@ -30,6 +31,7 @@
 #define COMMAND_SAVE "s"
 #define COMMAND_OPEN "o"
 #define COMMAND_FIND "f"
+#define COMMAND_FIND_AND_REPLACE "fr"
 #define COMMAND_QUIT "Q"
 #define COMMAND_QUIT_AND_SAVE "q"
 #define COMMAND_PASTE "p"
@@ -49,5 +51,6 @@
 #define COMMAND_COPY_WORD_BACK "cb"
 
 #define FIND_NEXT 'n'
+#define FIND_AND_REPLACE_SKIP 's'
 
 #define EXIT_CMD_MODE 'i'

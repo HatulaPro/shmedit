@@ -8,8 +8,8 @@
 
 int main() {
 	Helper::hideCursor();
-	Display d = Display("README.md");
-	//Display d = Display("mytest.txt");
+	//Display d = Display("README.md");
+	Display d = Display("mytest.txt");
 	while (true) {
 		d.show();
 		d.callAction(_getch()); 

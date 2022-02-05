@@ -38,6 +38,7 @@ const std::map<char, void (Content::*)(int&, int&)> Content::oneClickActions = {
 const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Content::calledCommands = {
 	{COMMAND_OPEN, &Content::commandOpen},
 	{COMMAND_FIND, &Content::commandFind},
+	{COMMAND_FIND_AND_REPLACE, &Content::commandFindAndReplace},
 };
 
 const std::map<std::string, void(Content::*)(int&, int&)> Content::instantCommands = {
@@ -115,9 +116,31 @@ std::string Content::getCommandInfo() const
 	return this->commandInfo;
 }
 
+std::string Content::getCommandArgs(std::string lastKeys) const
+{
+	if (this->state == DEAFULT) {
+		return "";
+	}
+	else if (this->state == COMMAND) {
+		return lastKeys;
+	}
+	else if (this->state == FIND) {
+		return this->commandInfo;
+	}
+	else if (this->isInFindState()) {
+		return this->commandInfo + '~' + this->commandInfo2;
+	}
+	throw std::exception("Unkown state");
+}
+
 int Content::getState() const
 {
 	return this->state;
+}
+
+bool Content::isInFindState() const
+{
+	return this->state == FIND_AND_REPLACE_F || this->state == FIND_AND_REPLACE_R || this->state == FIND;
 }
 
 std::string Content::getStateString() const
@@ -130,6 +153,9 @@ std::string Content::getStateString() const
 	}
 	else if (this->state == FIND) {
 		return "find| ";
+	}
+	else if (this->isInFindState()) {
+		return "find&rep| ";
 	}
 	throw std::exception("Unkown state");
 }
@@ -479,6 +505,47 @@ std::string Content::commandFind(std::string command, int& posX, int& posY)
 	}
 	this->state = DEAFULT;
 	return "String not found.";
+}
+
+std::string Content::commandFindAndReplace(std::string command, int& posX, int& posY)
+{
+	if (this->state == FIND_AND_REPLACE_R) {
+		std::string beforeTilda = this->commandInfo;
+		std::string afterTilda = this->commandInfo2;
+
+		this->content[posY].erase(posX, beforeTilda.size());
+		this->content[posY].insert(posX, afterTilda);
+		this->state = FIND_AND_REPLACE_F;
+		return "Found.";
+	}
+	else if (this->state == DEAFULT){
+		size_t index = command.find_first_of('~');
+		if (index == std::string::npos) {
+			return "'~' sign not found. Can not parse request.";
+		}
+
+		std::string beforeTilda = command.substr(0, index);
+		if (!beforeTilda.size()) {
+			return "Can not find an empty string.";
+		}
+		std::string afterTilda = command.substr(index + 1);
+		
+		this->commandInfo = beforeTilda;
+		this->commandInfo2 = afterTilda;
+
+		// :fr test~not test
+		this->commandFind(beforeTilda, posX, posY);
+
+		this->state = FIND_AND_REPLACE_R;
+		this->commandInfo = beforeTilda;
+		return "Found.";
+	}
+	else if (this->state == FIND_AND_REPLACE_F) {
+		this->commandFind(this->commandInfo, posX, posY);
+
+		this->state = FIND_AND_REPLACE_R;
+		return "Found.";
+	}
 }
 
 void Content::actionPaste(int& posX, int& posY)
