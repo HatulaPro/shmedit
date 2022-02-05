@@ -29,7 +29,7 @@ const std::map<char, void (Content::*)(int&, int&)> Content::oneClickActions = {
 	{ ACTION_REMOVE, &Content::actionRemove },
 	{ ACTION_CTRL_REMOVE, &Content::actionRemoveWord },
 	{ ACTION_CTRL_S, &Content::actionSaveFile },
-	{ ACTION_CTRL_D, &Content::actionCopyLine },
+	{ ACTION_CTRL_D, &Content::actionDuplicateLine },
 	{ ACTION_CTRL_L, &Content::actionDeleteLine },
 	{ ACTION_TABIFY, &Content::actionTabify },
 	{ ACTION_UNTABIFY, &Content::actionUntabify },
@@ -55,6 +55,9 @@ const std::map<std::string, void(Content::*)(int&, int&)> Content::instantComman
 	{ COMMAND_RIGHT_KEY, &Content::actionRightKey },
 	{ COMMAND_UP_KEY, &Content::actionUpKey },
 	{ COMMAND_DOWN_KEY, &Content::actionDownKey },
+	{ COMMAND_COPY_WORD, &Content::actionCopyWord },
+	{ COMMAND_COPY_LINE, &Content::actionCopyLine },
+	{ COMMAND_COPY_WORD_BACK, &Content::actionCopyWordBack },
 };
 
 Content::Content(std::string c)
@@ -124,7 +127,6 @@ void Content::actionDelete(int& posX, int& posY)
 		this->wasEdited = true;
 		return;
 	}
-	this->wasEdited = false;
 }
 
 void Content::actionDeleteWord(int& posX, int& posY)
@@ -248,7 +250,6 @@ void Content::actionLeftKey(int& posX, int& posY)
 		posY -= 1;
 		posX = this->content[posY].size();
 	}
-	this->wasEdited = false;
 }
 
 void Content::actionRightKey(int& posX, int& posY)
@@ -260,7 +261,6 @@ void Content::actionRightKey(int& posX, int& posY)
 		posY += 1;
 		posX = 0;
 	}
-	this->wasEdited = false;
 }
 
 void Content::actionUpKey(int& posX, int& posY)
@@ -274,7 +274,6 @@ void Content::actionUpKey(int& posX, int& posY)
 	else {
 		posX = 0;
 	}
-	this->wasEdited = false;
 }
 
 void Content::actionDownKey(int& posX, int& posY)
@@ -288,7 +287,6 @@ void Content::actionDownKey(int& posX, int& posY)
 	else {
 		posX = this->content[posY].size();
 	}
-	this->wasEdited = false;
 }
 
 void Content::actionWordRight(int& posX, int& posY)
@@ -304,10 +302,43 @@ void Content::actionWordRight(int& posX, int& posY)
 			posX++;
 		}
 	}
-	this->wasEdited = false;
+}
+
+void Content::actionCopyWord(int& posX, int& posY)
+{
+	if (posX == this->content[posY].size() && posY < this->content.size() - 1) {
+		this->commandInfo = "\n";
+		return;
+	}
+	bool firstType = Helper::isAlphanumeric(this->content[posY][posX]);
+	size_t count = 0;
+	while (Helper::isAlphanumeric(this->content[posY][posX + count]) == firstType) {
+		if (posX + count == this->content[posY].size()) break;
+		count++;
+	}
+	this->commandInfo = this->content[posY].substr(posX, count);
 }
 
 void Content::actionCopyLine(int& posX, int& posY)
+{
+	this->commandInfo = this->content[posY];
+}
+
+void Content::actionCopyWordBack(int& posX, int& posY)
+{
+	if (posX == 0) {
+		this->commandInfo = "\n";
+		return;
+	}
+	bool firstType = Helper::isAlphanumeric(this->content[posY][posX - 1]);
+	size_t count = 0;
+	while (posX - count >= 1 && Helper::isAlphanumeric(this->content[posY][posX - count - 1]) == firstType) {
+		count++;
+	}
+	this->commandInfo = this->content[posY].substr(posX - count, count);
+}
+
+void Content::actionDuplicateLine(int& posX, int& posY)
 {
 	this->content.insert(this->content.begin() + posY, this->content[posY]);
 	posY++;
@@ -367,7 +398,6 @@ void Content::actionWordLeft(int& posX, int& posY)
 			posX--;
 		} while (posX > 1 && Helper::isAlphanumeric(this->content[posY][posX - 1]) == firstType);
 	}
-	this->wasEdited = false;
 }
 
 void Content::actionQuit(int& posX, int& posY)
@@ -394,7 +424,11 @@ void Content::actionPaste(int& posX, int& posY)
 {
 	if (!this->commandInfo.size()) return;// "Nothing to paste";
 
-	if (this->commandInfo[this->commandInfo.size() - 1] == '\n') {
+	if (this->commandInfo[0] == '\n') {
+		this->content.insert(this->content.begin() + posY + 1, this->commandInfo.substr(1));
+		posY++;
+	}
+	else if (this->commandInfo[this->commandInfo.size() - 1] == '\n') {
 		this->content.insert(this->content.begin() + posY, this->commandInfo.substr(0, this->commandInfo.size() - 1));
 	}
 	else {
@@ -403,7 +437,7 @@ void Content::actionPaste(int& posX, int& posY)
 		}
 	}
 	this->wasEdited = true;
-	//return "Pasted";
+	posX = std::min((int)this->content[posY].size(), posX);
 }
 
 void Content::actionDeleteLine(int& posX, int& posY)

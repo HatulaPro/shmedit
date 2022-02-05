@@ -36,7 +36,7 @@ public:
 	void actionUpKey(int& posX, int& posY);
 	void actionDownKey(int& posX, int& posY);
 	void actionWordRight(int& posX, int& posY);
-	void actionCopyLine(int& posX, int& posY);
+	void actionDuplicateLine(int& posX, int& posY);
 	void actionJumpToLineEnd(int& posX, int& posY);
 	void actionJumpToLineStart(int& posX, int& posY);
 	void actionTabify(int& posX, int& posY);
@@ -51,6 +51,10 @@ public:
 	void actionQuitAndSave(int& posX, int& posY);
 	void actionPaste(int& posX, int& posY);
 	void actionDeleteLine(int& posX, int& posY);
+
+	void actionCopyWord(int& posX, int& posY);
+	void actionCopyLine(int& posX, int& posY);
+	void actionCopyWordBack(int& posX, int& posY);
 
 	std::string runCommand(std::string command, int& posX, int& posY);
 

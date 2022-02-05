@@ -42,5 +42,9 @@
 #define COMMAND_RIGHT_KEY "l"
 #define COMMAND_UP_KEY "k"
 #define COMMAND_DOWN_KEY "j"
+#define COMMAND_COPY_WORD "cw"
+#define COMMAND_COPY_LINE "cl"
+#define COMMAND_COPY_WORD_BACK "cb"
+
 
 #define EXIT_CMD_MODE 'i'

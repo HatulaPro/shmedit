@@ -1,4 +1,4 @@
-# shmedit
+# Shmedit
 A text editor program for windows.
 
 ## Warning:
@@ -76,7 +76,10 @@ A text editor program for windows.
     - `k`: Move the cursor one line up.
     - `h`: Move the cursor one character to the left.
     - `l`: Move the cursor one character to the right.
-      
+    - `cw`: Copy the next word to `mem`.
+    - `cl`: Copy the next line to `mem`.
+    - `cw`: Copy the last word to `mem`.
+    
 ## Future Features:
   - [X] A working text editor
   - [ ] Find & Replace
@@ -85,4 +88,3 @@ A text editor program for windows.
   - [ ] Highlighting
   - [ ] Custom commands
   - [ ] Making each user a millionaire
-  
