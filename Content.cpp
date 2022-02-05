@@ -37,6 +37,7 @@ const std::map<char, void (Content::*)(int&, int&)> Content::oneClickActions = {
 
 const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Content::calledCommands = {
 	{COMMAND_OPEN, &Content::commandOpen},
+	{COMMAND_FIND, &Content::commandFind},
 };
 
 const std::map<std::string, void(Content::*)(int&, int&)> Content::instantCommands = {
@@ -107,6 +108,35 @@ std::string Content::getContent() const
 std::string Content::getFileName() const
 {
 	return this->fileName;
+}
+
+std::string Content::getCommandInfo() const
+{
+	return this->commandInfo;
+}
+
+int Content::getState() const
+{
+	return this->state;
+}
+
+std::string Content::getStateString() const
+{
+	if (this->state == DEAFULT) {
+		return "key| ";
+	} 
+	else if (this->state == COMMAND) {
+		return "cmd| ";
+	}
+	else if (this->state == FIND) {
+		return "find| ";
+	}
+	throw std::exception("Unkown state");
+}
+
+void Content::setState(int state)
+{
+	this->state = state;
 }
 
 bool Content::getEditStatus() const
@@ -418,6 +448,37 @@ std::string Content::commandOpen(std::string command, int& posX, int& posY)
 	*this = Content(command);
 	this->wasEdited = true;
 	return "Opened " + command;
+}
+
+std::string Content::commandFind(std::string command, int& posX, int& posY)
+{
+	if (this->state == FIND) {
+		command = this->commandInfo;
+	}
+	else {
+		this->commandInfo = command;
+	}
+	this->state = FIND;
+
+	if (posX < this->content[posY].size()) {
+		size_t found = this->content[posY].find(command);
+		if (found != std::string::npos && found > posX) {
+			posX = found;
+			return "Found in " + std::to_string(posY) + ':' + std::to_string(posX);
+		}
+	}
+
+	for (size_t i = 0; i < this->content.size(); i++) {
+		size_t index = (posY + i + 1) % this->content.size();
+		size_t found = this->content[index].find(command);
+		if (found != std::string::npos) {
+			posX = found;
+			posY = index;
+			return "Found in " + std::to_string(posY) + ':' + std::to_string(posX);
+		}
+	}
+	this->state = DEAFULT;
+	return "String not found.";
 }
 
 void Content::actionPaste(int& posX, int& posY)

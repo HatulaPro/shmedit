@@ -5,11 +5,21 @@
 #include "KeyBinds.h"
 #define TAB_SIZE 4
 
+enum STATE
+{
+	DEAFULT,
+	COMMAND,
+	FIND,
+};
+
+
 class Content {
 private:
 	std::vector<std::string> content;
 	std::string fileName;
 	bool wasEdited = false;
+
+	int state = DEAFULT;
 
 	std::string commandInfo;
 public:
@@ -20,6 +30,10 @@ public:
 	size_t size() const;
 	std::string getContent() const;
 	std::string getFileName() const;
+	std::string getCommandInfo() const;
+	int getState() const;
+	std::string getStateString() const;
+	void setState(int state);
 	bool getEditStatus() const;
 
 	void actionDelete(int& posX, int& posY);
@@ -45,7 +59,6 @@ public:
 	void actionSaveFile(int& posX, int& posY);
 	void actionWordLeft(int& posX, int& posY);
 
-	std::string commandOpen(std::string command, int& posX, int& posY);
 
 	void actionQuit(int& posX, int& posY);
 	void actionQuitAndSave(int& posX, int& posY);
@@ -56,6 +69,8 @@ public:
 	void actionCopyLine(int& posX, int& posY);
 	void actionCopyWordBack(int& posX, int& posY);
 
+	std::string commandOpen(std::string command, int& posX, int& posY);
+	std::string commandFind(std::string command, int& posX, int& posY);
 	std::string runCommand(std::string command, int& posX, int& posY);
 
 

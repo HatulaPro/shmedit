@@ -63,6 +63,10 @@ void Display::show() const
 					std::string line = lineNumber + LINE_OFFSET_STR + i->substr(offset) + ' ';
 
 					Colorizer cursorColor = { width / 2 + LINE_NUMBER_SIZE + sizeof(LINE_OFFSET_STR) - 1, 1, CURSOR };
+					if (this->c.getState() == FIND) {
+						cursorColor.style = FIND_HIGHLIGHTING;
+						cursorColor.count = this->c.getCommandInfo().size();
+					}
 					Colorizers c;
 					c.push_back(lineNumberColor);
 					c.push_back(offsetLineColor);
@@ -75,6 +79,10 @@ void Display::show() const
 					Colorizers c;
 					c.push_back(lineNumberColor);
 					Colorizer cursorColor = { this->posX + LINE_NUMBER_SIZE + 1, 1, CURSOR };
+					if (this->c.getState() == FIND) {
+						cursorColor.style = FIND_HIGHLIGHTING;
+						cursorColor.count = this->c.getCommandInfo().size();
+					}
 					c.push_back(cursorColor);
 					std::cout << this->padToLine(Helper::colorize(line, c), width);
 				}
@@ -96,13 +104,19 @@ void Display::show() const
 	}
 
 	// Bottom line:
-	std::string commandString = this->state == COMMAND ? "cmd| " : "key| ";
+	std::string commandString = this->c.getStateString();
 	Colorizer commandStringColor = { 0, commandString.size() - 1, MAGENTA };
-	Colorizer commandArgsColor = { commandString.size(), this->lastKeys.size(), this->lastKeys.size() && this->lastKeys[0] == BEGIN_CALLED_COMMAND ? WHITE : BACKGROUND };
+	std::string commandData = this->lastKeys;
+	Style commandArgsStyle = commandData.size() && commandData[0] == BEGIN_CALLED_COMMAND ? WHITE : BACKGROUND;
+	if (this->c.getState() == FIND) {
+		commandData = this->c.getCommandInfo();
+		commandArgsStyle = FIND_HIGHLIGHTING;
+	}
+	Colorizer commandArgsColor = { commandString.size(), commandData.size(),  commandArgsStyle};
 	Colorizers c;
 	c.push_back(commandStringColor);
 	c.push_back(commandArgsColor);
-	std::cout << this->padToLine(Helper::colorize(commandString + this->lastKeys, c), width);
+	std::cout << this->padToLine(Helper::colorize(commandString + commandData, c), width);
 	std::cout << this->padToLine(this->commandOutput, width);
 
 	// Reset cursor position
@@ -122,10 +136,19 @@ std::string Display::padToLine(std::string line, short width) const
 
 void Display::callAction(char x)
 {
-	if (this->state == COMMAND) { // Ctrl C
+	if (this->c.getState() == FIND) {
+		if (x == FIND_NEXT || x == ACTION_ENTER) {
+			this->commandOutput = this->c.runCommand(COMMAND_FIND, this->posX, this->posY);
+		}
+		else if(x != NEXT_IS_UTILS && x != NULL){
+			this->c.setState(DEAFULT);
+		}
+		return;
+	}
+	if (this->c.getState() == COMMAND) { // Ctrl C
 		// Leave cmd mode
 		if (this->lastKeys.size() == 0 && x == EXIT_CMD_MODE) {
-			this->state = DEAFULT;
+			this->c.setState(DEAFULT);
 		}
 		// let the program know that a weird key was pressed
 		else if (this->lastKeys.size() > 0 && this->lastKeys[this->lastKeys.size() - 1] == NEXT_IS_UTILS) {
@@ -136,7 +159,7 @@ void Display::callAction(char x)
 			this->lastKeys = "";
 		}
 		else if (x == ACTION_ENTER) {
-			this->state = DEAFULT;
+			this->c.setState(DEAFULT);
 			// No command
 			if (!this->lastKeys.size()) return;
 
@@ -196,8 +219,12 @@ void Display::callAction(char x)
 		this->lastKeys = "a";
 		this->lastKeys[0] = NEXT_IS_UTILS;
 	}
+	else if (x == ACTION_START_FIND) {
+		this->lastKeys = std::string(1, BEGIN_CALLED_COMMAND) + COMMAND_FIND + ' ';
+		this->c.setState(COMMAND);
+	}
 	else if (x == ACTION_START_COMMAND) { // Starting command
-		this->state = COMMAND;
+		this->c.setState(COMMAND);
 	}
 	else if (Helper::isPrintable(x)) { // A normal character
 		this->c.actionWrite(this->posX, this->posY, x);

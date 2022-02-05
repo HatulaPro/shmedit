@@ -33,6 +33,7 @@ A text editor program for windows.
     - `FN + Right`, `FN + LEFT`: Jump to the end/start of the line.
     - `Ctrl + ]`: Tabify line.
     - `Ctrl + [`: Untabify line.
+    - `Ctrl + F`: The command 'f: ' will be set, to allow users to get to `find` mode more easily.
   
   - ### Commands:
     After starting command mode (`Ctrl + C`), you can start writing commands. The editor will parse and run them.
@@ -54,13 +55,14 @@ A text editor program for windows.
       cmd| :o myfile.txt
       ```
     
+    - `f <str>`: Starts `find` mode. Press `Enter` or `n` to find the next instance of `<str>`, or any other key to go back to deafult mode.
+    
+       ```
+       cmd| :f StrToLookFor
+       ```
       
     #### Instant commands:    
     - `s`: Save file.
-      
-      ```
-        cmd| s
-      ```
     - `i`, `Enter`: Exit cmd mode.
     - `q`: Saves and quits the editor. 
     - `Q`: Quits the editor. Warning: This command does not save the contents of the file.

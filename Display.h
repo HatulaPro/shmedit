@@ -2,12 +2,6 @@
 #include <vector>
 #include "Content.h"
 
-enum STATE
-{
-	DEAFULT,
-	COMMAND,
-};
-
 
 class Display {
 private:
@@ -18,8 +12,6 @@ private:
 	std::string commandOutput;
 	std::string lastKeys;
 	int cmdCount = 0;
-
-	int state = DEAFULT;
 
 	void showTopBar(short width, bool wasEdited) const;
 public:
