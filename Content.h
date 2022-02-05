@@ -39,6 +39,8 @@ public:
 	void actionCopyLine(int& posX, int& posY);
 	void actionJumpToLineEnd(int& posX, int& posY);
 	void actionJumpToLineStart(int& posX, int& posY);
+	void actionTabify(int& posX, int& posY);
+	void actionUntabify(int& posX, int& posY);
 
 	void actionSaveFile(int& posX, int& posY);
 	void actionWordLeft(int& posX, int& posY);

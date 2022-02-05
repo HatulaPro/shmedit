@@ -19,6 +19,8 @@
 #define ACTION_FN_RIGHT 79
 #define ACTION_FN_LEFT 71
 #define ACTION_START_COMMAND 3
+#define ACTION_TABIFY 29
+#define ACTION_UNTABIFY 27
 
 #define NEXT_IS_UTILS -32
 
@@ -34,3 +36,9 @@
 #define COMMAND_REMOVE_WORD "db"
 #define COMMAND_MOVE_WORD "w"
 #define COMMAND_BACK_WORD "b"
+#define COMMAND_TABIFY "ta"
+#define COMMAND_UNTABIFY "ut"
+#define COMMAND_LEFT_KEY "h"
+#define COMMAND_RIGHT_KEY "l"
+#define COMMAND_UP_KEY "k"
+#define COMMAND_DOWN_KEY "j"

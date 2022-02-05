@@ -12,7 +12,7 @@ A text editor program for windows.
 
 ## Documentation:
   - Currently, there is no way to customize keybinds. This feature will be added in the future though. 
-  
+
   - Notice that Shmedit is still in development, so many useful features (such as copy & paste) do not exist yet.
   
   - `mem`: The editor's memory. 
@@ -31,6 +31,8 @@ A text editor program for windows.
     - `Ctrl + D`: Duplicate current line.
     - `Ctrl + L`: Delete current line.
     - `FN + Right`, `FN + LEFT`: Jump to the end/start of the line.
+    - `Ctrl + ]`: Tabify line.
+    - `Ctrl + [`: Untabify line.
   
   - ### Commands:
     After starting command mode (`Ctrl + C`), you can start writing commands. The editor will parse and run them.
@@ -59,6 +61,7 @@ A text editor program for windows.
       ```
         cmd| s
       ```
+    - `i`, `Enter`: Exit cmd mode.
     - `q`: Saves and quits the editor. 
     - `Q`: Quits the editor. Warning: This command does not save the contents of the file.
     - `dw`: Deletes the next word and saves its contents in `mem`. 
@@ -67,6 +70,12 @@ A text editor program for windows.
     - `p`: Pastes the last word from `mem`.
     - `w`: Moves one word to the left.
     - `b`: Moves one word to the right.
+    - `ta`: Tabify line.
+    - `ua`: Unabify line.
+    - `j`: Move the cursor one line down.
+    - `k`: Move the cursor one line up.
+    - `h`: Move the cursor one character to the left.
+    - `l`: Move the cursor one character to the right.
       
 ## Future Features:
   - [X] A working text editor

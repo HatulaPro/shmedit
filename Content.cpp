@@ -31,6 +31,8 @@ const std::map<char, void (Content::*)(int&, int&)> Content::oneClickActions = {
 	{ ACTION_CTRL_S, &Content::actionSaveFile },
 	{ ACTION_CTRL_D, &Content::actionCopyLine },
 	{ ACTION_CTRL_L, &Content::actionDeleteLine },
+	{ ACTION_TABIFY, &Content::actionTabify },
+	{ ACTION_UNTABIFY, &Content::actionUntabify },
 };
 
 const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Content::calledCommands = {
@@ -38,15 +40,21 @@ const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Co
 };
 
 const std::map<std::string, void(Content::*)(int&, int&)> Content::instantCommands = {
-	{COMMAND_SAVE, &Content::actionSaveFile},
-	{COMMAND_QUIT, &Content::actionQuit},
-	{COMMAND_QUIT_AND_SAVE, &Content::actionQuitAndSave},
-	{COMMAND_PASTE, &Content::actionPaste},
-	{COMMAND_DELETE_WORD, &Content::actionDeleteWord},
-	{COMMAND_REMOVE_WORD, &Content::actionRemoveWord},
-	{COMMAND_DELETE_LINE, &Content::actionDeleteLine},
-	{COMMAND_MOVE_WORD, &Content::actionWordRight},
-	{COMMAND_BACK_WORD, &Content::actionWordLeft},
+	{ COMMAND_SAVE, &Content::actionSaveFile },
+	{ COMMAND_QUIT, &Content::actionQuit },
+	{ COMMAND_QUIT_AND_SAVE, &Content::actionQuitAndSave },
+	{ COMMAND_PASTE, &Content::actionPaste },
+	{ COMMAND_DELETE_WORD, &Content::actionDeleteWord },
+	{ COMMAND_REMOVE_WORD, &Content::actionRemoveWord },
+	{ COMMAND_DELETE_LINE, &Content::actionDeleteLine },
+	{ COMMAND_MOVE_WORD, &Content::actionWordRight },
+	{ COMMAND_BACK_WORD, &Content::actionWordLeft },
+	{ COMMAND_TABIFY, &Content::actionTabify },
+	{ COMMAND_UNTABIFY, &Content::actionUntabify },
+	{ COMMAND_LEFT_KEY, &Content::actionLeftKey },
+	{ COMMAND_RIGHT_KEY, &Content::actionRightKey },
+	{ COMMAND_UP_KEY, &Content::actionUpKey },
+	{ COMMAND_DOWN_KEY, &Content::actionDownKey },
 };
 
 Content::Content(std::string c)
@@ -145,7 +153,6 @@ void Content::actionMoveLineUp(int& posX, int& posY)
 		(posY)--;
 		this->wasEdited = true;
 	}
-	this->wasEdited = false;
 }
 
 void Content::actionMoveLineDown(int& posX, int& posY)
@@ -317,6 +324,29 @@ void Content::actionJumpToLineStart(int& posX, int& posY)
 	posX = 0;
 }
 
+void Content::actionTabify(int& posX, int& posY)
+{
+	this->content[posY] = "    " + this->content[posY];
+	this->wasEdited = true;
+}
+
+void Content::actionUntabify(int& posX, int& posY)
+{
+	if (this->content[posY][0] == '\t') {
+		this->content[posY] = this->content[posY].substr(0, this->content[posY].size() - 1);
+		this->wasEdited = true;
+		return;
+	}
+	size_t count = 0;
+	while (count < this->content[posY].size() && isspace(this->content[posY][count])) count++;
+
+	if (count > 0) {
+		this->content[posY] = this->content[posY].substr(count);
+		this->wasEdited = true;
+		return;
+	}
+}
+
 void Content::actionSaveFile(int& posX, int& posY)
 {
 	Helper::writeFile(this->fileName, this->getContent());
@@ -385,7 +415,7 @@ void Content::actionDeleteLine(int& posX, int& posY)
 	this->commandInfo = this->content[posY] + '\n';
 	this->content.erase(this->content.begin() + posY);
 	posY = std::min((int)posY, (int)this->content.size() - 1);
-
+	posX = std::min((int)posX, (int)this->content[posY].size());
 	//return "Line deleted";
 }
 
