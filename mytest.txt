@@ -5,9 +5,10 @@
 </head>
 <body>
     <h1>Hello World!</h1>
-    <p> That's so awesome and cool!</p>
-    <b> I'd say this shite is fantastic </b>
+
+    <p>That's so awesome and cool!</p>
+    <b>I'd say this shite is fantastic </b>
     
     <script defer>console.log("Great!");</script>
 </body>
-</html>
+</htm>

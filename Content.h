@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include "KeyBinds.h"
+#include <stack>
 #define TAB_SIZE 4
 
 enum STATE
@@ -26,6 +27,7 @@ private:
 
 	std::string commandInfo;
 	std::string commandInfo2;
+
 public:
 	Content(std::string c);
 	void setContent(std::string c);
@@ -48,6 +50,7 @@ public:
 	void actionMoveLineUp(int& posX, int& posY);
 	void actionMoveLineDown(int& posX, int& posY);
 	void actionEnter(int& posX, int& posY);
+	void actionEnterNoSpacing(int& posX, int& posY);
 	void actionEnterNewline(int& posX, int& posY);
 	void actionRemove(int& posX, int& posY);
 	void actionRemoveWord(int& posX, int& posY);
@@ -57,6 +60,7 @@ public:
 	void actionUpKey(int& posX, int& posY);
 	void actionDownKey(int& posX, int& posY);
 	void actionWordRight(int& posX, int& posY);
+	void actionWordLeft(int& posX, int& posY);
 	void actionDuplicateLine(int& posX, int& posY);
 	void actionJumpToLineEnd(int& posX, int& posY);
 	void actionJumpToLineStart(int& posX, int& posY);
@@ -64,7 +68,6 @@ public:
 	void actionUntabify(int& posX, int& posY);
 
 	void actionSaveFile(int& posX, int& posY);
-	void actionWordLeft(int& posX, int& posY);
 
 
 	void actionQuit(int& posX, int& posY);
@@ -76,6 +79,21 @@ public:
 	void actionCopyLine(int& posX, int& posY);
 	void actionCopyWordBack(int& posX, int& posY);
 
+	void actionCopySelection(int& posX, int& posY, int& startX, int& startY);
+	void actionPasteSelection(int& posX, int& posY, int& startX, int& startY);
+	void actionDeleteSelection(int& posX, int& posY, int& startX, int& startY);
+	void actionLeftKeySelection(int& posX, int& posY, int& startX, int& startY);
+	void actionRightKeySelection(int& posX, int& posY, int& startX, int& startY);
+	void actionUpKeySelection(int& posX, int& posY, int& startX, int& startY);
+	void actionDownKeySelection(int& posX, int& posY, int& startX, int& startY);
+	void actionJumpToLineEndSelection(int& posX, int& posY, int& startX, int& startY);
+	void actionJumpToLineStartSelection(int& posX, int& posY, int& startX, int& startY);
+	void actionTabifySelection(int& posX, int& posY, int& startX, int& startY);
+	void actionUntabifySelection(int& posX, int& posY, int& startX, int& startY);
+	void actionWordRightSelection(int& posX, int& posY, int& startX, int& startY);
+	void actionWordLeftSelection(int& posX, int& posY, int& startX, int& startY);
+
+
 	std::string commandOpen(std::string command, int& posX, int& posY);
 	std::string commandFind(std::string command, int& posX, int& posY);
 	std::string commandFindAndReplace(std::string command, int& posX, int& posY);
@@ -86,6 +104,7 @@ public:
 	static const std::map<char, void (Content::*)(int&, int&)> oneClickActions; 
 
 	static const std::map<std::string, void(Content::*)(int&, int&)> instantCommands;
+	static const std::map<char, void(Content::*)(int&, int&, int&, int&)> visualCommands;
 	static const std::map<std::string, std::string (Content::*)(std::string, int&, int&)> calledCommands; 
 	//{ACTION_CTRL_S, Content::actionSave},
 };

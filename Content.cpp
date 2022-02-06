@@ -62,6 +62,23 @@ const std::map<std::string, void(Content::*)(int&, int&)> Content::instantComman
 	{ COMMAND_COPY_WORD_BACK, &Content::actionCopyWordBack },
 };
 
+const std::map<char, void(Content::*)(int&, int&, int&, int&)> Content::visualCommands = {
+	{ ACTION_COPY_SELECTION, &Content::actionCopySelection },
+	{ ACTION_PASTE_SELECTION, &Content::actionPasteSelection },
+	{ ACTION_REMOVE, &Content::actionDeleteSelection },
+	{ ACTION_REMOVE_SELECTION, &Content::actionDeleteSelection },
+	{ ACTION_TABIFY, &Content::actionTabifySelection },
+	{ ACTION_UNTABIFY, &Content::actionUntabifySelection },
+	{ ACTION_LEFT_KEY, &Content::actionLeftKeySelection },
+	{ ACTION_RIGHT_KEY, &Content::actionRightKeySelection },
+	{ ACTION_UP_KEY, &Content::actionUpKeySelection },
+	{ ACTION_DOWN_KEY, &Content::actionDownKeySelection },
+	{ ACTION_FN_RIGHT, &Content::actionJumpToLineEndSelection  },
+	{ ACTION_FN_LEFT, &Content::actionJumpToLineStartSelection  },
+	{ ACTION_CTRL_RIGHT_KEY, &Content::actionWordRightSelection  },
+	{ ACTION_CTRL_LEFT_KEY, &Content::actionWordLeftSelection  },
+};
+
 Content::Content(std::string c)
 {
 	this->fileName = c;
@@ -243,6 +260,17 @@ void Content::actionEnter(int& posX, int& posY)
 	this->wasEdited = true;
 }
 
+void Content::actionEnterNoSpacing(int& posX, int& posY)
+{
+	std::string beforeEnter = this->content[posY].substr(0, posX);
+	std::string afterEnter = this->content[posY].substr(posX);
+	this->content[posY] = beforeEnter;
+	posY += 1;
+	this->content.insert(this->content.begin() + posY, afterEnter);
+	posX = 0;
+	this->wasEdited = true;
+}
+
 void Content::actionEnterNewline(int& posX, int& posY)
 {
 	int spaceCount = 0;
@@ -400,6 +428,133 @@ void Content::actionCopyWordBack(int& posX, int& posY)
 	this->commandInfo = this->content[posY].substr(posX - count, count);
 }
 
+void Content::actionCopySelection(int& posX, int& posY, int& startX, int& startY)
+{
+	if (posY == startY) {
+		this->commandInfo = this->content[posY].substr(startX, posX - startX);
+		return;
+	}
+	this->commandInfo = this->content[startY].substr(startX) + '\n';
+	for (size_t i = startY + 1; i < posY; i++) {
+		this->commandInfo += this->content[i] + '\n';
+	}
+	this->commandInfo += this->content[posY].substr(0, posX);
+}
+
+void Content::actionPasteSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionPaste(posX, posY);
+}
+
+void Content::actionDeleteSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	if (posY == startY) {
+		this->content[posY].erase(startX, posX - startX);
+		if (startX == this->content[posY].size()) startX--;
+		posX = startX + 1;
+		this->wasEdited = true;
+		return;
+	}
+
+	this->content[startY] = this->content[startY].substr(0, startX) + this->content[posY].substr(posX);
+	if (startY + 1 < posY) {
+		this->content.erase(this->content.begin() + startY + 1, this->content.begin() + posY + 1);
+	}
+	posY = startY;
+	if (startX == this->content[posY].size()) startX--;
+	posX = startX + 1;
+	this->wasEdited = true;
+}
+
+void Content::actionLeftKeySelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionLeftKey(posX, posY);
+	if (posY < startY) {
+		this->state = DEAFULT;
+	}
+	else if (posY == startY && posX < startX) {
+		this->state = DEAFULT;
+	}
+}
+
+void Content::actionRightKeySelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionRightKey(posX, posY);
+}
+
+void Content::actionUpKeySelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionUpKey(posX, posY);
+	if (posY < startY) {
+		this->state = DEAFULT;
+	}
+	else if (posY == startY && posX < startX) {
+		this->state = DEAFULT;
+	}
+}
+
+void Content::actionDownKeySelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionDownKey(posX, posY);
+}
+
+void Content::actionJumpToLineEndSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionJumpToLineEnd(posX, posY);
+}
+
+void Content::actionJumpToLineStartSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionJumpToLineStart(posX, posY);
+	if (posY < startY) {
+		this->state = DEAFULT;
+	}
+	else if (posY == startY && posX < startX) {
+		this->state = DEAFULT;
+	}
+}
+
+void Content::actionTabifySelection(int& posX, int& posY, int& startX, int& startY)
+{
+	for (size_t i = startY; i <= posY; i++) {
+		this->content[i] = "    " + this->content[i];
+	}
+	this->wasEdited = true;
+}
+
+void Content::actionUntabifySelection(int& posX, int& posY, int& startX, int& startY)
+{
+	for (size_t i = startY; i <= posY; i++) {
+		size_t count = 0;
+		
+		while (count < this->content[i].size() && isspace(this->content[i][count]) && count < TAB_SIZE) count++;
+
+		if (count > 0) {
+			if (i == startY) {
+				startX = std::max(startX - (int)count, 0);
+			}
+			this->content[i] = this->content[i].substr(count);
+			this->wasEdited = true;
+		}
+	}
+}
+
+void Content::actionWordRightSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionWordRight(posX, posY);
+}
+
+void Content::actionWordLeftSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionWordLeft(posX, posY);
+	if (posY < startY) {
+		this->state = DEAFULT;
+	}
+	else if (posY == startY && posX < startX) {
+		this->state = DEAFULT;
+	}
+}
+
 void Content::actionDuplicateLine(int& posX, int& posY)
 {
 	this->content.insert(this->content.begin() + posY, this->content[posY]);
@@ -425,15 +580,11 @@ void Content::actionTabify(int& posX, int& posY)
 
 void Content::actionUntabify(int& posX, int& posY)
 {
-	if (this->content[posY][0] == '\t') {
-		this->content[posY] = this->content[posY].substr(0, this->content[posY].size() - 1);
-		this->wasEdited = true;
-		return;
-	}
 	size_t count = 0;
-	while (count < this->content[posY].size() && isspace(this->content[posY][count])) count++;
+	while (count < this->content[posY].size() && isspace(this->content[posY][count]) && count < TAB_SIZE) count++;
 
 	if (count > 0) {
+		posX = std::max(posX - (int)count, 0);
 		this->content[posY] = this->content[posY].substr(count);
 		this->wasEdited = true;
 		return;
@@ -556,22 +707,16 @@ std::string Content::commandFindAndReplace(std::string command, int& posX, int& 
 
 void Content::actionPaste(int& posX, int& posY)
 {
-	if (!this->commandInfo.size()) return;// "Nothing to paste";
-
-	if (this->commandInfo[0] == '\n') {
-		this->content.insert(this->content.begin() + posY + 1, this->commandInfo.substr(1));
-		posY++;
-	}
-	else if (this->commandInfo[this->commandInfo.size() - 1] == '\n') {
-		this->content.insert(this->content.begin() + posY, this->commandInfo.substr(0, this->commandInfo.size() - 1));
-	}
-	else {
-		for (size_t i = 0; i < this->commandInfo.size(); i++) {
-			this->content[posY].insert(this->content[posY].begin() + posX + i, this->commandInfo[i]);
+	if (!this->commandInfo.size()) return;
+	
+	for (size_t i = 0; i < this->commandInfo.size(); i++) {
+		if (commandInfo[i] == '\n') {
+			this->actionEnterNoSpacing(posX, posY);
+		}
+		else {
+			this->actionWrite(posX, posY, commandInfo[i]);
 		}
 	}
-	this->wasEdited = true;
-	posX = std::min((int)this->content[posY].size(), posX);
 }
 
 void Content::actionDeleteLine(int& posX, int& posY)
@@ -584,7 +729,6 @@ void Content::actionDeleteLine(int& posX, int& posY)
 	this->content.erase(this->content.begin() + posY);
 	posY = std::min((int)posY, (int)this->content.size() - 1);
 	posX = std::min((int)posX, (int)this->content[posY].size());
-	//return "Line deleted";
 }
 
 std::string Content::runCommand(std::string command, int& posX, int& posY)
