@@ -28,7 +28,7 @@ void Display::showTopBar(short width, bool wasEdited) const
 }
 
 Display::Display(std::string fname) : c(fname) {
-	
+
 }
 
 void Display::show() const
@@ -65,7 +65,7 @@ void Display::show() const
 					std::string line = lineNumber + LINE_OFFSET_STR + i->substr(offset) + ' ';
 
 					size_t cursorLocation = width / 2 + LINE_NUMBER_SIZE + sizeof(LINE_OFFSET_STR) - 1;
-					Colorizer cursorColor = {cursorLocation , 1, CURSOR };
+					Colorizer cursorColor = { cursorLocation , 1, CURSOR };
 
 					c.push_back(lineNumberColor);
 					c.push_back(offsetLineColor);
@@ -165,6 +165,9 @@ std::string Display::padToLine(std::string line, short width) const
 
 void Display::callAction(char x)
 {
+	if (x == '\t') {
+		this->commandOutput = "!";
+	}
 	this->commandOutput = "";
 
 	if (x == -32 or x == 224 or x == 0) { // Next is utils
@@ -172,7 +175,6 @@ void Display::callAction(char x)
 		this->lastKeys[0] = NEXT_IS_UTILS;
 		return;
 	}
-
 
 	if (x == ACTION_START_FIND) { // Ctrl + F for find
 		this->lastKeys = std::string(1, BEGIN_CALLED_COMMAND) + COMMAND_FIND + ' ';
