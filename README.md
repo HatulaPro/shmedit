@@ -19,7 +19,7 @@ A text editor program for windows.
   
   - ### Keys:
     - You can write by simply typing letters and numbers. Pretty normal.
-    - `Delete`, `Remove` keys - Just like you'd expect.
+    - `Delete`, `Backspace` keys - Just like you'd expect.
     - `Ctrl + Delete`: Remove the word to the right of your cursor and saves its contents in `mem`. 
     - `Ctrl + Remove`: Remove the word to the left of your cursor.
     - `Left`, `Right`, `Up`, `Down` keys: Standard navigation. 
@@ -35,6 +35,14 @@ A text editor program for windows.
     - `Ctrl + [`: Untabify line.
     - `Ctrl + F`: The command 'f: ' will be set, to allow users to get to `find` mode more easily.
     - `Ctrl + R`: The command 'fr: ' will be set, to allow users to get to `find&rep` mode more easily.
+    - `Ctrl + V`: Switches to `visual` mode.
+      + When in `visual` mode, you'll have two cursors. A static one (set to the location where you pressed `Ctrl + V`), and a dynamic one, which you can control.
+      + Controlling the `visual` mode dynamic cursor is done in the same way as normally, altough other modes are not available.
+      + Visual mode functions:
+        - `c`: Copy selection.
+        - `r`, `Backspace`: Remove selection.
+        - `p`: Paste from `mem`. Will be pasted after the dynamic cursor.
+  
   
   - ### Commands:
     After starting command mode (`Ctrl + C`), you can start writing commands. The editor will parse and run them.
@@ -92,8 +100,8 @@ A text editor program for windows.
 ## Future Features:
   - [X] A working text editor
   - [X] Find & Replace
-  - [ ] Copy & Paste
-  - [ ] Visual mode 
+  - [X] Visual mode 
+  - [X] Copy & Paste
   - [ ] Custom keybindings
   - [ ] Highlighting
   - [ ] Custom commands

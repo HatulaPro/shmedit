@@ -74,6 +74,10 @@ void Display::show() const
 					}
 					else if (this->c.getState() == VISUAL) {
 						Colorizer visualCursorColor = { LINE_NUMBER_SIZE + sizeof(LINE_OFFSET_STR) - 1, width / 2, VISUAL_STYLE }; // First cursor
+						if (this->startY == this->posY && this->startX > this->posX - (width / 2)) {
+							visualCursorColor.begin = cursorLocation - this->posX + this->startX;
+							visualCursorColor.count = this->posX - this->startX;
+						}
 						c.push_back(visualCursorColor);
 					}
 					c.push_back(cursorColor);
