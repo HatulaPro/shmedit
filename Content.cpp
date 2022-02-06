@@ -130,6 +130,9 @@ std::string Content::getCommandArgs(std::string lastKeys) const
 	else if (this->isInFindState()) {
 		return this->commandInfo + '~' + this->commandInfo2;
 	}
+	else if (this->state == VISUAL) {
+		return "#";
+	}
 	throw std::exception("Unkown state");
 }
 
@@ -147,7 +150,7 @@ std::string Content::getStateString() const
 {
 	if (this->state == DEAFULT) {
 		return "key| ";
-	} 
+	}
 	else if (this->state == COMMAND) {
 		return "cmd| ";
 	}
@@ -156,6 +159,9 @@ std::string Content::getStateString() const
 	}
 	else if (this->isInFindState()) {
 		return "find&rep| ";
+	}
+	else if (this->state == VISUAL) {
+		return "visual| ";
 	}
 	throw std::exception("Unkown state");
 }
@@ -518,7 +524,7 @@ std::string Content::commandFindAndReplace(std::string command, int& posX, int& 
 		this->state = FIND_AND_REPLACE_F;
 		return "Found.";
 	}
-	else if (this->state == DEAFULT){
+	else if (this->state == DEAFULT) {
 		size_t index = command.find_first_of('~');
 		if (index == std::string::npos) {
 			return "'~' sign not found. Can not parse request.";
@@ -529,7 +535,7 @@ std::string Content::commandFindAndReplace(std::string command, int& posX, int& 
 			return "Can not find an empty string.";
 		}
 		std::string afterTilda = command.substr(index + 1);
-		
+
 		this->commandInfo = beforeTilda;
 		this->commandInfo2 = afterTilda;
 

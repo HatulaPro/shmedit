@@ -83,6 +83,10 @@ void Display::show() const
 						cursorColor.style = FIND_HIGHLIGHTING;
 						cursorColor.count = this->c.getCommandInfo().size();
 					}
+					else if (this->c.getState() == VISUAL && count + startIndex == this->startY) {
+						Colorizer visualCursorColor = { this->startX + LINE_NUMBER_SIZE + 1, this->posX - this->startX, VISUAL_STYLE }; // First cursor
+						c.push_back(visualCursorColor);
+					}
 					c.push_back(cursorColor);
 					std::cout << this->padToLine(Helper::colorize(line, c), width);
 				}
@@ -112,7 +116,7 @@ void Display::show() const
 		commandArgsStyle = WHITE;
 	}
 
-	Colorizer commandArgsColor = { commandString.size(), commandData.size(),  commandArgsStyle};
+	Colorizer commandArgsColor = { commandString.size(), commandData.size(),  commandArgsStyle };
 	Colorizers c;
 	c.push_back(commandStringColor);
 	c.push_back(commandArgsColor);
@@ -136,11 +140,14 @@ std::string Display::padToLine(std::string line, short width) const
 
 void Display::callAction(char x)
 {
-	if (this->c.getState() == FIND) { // Find
+	if (this->c.getState() == VISUAL) { // Visual mode
+
+	}
+	else if (this->c.getState() == FIND) { // Find
 		if (x == FIND_NEXT || x == ACTION_ENTER) {
 			this->commandOutput = this->c.runCommand(COMMAND_FIND, this->posX, this->posY);
 		}
-		else if(x != NEXT_IS_UTILS && x != NULL){
+		else if (x != NEXT_IS_UTILS && x != NULL) {
 			this->c.setState(DEAFULT);
 		}
 		return;
@@ -149,7 +156,7 @@ void Display::callAction(char x)
 		if (x == FIND_NEXT || x == ACTION_ENTER) {
 			this->commandOutput = this->c.runCommand(COMMAND_FIND_AND_REPLACE, this->posX, this->posY);
 		}
-		else if (x == FIND_AND_REPLACE_SKIP){
+		else if (x == FIND_AND_REPLACE_SKIP) {
 			this->c.setState(FIND_AND_REPLACE_F);
 			this->commandOutput = this->c.runCommand(COMMAND_FIND_AND_REPLACE, this->posX, this->posY);
 		}
@@ -239,6 +246,13 @@ void Display::callAction(char x)
 	else if (x == ACTION_START_FIND_AND_REPLACE) { // Ctrl + R for find and replace 
 		this->lastKeys = std::string(1, BEGIN_CALLED_COMMAND) + COMMAND_FIND_AND_REPLACE + ' ';
 		this->c.setState(COMMAND);
+	}
+	else if (x == ACTION_START_VISUAL) { // Ctrl + V for visual mode
+		this->startX = this->posX;
+		this->startY = this->posY;
+		this->c.actionRightKey(this->posX, this->posY);
+		//this->lastKeys = std::string(1, BEGIN_VISUAL) + COMMAND_FIND + ' ';
+		this->c.setState(VISUAL);
 	}
 	else if (x == ACTION_START_COMMAND) { // Starting command
 		this->c.setState(COMMAND);
