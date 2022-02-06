@@ -6,6 +6,8 @@
 #include <string>
 #include <ctype.h>
 #include <Windows.h>
+#include <filesystem>
+#include <iostream>
 
 
 void Helper::hideCursor()
@@ -193,4 +195,44 @@ std::string Helper::trim(std::string s)
 	copy.erase(copy.find_last_not_of(" \t\n\r\f\v") + 1);
 	copy.erase(0, copy.find_first_not_of(" \t\n\r\f\v"));
 	return copy;
+}
+
+std::string Helper::getFileName(std::string fileName)
+{
+	return "";
+}
+
+std::vector<std::string> Helper::getFilesInDirectory(std::string dir)
+{
+	std::vector<std::wstring> names;
+	std::wstring search_path(dir.begin(), dir.end());
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = ::FindFirstFile(search_path.c_str(), &fd);
+	if (hFind != INVALID_HANDLE_VALUE) {
+		do {
+			// read all (real) files in current folder
+			// , delete '!' read other 2 default folder . and ..
+			//if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				names.push_back(fd.cFileName);
+			//}
+		} while (::FindNextFile(hFind, &fd));
+		::FindClose(hFind);
+	}
+	std::vector<std::string> res;
+	for (auto i : names) {
+		res.push_back(std::string(i.begin(), i.end()));
+	}
+	return res;
+}
+
+bool Helper::insStrCompare(std::string a, std::string b)
+{
+	if (b.size() != a.size()) return false;
+	std::for_each(a.begin(), a.end(), [](char& c) {
+		c = ::tolower(c);
+	});
+	std::for_each(b.begin(), b.end(), [](char& c) {
+		c = ::tolower(c);
+	});
+	return a == b;
 }

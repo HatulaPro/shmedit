@@ -8,7 +8,9 @@
 
 int main() {
 	Helper::hideCursor();
-	Display d = Display("README.md");
+	std::string fileName = "readme.md";
+	
+	Display d = Display(fileName);
 	//Display d = Display("mytest.txt");
 	while (true) {
 		d.show();

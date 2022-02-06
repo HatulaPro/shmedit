@@ -28,6 +28,7 @@ void Display::showTopBar(short width, bool wasEdited) const
 }
 
 Display::Display(std::string fname) : c(fname) {
+	
 }
 
 void Display::show() const

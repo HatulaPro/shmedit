@@ -81,8 +81,14 @@ const std::map<char, void(Content::*)(int&, int&, int&, int&)> Content::visualCo
 
 Content::Content(std::string c)
 {
-	this->fileName = c;
-	setContent(c);
+	for (auto i : Helper::getFilesInDirectory(c)) {
+		if (Helper::insStrCompare(c, i)) {
+			this->fileName = i;
+			setContent(i);
+			return;
+		}
+	}
+	throw std::exception("File not found");
 }
 
 void Content::setContent(std::string c)

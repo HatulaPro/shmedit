@@ -41,4 +41,7 @@ public:
 	static bool isPrintable(char c);
 	static bool isAlphanumeric(char c);
 	static std::string trim(std::string s);
+	static std::string getFileName(std::string fileName);
+	static std::vector<std::string> getFilesInDirectory(std::string dir);
+	static bool insStrCompare(std::string a, std::string b);
 };
