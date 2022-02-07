@@ -28,7 +28,9 @@ void Display::showTopBar(short width, bool wasEdited) const
 }
 
 Display::Display(std::string fname) : c(fname) {
-
+	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	Helper::hideCursor(this->hConsole);
+	Helper::getCursorPosition(this->hConsole, this->cursorPosition);
 }
 
 void Display::show() const
@@ -39,19 +41,19 @@ void Display::show() const
 	// Getting terminal dimensions
 	short width = 0;
 	short height = 0;
-	Helper::getTerminalSize(&width, &height);
+	Helper::getTerminalSize(this->hConsole, &width, &height);
 	short effectiveHeight = height - NON_CONTENT_LINES;
 
 	this->showTopBar(width, this->c.getEditStatus());
 
-	int offset = std::max(0, this->posX - (width / 2));
+	int offset = max(0, this->posX - (width / 2));
 	Colorizer lineNumberColor = { 0, LINE_NUMBER_SIZE, LINE_NUMBER };
 	Colorizer offsetLineColor = { LINE_NUMBER_SIZE, sizeof(LINE_OFFSET_STR) - 1, WHITE };
 
 	// Aligning to top/bottom
-	int startIndex = std::max(std::min(this->posY - (effectiveHeight / 2), (int)content.size() - effectiveHeight), 0);
+	int startIndex = max(min(this->posY - (effectiveHeight / 2), (int)content.size() - effectiveHeight), 0);
 
-	for (auto i = content.begin() + startIndex; i != content.begin() + std::min(startIndex + height, (int)content.size()); i++) {
+	for (auto i = content.begin() + startIndex; i != content.begin() + min(startIndex + height, (int)content.size()); i++) {
 		if (count < height - NON_CONTENT_LINES) {
 			// For every line in content (that is inside the view)
 			std::string lineNumber = std::to_string(count + startIndex);
@@ -149,8 +151,10 @@ void Display::show() const
 	std::cout << this->padToLine(this->commandOutput, width);
 
 	// Reset cursor position
-	std::cout << (char)27 << '[' << height << 'A';
-	std::cout << (char)27 << '[' << width + 1 << 'D';
+
+	Helper::setCursorPosition(this->hConsole, this->cursorPosition);
+	//std::cout << (char)27 << '[' << heig/*ht << 'A';
+	//std::cout << (char)27 << '[' << width + 1*/ << 'D';
 }
 
 std::string Display::padToLine(std::string line, short width) const
@@ -252,8 +256,8 @@ void Display::callAction(char x)
 			if (this->lastKeys.find_first_not_of("0123456789") == std::string::npos) { // Just a number
 				std::stringstream s(this->lastKeys);
 				s >> this->posY;
-				this->posY = std::min(this->posY, (int)this->c.size() - 1);
-				this->posX = std::min(this->posX, (int)this->c.getLine(this->posY).size());
+				this->posY = min(this->posY, (int)this->c.size() - 1);
+				this->posX = min(this->posX, (int)this->c.getLine(this->posY).size());
 			}
 			else if (this->lastKeys[0] == BEGIN_CALLED_COMMAND) {
 				this->commandOutput = this->c.runCommand(this->lastKeys.substr(1), this->posX, this->posY);
@@ -280,7 +284,7 @@ void Display::callAction(char x)
 			std::stringstream tmp(this->lastKeys);
 			if (isdigit(this->lastKeys[0])) {
 				tmp >> count;
-				count = std::max(1, count);
+				count = max(1, count);
 			}
 			std::getline(tmp, command);
 

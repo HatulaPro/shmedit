@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "Content.h"
+#include "Windows.h"
 
 
 class Display {
@@ -18,6 +19,9 @@ private:
 	int cmdCount = 0;
 
 	void showTopBar(short width, bool wasEdited) const;
+
+	HANDLE hConsole;
+	COORD cursorPosition;
 public:
 	Display(std::string fname);
 	void show() const;

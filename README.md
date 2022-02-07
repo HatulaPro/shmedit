@@ -40,7 +40,7 @@ A text editor program for windows.
       + Controlling the `visual` mode dynamic cursor is done in the same way as normally, altough other modes are not available.
       + Visual mode functions:
         - `c`: Copy selection.
-        - `r`, `Backspace`: Remove selection.
+        - `d`, `r`, `Backspace`: Remove selection.
         - `p`: Paste from `mem`. Will be pasted after the dynamic cursor.
         - `Alt + Up`: Move selection one line up.
         - `Alt + Down`: Move selection one line down.

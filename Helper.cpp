@@ -5,19 +5,27 @@
 #include <iostream>
 #include <string>
 #include <ctype.h>
-#include <Windows.h>
-#include <filesystem>
 #include <iostream>
 
+#define STD_OUTPUT_HANDLE -11
 
-void Helper::hideCursor()
+void Helper::hideCursor(HANDLE hConsole)
 {
 	CONSOLE_CURSOR_INFO lpCursor;
 	lpCursor.bVisible = false;
 	lpCursor.dwSize = 50;
-	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &lpCursor);
+	SetConsoleCursorInfo(hConsole, &lpCursor);
 }
-
+void Helper::getCursorPosition(HANDLE hConsole, COORD& pcoord)
+{
+	CONSOLE_SCREEN_BUFFER_INFO  info;
+	GetConsoleScreenBufferInfo(hConsole, &info);
+	pcoord = info.dwCursorPosition;
+}
+void Helper::setCursorPosition(HANDLE hConsole, COORD coord)
+{
+	SetConsoleCursorPosition(hConsole, coord);
+}
 std::string Helper::readFile(std::string fileName)
 {
 	std::string content;
@@ -150,12 +158,12 @@ size_t Helper::getDisplayIndex(std::string str, size_t index)
 	return s;
 }
 
-void Helper::getTerminalSize(short* x, short* y)
+void Helper::getTerminalSize(HANDLE hConsole, short* x, short* y)
 {
 	// Only works on windows!
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 
-	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+	GetConsoleScreenBufferInfo(hConsole, &csbi);
 	*x = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 	*y = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 }

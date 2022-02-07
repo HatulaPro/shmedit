@@ -67,6 +67,7 @@ const std::map<char, void(Content::*)(int&, int&, int&, int&)> Content::visualCo
 	{ ACTION_PASTE_SELECTION, &Content::actionPasteSelection },
 	{ ACTION_REMOVE, &Content::actionDeleteSelection },
 	{ ACTION_REMOVE_SELECTION, &Content::actionDeleteSelection },
+	{ ACTION_REMOVE_SELECTION_ALT, &Content::actionDeleteSelection },
 	{ ACTION_TABIFY, &Content::actionTabifySelection },
 	{ ACTION_UNTABIFY, &Content::actionUntabifySelection },
 	{ ACTION_LEFT_KEY, &Content::actionLeftKeySelection },
@@ -543,7 +544,7 @@ void Content::actionUntabifySelection(int& posX, int& posY, int& startX, int& st
 
 		if (count > 0) {
 			if (i == startY) {
-				startX = std::max(startX - (int)count, 0);
+				startX = max(startX - (int)count, 0);
 			}
 			this->content[i] = this->content[i].substr(count);
 			this->wasEdited = true;
@@ -627,7 +628,7 @@ void Content::actionUntabify(int& posX, int& posY)
 	while (count < this->content[posY].size() && isspace(this->content[posY][count]) && count < TAB_SIZE) count++;
 
 	if (count > 0) {
-		posX = std::max(posX - (int)count, 0);
+		posX = max(posX - (int)count, 0);
 		this->content[posY] = this->content[posY].substr(count);
 		this->wasEdited = true;
 		return;
@@ -770,8 +771,8 @@ void Content::actionDeleteLine(int& posX, int& posY)
 	}
 	this->commandInfo = this->content[posY] + '\n';
 	this->content.erase(this->content.begin() + posY);
-	posY = std::min((int)posY, (int)this->content.size() - 1);
-	posX = std::min((int)posX, (int)this->content[posY].size());
+	posY = min((int)posY, (int)this->content.size() - 1);
+	posX = min((int)posX, (int)this->content[posY].size());
 }
 
 std::string Content::runCommand(std::string command, int& posX, int& posY)
