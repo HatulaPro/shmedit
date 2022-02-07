@@ -66,6 +66,8 @@ public:
 	void actionJumpToLineStart(int& posX, int& posY);
 	void actionTabify(int& posX, int& posY);
 	void actionUntabify(int& posX, int& posY);
+	void actionPageUp(int& posX, int& posY);
+	void actionPageDown(int& posX, int& posY);
 
 	void actionSaveFile(int& posX, int& posY);
 
@@ -95,6 +97,8 @@ public:
 	void actionMoveLineUpSelection(int& posX, int& posY, int& startX, int& startY);
 	void actionMoveLineDownSelection(int& posX, int& posY, int& startX, int& startY);
 	void actionSelectLinesSelection(int& posX, int& posY, int& startX, int& startY);
+	void actionPageUpSelection(int& posX, int& posY, int& startX, int& startY);
+	void actionPageDownSelection(int& posX, int& posY, int& startX, int& startY);
 
 
 	std::string commandOpen(std::string command, int& posX, int& posY);

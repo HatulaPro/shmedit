@@ -13,7 +13,6 @@ void Helper::hideCursor(HANDLE hConsole)
 {
 	CONSOLE_CURSOR_INFO lpCursor;
 	lpCursor.bVisible = false;
-	lpCursor.dwSize = 50;
 	SetConsoleCursorInfo(hConsole, &lpCursor);
 }
 void Helper::getCursorPosition(HANDLE hConsole, COORD& pcoord)

@@ -30,7 +30,8 @@ A text editor program for windows.
     - `Ctrl + C`: Start command mode.
     - `Ctrl + D`: Duplicate current line.
     - `Ctrl + L`: Delete current line.
-    - `FN + Right`, `FN + LEFT`: Jump to the end/start of the line.
+    - `FN + Right`, `FN + Left`: Jump to the end/start of the line.
+    - `FN + Up`, `FN + Down`: Jump 25 lines up/down.
     - `Ctrl + ]`: Tabify line.
     - `Ctrl + [`: Untabify line.
     - `Ctrl + F`: The command 'f: ' will be set, to allow users to get to `find` mode more easily.

@@ -21,6 +21,8 @@ const std::map<char, void (Content::*)(int&, int&)> Content::utilActions = {
 	{ ACTION_ALT_DOWN, &Content::actionMoveLineDown },
 	{ ACTION_FN_RIGHT, &Content::actionJumpToLineEnd },
 	{ ACTION_FN_LEFT, &Content::actionJumpToLineStart },
+	{ ACTION_PAGE_UP, &Content::actionPageUp },
+	{ ACTION_PAGE_DOWN, &Content::actionPageDown },
 };
 
 const std::map<char, void (Content::*)(int&, int&)> Content::oneClickActions = {
@@ -81,6 +83,8 @@ const std::map<char, void(Content::*)(int&, int&, int&, int&)> Content::visualCo
 	{ ACTION_ALT_UP, &Content::actionMoveLineUpSelection },
 	{ ACTION_ALT_DOWN, &Content::actionMoveLineDownSelection },
 	{ ACTION_SELECT_LINES, &Content::actionSelectLinesSelection },
+	{ ACTION_PAGE_UP, &Content::actionPageUpSelection },
+	{ ACTION_PAGE_DOWN, &Content::actionPageDownSelection },
 };
 
 Content::Content(std::string c)
@@ -599,6 +603,16 @@ void Content::actionSelectLinesSelection(int& posX, int& posY, int& startX, int&
 	posX = this->content[posY].size();
 }
 
+void Content::actionPageUpSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionPageUp(posX, posY);
+}
+
+void Content::actionPageDownSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	this->actionPageDown(posX, posY);
+}
+
 void Content::actionDuplicateLine(int& posX, int& posY)
 {
 	this->content.insert(this->content.begin() + posY, this->content[posY]);
@@ -633,6 +647,16 @@ void Content::actionUntabify(int& posX, int& posY)
 		this->wasEdited = true;
 		return;
 	}
+}
+
+void Content::actionPageUp(int& posX, int& posY)
+{
+	posY = min(posY + PAGE_UP_DOWN_SIZE, this->content.size() - 1);
+}
+
+void Content::actionPageDown(int& posX, int& posY)
+{
+	posY = max(posY - PAGE_UP_DOWN_SIZE, 0);
 }
 
 void Content::actionSaveFile(int& posX, int& posY)
