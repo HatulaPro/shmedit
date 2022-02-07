@@ -75,7 +75,13 @@ A text editor program for windows.
       ```
       cmd| :fr StrToLookFor~StrToBeReplacedWith
       ```
-      
+    
+    - `<Integer>`: Type any integer and then `Enter` to jump to that line. For example, the following command will move the cursor to line 45:
+    
+      ```
+      cmd| 45
+      ```      
+    
     #### Instant commands:    
     - `s`: Save file.
     - `i`, `Enter`: Exit cmd mode.

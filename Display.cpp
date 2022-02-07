@@ -165,9 +165,6 @@ std::string Display::padToLine(std::string line, short width) const
 
 void Display::callAction(char x)
 {
-	if (x == '\t') {
-		this->commandOutput = "!";
-	}
 	this->commandOutput = "";
 
 	if (x == -32 or x == 224 or x == 0) { // Next is utils
@@ -199,7 +196,7 @@ void Display::callAction(char x)
 		this->lastKeys = "";
 		return;
 	}
-	else if (x == ACTION_START_DEAFULT) { // Starting command
+	else if (x == ACTION_START_DEAFULT) { // Starting default
 		this->c.setState(DEAFULT);
 		this->lastKeys = "";
 		return;
@@ -252,7 +249,13 @@ void Display::callAction(char x)
 			if (!this->lastKeys.size()) return;
 
 			// Called command was... called
-			if (this->lastKeys[0] == BEGIN_CALLED_COMMAND) {
+			if (this->lastKeys.find_first_not_of("0123456789") == std::string::npos) { // Just a number
+				std::stringstream s(this->lastKeys);
+				s >> this->posY;
+				this->posY = std::min(this->posY, (int)this->c.size() - 1);
+				this->posX = std::min(this->posX, (int)this->c.getLine(this->posY).size());
+			}
+			else if (this->lastKeys[0] == BEGIN_CALLED_COMMAND) {
 				this->commandOutput = this->c.runCommand(this->lastKeys.substr(1), this->posX, this->posY);
 			}
 			// Command does not exist
@@ -280,7 +283,6 @@ void Display::callAction(char x)
 				count = std::max(1, count);
 			}
 			std::getline(tmp, command);
-
 
 			if (Content::instantCommands.count(command)) {
 				for (int i = 0; i < count; i++) {
