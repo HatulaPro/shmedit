@@ -42,6 +42,8 @@ A text editor program for windows.
         - `c`: Copy selection.
         - `r`, `Backspace`: Remove selection.
         - `p`: Paste from `mem`. Will be pasted after the dynamic cursor.
+        - `Alt + Up`: Move selection one line up.
+        - `Alt + Down`: Move selection one line down.
   
   
   - ### Commands:

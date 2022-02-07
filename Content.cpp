@@ -77,6 +77,8 @@ const std::map<char, void(Content::*)(int&, int&, int&, int&)> Content::visualCo
 	{ ACTION_FN_LEFT, &Content::actionJumpToLineStartSelection  },
 	{ ACTION_CTRL_RIGHT_KEY, &Content::actionWordRightSelection  },
 	{ ACTION_CTRL_LEFT_KEY, &Content::actionWordLeftSelection  },
+	{ ACTION_ALT_UP, &Content::actionMoveLineUpSelection },
+	{ ACTION_ALT_DOWN, &Content::actionMoveLineDownSelection },
 };
 
 Content::Content(std::string c)
@@ -559,6 +561,31 @@ void Content::actionWordLeftSelection(int& posX, int& posY, int& startX, int& st
 	else if (posY == startY && posX < startX) {
 		this->state = DEAFULT;
 	}
+}
+
+void Content::actionMoveLineUpSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	if (startY == 0) return;
+	if (posY == startY) this->actionMoveLineUp(posX, posY);
+	std::string tmp = this->content[startY - 1];
+	this->content.erase(this->content.begin() + startY - 1);
+	this->content.insert(this->content.begin() + posY, tmp);
+	startY--;
+	posY--;
+	this->wasEdited = true;
+}
+
+void Content::actionMoveLineDownSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	if (posY == this->content.size() - 1) return;
+	if (posY == startY) this->actionMoveLineDown(posX, posY);
+
+	std::string tmp = this->content[posY + 1];
+	this->content.erase(this->content.begin() + posY + 1);
+	this->content.insert(this->content.begin() + startY, tmp);
+	startY++;
+	posY++;
+	this->wasEdited = true;
 }
 
 void Content::actionDuplicateLine(int& posX, int& posY)
