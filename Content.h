@@ -94,6 +94,7 @@ public:
 	void actionWordLeftSelection(int& posX, int& posY, int& startX, int& startY);
 	void actionMoveLineUpSelection(int& posX, int& posY, int& startX, int& startY);
 	void actionMoveLineDownSelection(int& posX, int& posY, int& startX, int& startY);
+	void actionSelectLinesSelection(int& posX, int& posY, int& startX, int& startY);
 
 
 	std::string commandOpen(std::string command, int& posX, int& posY);

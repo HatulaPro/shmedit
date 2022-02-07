@@ -44,6 +44,7 @@ A text editor program for windows.
         - `p`: Paste from `mem`. Will be pasted after the dynamic cursor.
         - `Alt + Up`: Move selection one line up.
         - `Alt + Down`: Move selection one line down.
+        - `Ctrl + L`: Select select lines from start to end.
   
   
   - ### Commands:

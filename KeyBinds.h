@@ -59,4 +59,6 @@
 #define ACTION_PASTE_SELECTION 'p'
 #define ACTION_REMOVE_SELECTION 'r'
 
+#define ACTION_SELECT_LINES 12
+
 #define EXIT_CMD_MODE 'i'

@@ -79,6 +79,7 @@ const std::map<char, void(Content::*)(int&, int&, int&, int&)> Content::visualCo
 	{ ACTION_CTRL_LEFT_KEY, &Content::actionWordLeftSelection  },
 	{ ACTION_ALT_UP, &Content::actionMoveLineUpSelection },
 	{ ACTION_ALT_DOWN, &Content::actionMoveLineDownSelection },
+	{ ACTION_SELECT_LINES, &Content::actionSelectLinesSelection },
 };
 
 Content::Content(std::string c)
@@ -468,8 +469,11 @@ void Content::actionDeleteSelection(int& posX, int& posY, int& startX, int& star
 	if (startY + 1 < posY) {
 		this->content.erase(this->content.begin() + startY + 1, this->content.begin() + posY + 1);
 	}
+	else {
+		this->content.erase(this->content.begin() + posY);
+	}
 	posY = startY;
-	if (startX == this->content[posY].size()) startX--;
+	if (startX == this->content[posY].size() && startX > 0) startX--;
 	posX = startX + 1;
 	this->wasEdited = true;
 }
@@ -586,6 +590,12 @@ void Content::actionMoveLineDownSelection(int& posX, int& posY, int& startX, int
 	startY++;
 	posY++;
 	this->wasEdited = true;
+}
+
+void Content::actionSelectLinesSelection(int& posX, int& posY, int& startX, int& startY)
+{
+	startX = 0;
+	posX = this->content[posY].size();
 }
 
 void Content::actionDuplicateLine(int& posX, int& posY)
