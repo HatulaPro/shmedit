@@ -94,7 +94,8 @@ Content::Content(std::string c)
 			return;
 		}
 	}
-	throw std::exception("File not found");
+	this->fileName = c;
+	setContent(c);
 }
 
 void Content::setContent(std::string c)
