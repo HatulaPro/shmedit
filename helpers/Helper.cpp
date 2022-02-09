@@ -147,7 +147,7 @@ std::string Helper::getTimeString()
 
 bool Helper::isPrintable(char c)
 {
-	return c >= 32 && c <= 126;
+	return c >= 32 && c <= 126 || c == '\t';
 }
 
 bool Helper::isAlphanumeric(char c)

@@ -9,6 +9,7 @@
 #include <chrono>
 #include <map>
 #include <thread>
+#include "Config.h"
 
 #define LINE_NUMBER_SIZE 4
 #define NON_CONTENT_LINES 3
@@ -204,23 +205,23 @@ void Display::callAction(int x)
 	}
 
 	if (this->c.getState() == VISUAL) { // Visual mode
-		if (x == EXIT_CMD_MODE || x == ACTION_ENTER) {
+		if (x == EXIT_CMD_MODE || x == ACTION_NEWLINE) {
 			this->c.setState(DEAFULT);
 		}
-		if (Content::visualCommands.count(x)) { // All visual commands
-			auto f = Content::visualCommands.find(x);
+		if (Config::visualCommands.count(x)) { // All visual commands
+			auto f = Config::visualCommands.find(x);
 			(this->c.*(f->second))(this->posX, this->posY, this->startX, this->startY);
 		}
 		return;
 	}
 	else if (this->c.getState() == FIND) { // Find
-		if (x == FIND_NEXT || x == ACTION_ENTER) {
+		if (x == FIND_NEXT || x == ACTION_NEWLINE) {
 			this->commandOutput = this->c.runCommand(COMMAND_FIND, this->posX, this->posY);
 		}
 		return;
 	}
 	if (this->c.isInFindState()) { // Find and replace
-		if (x == FIND_NEXT || x == ACTION_ENTER) {
+		if (x == FIND_NEXT || x == ACTION_NEWLINE) {
 			this->commandOutput = this->c.runCommand(COMMAND_FIND_AND_REPLACE, this->posX, this->posY);
 		}
 		else if (x == FIND_AND_REPLACE_SKIP) {
@@ -234,7 +235,7 @@ void Display::callAction(int x)
 		if (this->lastKeys.size() == 0 && x == EXIT_CMD_MODE) {
 			this->c.setState(DEAFULT);
 		}
-		else if (x == ACTION_ENTER) {
+		else if (x == ACTION_NEWLINE) {
 			this->c.setState(DEAFULT);
 			// No command
 			if (!this->lastKeys.size()) return;
@@ -271,7 +272,7 @@ void Display::callAction(int x)
 			}
 			std::getline(tmp, command);
 
-			if (Content::instantCommands.count(command)) {
+			if (Config::instantCommands.count(command)) {
 				for (int i = 0; i < count; i++) {
 					this->commandOutput = this->c.runCommand(command, this->posX, this->posY);
 					this->lastKeys = "";
@@ -280,9 +281,9 @@ void Display::callAction(int x)
 		}
 		return;
 	}
-	if (Content::oneClickActions.count(x)) { // One click actions
-		auto f = Content::oneClickActions.find(x);
-		(this->c.*(f->second))(this->posX, this->posY);
+	if (Config::oneClickActions.count(x)) { // One click actions
+		auto f = Config::oneClickActions.find(x);
+		(this->c.*(f->second.second))(this->posX, this->posY);
 	}
 	else if (Helper::isPrintable(x)) { // A normal character
 		this->c.actionWrite(this->posX, this->posY, x);

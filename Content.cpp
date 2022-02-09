@@ -8,82 +8,9 @@
 #include <algorithm>
 #include <ctype.h>
 #include <chrono>
+#include "Config.h"
 
-const std::map<int, void (Content::*)(int&, int&)> Content::oneClickActions = {
-	{ ACTION_ENTER, &Content::actionEnter },
-	{ ACTION_CTRL_ENTER, &Content::actionEnterNewline },
-	{ ACTION_REMOVE, &Content::actionRemove },
-	{ ACTION_CTRL_REMOVE, &Content::actionRemoveWord },
-	{ ACTION_CTRL_S, &Content::actionSaveFile },
-	{ ACTION_CTRL_D, &Content::actionDuplicateLine },
-	{ ACTION_CTRL_L, &Content::actionDeleteLine },
-	{ ACTION_TABIFY, &Content::actionTabify },
-	{ ACTION_UNTABIFY, &Content::actionUntabify },
-	{ ACTION_DELETE, &Content::actionDelete },
-	{ ACTION_CTRL_DELETE, &Content::actionDeleteWord },
-	{ ACTION_LEFT_KEY, &Content::actionLeftKey },
-	{ ACTION_RIGHT_KEY, &Content::actionRightKey },
-	{ ACTION_UP_KEY, &Content::actionUpKey },
-	{ ACTION_DOWN_KEY, &Content::actionDownKey },
-	{ ACTION_CTRL_RIGHT_KEY, &Content::actionWordRight },
-	{ ACTION_CTRL_LEFT_KEY, &Content::actionWordLeft },
-	{ ACTION_ALT_UP, &Content::actionMoveLineUp },
-	{ ACTION_ALT_DOWN, &Content::actionMoveLineDown },
-	{ ACTION_FN_RIGHT, &Content::actionJumpToLineEnd },
-	{ ACTION_FN_LEFT, &Content::actionJumpToLineStart },
-	{ ACTION_PAGE_UP, &Content::actionPageUp },
-	{ ACTION_PAGE_DOWN, &Content::actionPageDown },
-};
 
-const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Content::calledCommands = {
-	{COMMAND_OPEN, &Content::commandOpen},
-	{COMMAND_FIND, &Content::commandFind},
-	{COMMAND_FIND_AND_REPLACE, &Content::commandFindAndReplace},
-};
-
-const std::map<std::string, void(Content::*)(int&, int&)> Content::instantCommands = {
-	{ COMMAND_SAVE, &Content::actionSaveFile },
-	{ COMMAND_QUIT, &Content::actionQuit },
-	{ COMMAND_QUIT_AND_SAVE, &Content::actionQuitAndSave },
-	{ COMMAND_PASTE, &Content::actionPaste },
-	{ COMMAND_DELETE_WORD, &Content::actionDeleteWord },
-	{ COMMAND_REMOVE_WORD, &Content::actionRemoveWord },
-	{ COMMAND_DELETE_LINE, &Content::actionDeleteLine },
-	{ COMMAND_MOVE_WORD, &Content::actionWordRight },
-	{ COMMAND_BACK_WORD, &Content::actionWordLeft },
-	{ COMMAND_TABIFY, &Content::actionTabify },
-	{ COMMAND_UNTABIFY, &Content::actionUntabify },
-	{ COMMAND_LEFT_KEY, &Content::actionLeftKey },
-	{ COMMAND_RIGHT_KEY, &Content::actionRightKey },
-	{ COMMAND_UP_KEY, &Content::actionUpKey },
-	{ COMMAND_DOWN_KEY, &Content::actionDownKey },
-	{ COMMAND_COPY_WORD, &Content::actionCopyWord },
-	{ COMMAND_COPY_LINE, &Content::actionCopyLine },
-	{ COMMAND_COPY_WORD_BACK, &Content::actionCopyWordBack },
-};
-
-const std::map<int, void(Content::*)(int&, int&, int&, int&)> Content::visualCommands = {
-	{ ACTION_COPY_SELECTION, &Content::actionCopySelection },
-	{ ACTION_PASTE_SELECTION, &Content::actionPasteSelection },
-	{ ACTION_REMOVE, &Content::actionDeleteSelection },
-	{ ACTION_REMOVE_SELECTION, &Content::actionDeleteSelection },
-	{ ACTION_REMOVE_SELECTION_ALT, &Content::actionDeleteSelection },
-	{ ACTION_TABIFY, &Content::actionTabifySelection },
-	{ ACTION_UNTABIFY, &Content::actionUntabifySelection },
-	{ ACTION_LEFT_KEY, &Content::actionLeftKeySelection },
-	{ ACTION_RIGHT_KEY, &Content::actionRightKeySelection },
-	{ ACTION_UP_KEY, &Content::actionUpKeySelection },
-	{ ACTION_DOWN_KEY, &Content::actionDownKeySelection },
-	{ ACTION_FN_RIGHT, &Content::actionJumpToLineEndSelection  },
-	{ ACTION_FN_LEFT, &Content::actionJumpToLineStartSelection  },
-	{ ACTION_CTRL_RIGHT_KEY, &Content::actionWordRightSelection  },
-	{ ACTION_CTRL_LEFT_KEY, &Content::actionWordLeftSelection  },
-	{ ACTION_ALT_UP, &Content::actionMoveLineUpSelection },
-	{ ACTION_ALT_DOWN, &Content::actionMoveLineDownSelection },
-	{ ACTION_SELECT_LINES, &Content::actionSelectLinesSelection },
-	{ ACTION_PAGE_UP, &Content::actionPageUpSelection },
-	{ ACTION_PAGE_DOWN, &Content::actionPageDownSelection },
-};
 
 Content::Content(std::string c)
 {
@@ -287,7 +214,7 @@ void Content::actionEnterNoSpacing(int& posX, int& posY)
 void Content::actionEnterNewline(int& posX, int& posY)
 {
 	int spaceCount = 0;
-	while (spaceCount < this->content[posY].size() && this->content[posY][spaceCount] == ' ') spaceCount += 2;
+	while (spaceCount < this->content[posY].size() && this->content[posY][spaceCount] == ' ') spaceCount += TAB_SIZE;
 	posY += 1;
 	this->content.insert(this->content.begin() + posY, std::string(spaceCount, ' '));
 	posX = spaceCount;
@@ -772,6 +699,7 @@ std::string Content::commandFindAndReplace(std::string command, int& posX, int& 
 		this->state = FIND_AND_REPLACE_R;
 		return "Found.";
 	}
+	return "Unreachable";
 }
 
 void Content::actionPaste(int& posX, int& posY)
@@ -790,9 +718,11 @@ void Content::actionPaste(int& posX, int& posY)
 
 void Content::actionDeleteLine(int& posX, int& posY)
 {
+	this->wasEdited = true;
 	if (this->content.size() == 1) {
 		this->content[0] = "";
 		posX = 0;
+		return;
 	}
 	this->commandInfo = this->content[posY] + '\n';
 	this->content.erase(this->content.begin() + posY);
@@ -807,8 +737,8 @@ std::string Content::runCommand(std::string command, int& posX, int& posY)
 		return "";
 	}
 
-	if (Content::instantCommands.count(command)) {
-		auto f = Content::instantCommands.find(command);
+	if (Config::instantCommands.count(command)) {
+		auto f = Config::instantCommands.find(command);
 		(this->*(f->second))(posX, posY);
 		return "";
 	}
@@ -817,8 +747,8 @@ std::string Content::runCommand(std::string command, int& posX, int& posY)
 	std::string afterSpace = Helper::trim(command.substr(commandName.size()));
 
 
-	if (Content::calledCommands.count(commandName)) {
-		auto f = Content::calledCommands.find(commandName);
+	if (Config::calledCommands.count(commandName)) {
+		auto f = Config::calledCommands.find(commandName);
 		return (this->*(f->second))(afterSpace, posX, posY);
 	}
 	return "Command not found";

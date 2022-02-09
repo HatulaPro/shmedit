@@ -11,8 +11,6 @@ A text editor program for windows.
   
 
 ## Documentation:
-  - Currently, there is no way to customize keybinds. This feature will be added in the future though. 
-
   - Notice that Shmedit is still in development, so many useful features (such as copy & paste) do not exist yet.
   
   - `mem`: The editor's memory. 
@@ -27,13 +25,15 @@ A text editor program for windows.
     - `Alt + Up`, `Alt + Down`: Move current line up/down.
     - `Ctrl + S`: Save file.
     - `Ctrl + Enter`: Leave current line and start a new one.
-    - `Ctrl + C`: Start command mode.
     - `Ctrl + D`: Duplicate current line.
     - `Ctrl + L`: Delete current line.
     - `FN + Right`, `FN + Left`: Jump to the end/start of the line.
     - `FN + Up`, `FN + Down`: Jump 25 lines up/down.
     - `Ctrl + ]`: Tabify line.
     - `Ctrl + [`: Untabify line.
+    
+    - `Ctrl + U`: Switch to default mode.
+    - `Ctrl + C`: Start command mode.
     - `Ctrl + F`: The command 'f: ' will be set, to allow users to get to `find` mode more easily.
     - `Ctrl + R`: The command 'fr: ' will be set, to allow users to get to `find&rep` mode more easily.
     - `Ctrl + V`: Switches to `visual` mode.
@@ -88,7 +88,7 @@ A text editor program for windows.
     
     #### Instant commands:    
     - `s`: Save file.
-    - `i`, `Enter`: Exit cmd mode.
+    - `u`, `Enter`: Exit cmd mode.
     - `q`: Saves and quits the editor. 
     - `Q`: Quits the editor. Warning: This command does not save the contents of the file.
     - `dw`: Deletes the next word and saves its contents in `mem`. 
@@ -106,6 +106,44 @@ A text editor program for windows.
     - `cw`: Copy the next word to `mem`.
     - `cl`: Copy the next line to `mem`.
     - `cw`: Copy the last word to `mem`.
+    
+  ## Config File:
+- All configurations are still under development and there might be changes in the future.
+- The config file can only be used to change certain keybinds (for now).
+- The syntax is very simple. Every line must be of the following form: 
+  ```
+  ActionName:KEY
+  ```
+- Lines that do not follow that form will be ignored (there is no feedback yet). 
+- Use a `#` for comments.
+- Possible action names:
+  Newline, InstantNewline, Remove, RemoveWord, SaveFile, DuplicateLine, DeleteLine, Tabify, Untabify, Delete, DeleteWord, MoveLeft, MoveRight, MoveUp, MoveDown, MoveWordRight, MoveWordLeft, MoveLineUp, MoveLineDown, JumpToLineEnd, JumpToLineStart, PageUp, PageDown
+
+### Specifying Keys:
+  - Use `^` to specify Ctrl.
+    ```
+    MoveLeft:^L
+    ```
+    Would set the `MoveLeft` button to `Ctrl + L`
+  - Use `@` to specify Alt.
+    ```
+    MoveLeft:@UP
+    ```
+    Would set the `MoveLeft` button to `Alt + UP`
+  - Use `*` to specify function key.
+    ```
+    MoveLeft:*UP
+    ```
+    Would set the `MoveLeft` button to `FN + UP`
+  
+  - `Enter`: Enter key.
+  - `Tab`: Tab key.
+  - `Del`: Delete key.
+  - `LEFT`, `RIGHT`, `UP`, `DOWN`: Arrow keys.
+  - `Del`: Delete key.
+  + Other available options (Must be combined with some prefix) : `]`, `\`, `[`
+      
+      
     
 ## Future Features:
   - [X] A working text editor
