@@ -1,4 +1,3 @@
-#include <fstream>
 #include <string>
 #include <vector>
 #include "Windows.h"
@@ -28,12 +27,7 @@ typedef std::vector<Colorizer> Colorizers;
 
 class Helper {
 public:
-	static void hideCursor(HANDLE hConsole);
-	static void getCursorPosition(HANDLE hConsole, COORD& pcoord);
-	static void setCursorPosition(HANDLE hConsole, COORD coord);
-	static void getTerminalSize(HANDLE hConsole, short* x, short* y);
-	static std::string readFile(std::string fileName);
-	static void writeFile(std::string fileName, std::string content);
+	
 	static std::string colorize(std::string text, int style);
 	static std::string colorize(std::string text, Colorizers colorizers);
 	static std::string setCursor(std::string line, int x);
@@ -44,7 +38,5 @@ public:
 	static bool isPrintable(char c);
 	static bool isAlphanumeric(char c);
 	static std::string trim(std::string s);
-	static std::string getFileName(std::string fileName);
-	static std::vector<std::string> getFilesInDirectory(std::string dir);
 	static bool insStrCompare(std::string a, std::string b);
 };

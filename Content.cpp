@@ -1,5 +1,6 @@
 #include "Content.h"
-#include "Helper.h"
+#include "helpers/Helper.h"
+#include "helpers/FilesUtil.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -89,7 +90,7 @@ const std::map<char, void(Content::*)(int&, int&, int&, int&)> Content::visualCo
 
 Content::Content(std::string c)
 {
-	for (auto i : Helper::getFilesInDirectory(c)) {
+	for (auto i : FilesUtil::getFilesInDirectory(c)) {
 		if (Helper::insStrCompare(c, i)) {
 			this->fileName = i;
 			setContent(i);
@@ -102,7 +103,7 @@ Content::Content(std::string c)
 void Content::setContent(std::string c)
 {
 	std::string tmp;
-	std::stringstream cc(Helper::readFile(c).c_str());
+	std::stringstream cc(FilesUtil::readFile(c).c_str());
 	this->content = std::vector<std::string>();
 	while (std::getline(cc, tmp, '\n')) {
 		this->content.push_back(Helper::replace(tmp, "\t", "  "));
@@ -661,7 +662,7 @@ void Content::actionPageDown(int& posX, int& posY)
 
 void Content::actionSaveFile(int& posX, int& posY)
 {
-	Helper::writeFile(this->fileName, this->getContent());
+	FilesUtil::writeFile(this->fileName, this->getContent());
 	this->wasEdited = false;
 }
 

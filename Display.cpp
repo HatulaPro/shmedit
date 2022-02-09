@@ -1,5 +1,6 @@
 #include "Display.h"
-#include "Helper.h"
+#include "helpers/Helper.h"
+#include "helpers/ConsoleUtils.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -29,8 +30,8 @@ void Display::showTopBar(short width, bool wasEdited) const
 
 Display::Display(std::string fname) : c(fname) {
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	Helper::hideCursor(this->hConsole);
-	Helper::getCursorPosition(this->hConsole, this->cursorPosition);
+	ConsoleUtils::hideCursor(this->hConsole);
+	ConsoleUtils::getCursorPosition(this->hConsole, this->cursorPosition);
 }
 
 void Display::show() const
@@ -41,7 +42,7 @@ void Display::show() const
 	// Getting terminal dimensions
 	short width = 0;
 	short height = 0;
-	Helper::getTerminalSize(this->hConsole, &width, &height);
+	ConsoleUtils::getTerminalSize(this->hConsole, &width, &height);
 	short effectiveHeight = height - NON_CONTENT_LINES;
 
 	this->showTopBar(width, this->c.getEditStatus());
@@ -152,9 +153,7 @@ void Display::show() const
 
 	// Reset cursor position
 
-	Helper::setCursorPosition(this->hConsole, this->cursorPosition);
-	//std::cout << (char)27 << '[' << heig/*ht << 'A';
-	//std::cout << (char)27 << '[' << width + 1*/ << 'D';
+	ConsoleUtils::setCursorPosition(this->hConsole, this->cursorPosition);
 }
 
 std::string Display::padToLine(std::string line, short width) const
