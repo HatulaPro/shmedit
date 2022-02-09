@@ -145,10 +145,14 @@ void Display::show() const
 	}
 
 	Colorizer commandArgsColor = { commandString.size(), commandData.size(),  commandArgsStyle };
+	Colorizer commandCursor = { commandString.size() + commandData.size(), 1,  CURSOR };
 	Colorizers c;
 	c.push_back(commandStringColor);
 	c.push_back(commandArgsColor);
-	std::cout << this->padToLine(Helper::colorize(commandString + commandData, c), width);
+	if (this->c.getState() == COMMAND) {
+		c.push_back(commandCursor);
+	}
+	std::cout << this->padToLine(Helper::colorize(commandString + commandData + ' ', c), width);
 	std::cout << this->padToLine(this->commandOutput, width);
 
 	// Reset cursor position
