@@ -1,10 +1,12 @@
 #include "Helper.h"
+#include "../KeyBinds.h"
 
 #include <algorithm>
 #include <chrono>
 #include <iostream>
 #include <string>
 #include <ctype.h>
+#include <conio.h>
 
 #define STD_OUTPUT_HANDLE -11
 
@@ -171,4 +173,13 @@ bool Helper::insStrCompare(std::string a, std::string b)
 		c = ::tolower(c);
 	});
 	return a == b;
+}
+
+int Helper::getNextKey()
+{
+	char key = _getch();
+	if (key == NEXT_IS_UTILS || key == NULL) {
+		return ((int)_getch() << 8) + key;
+	}
+	return key;
 }

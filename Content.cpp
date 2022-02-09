@@ -9,8 +9,17 @@
 #include <ctype.h>
 #include <chrono>
 
-const std::map<char, void (Content::*)(int&, int&)> Content::utilActions = {
-	{ACTION_DELETE, &Content::actionDelete},
+const std::map<int, void (Content::*)(int&, int&)> Content::oneClickActions = {
+	{ ACTION_ENTER, &Content::actionEnter },
+	{ ACTION_CTRL_ENTER, &Content::actionEnterNewline },
+	{ ACTION_REMOVE, &Content::actionRemove },
+	{ ACTION_CTRL_REMOVE, &Content::actionRemoveWord },
+	{ ACTION_CTRL_S, &Content::actionSaveFile },
+	{ ACTION_CTRL_D, &Content::actionDuplicateLine },
+	{ ACTION_CTRL_L, &Content::actionDeleteLine },
+	{ ACTION_TABIFY, &Content::actionTabify },
+	{ ACTION_UNTABIFY, &Content::actionUntabify },
+	{ ACTION_DELETE, &Content::actionDelete },
 	{ ACTION_CTRL_DELETE, &Content::actionDeleteWord },
 	{ ACTION_LEFT_KEY, &Content::actionLeftKey },
 	{ ACTION_RIGHT_KEY, &Content::actionRightKey },
@@ -24,18 +33,6 @@ const std::map<char, void (Content::*)(int&, int&)> Content::utilActions = {
 	{ ACTION_FN_LEFT, &Content::actionJumpToLineStart },
 	{ ACTION_PAGE_UP, &Content::actionPageUp },
 	{ ACTION_PAGE_DOWN, &Content::actionPageDown },
-};
-
-const std::map<char, void (Content::*)(int&, int&)> Content::oneClickActions = {
-	{ ACTION_ENTER, &Content::actionEnter },
-	{ ACTION_CTRL_ENTER, &Content::actionEnterNewline },
-	{ ACTION_REMOVE, &Content::actionRemove },
-	{ ACTION_CTRL_REMOVE, &Content::actionRemoveWord },
-	{ ACTION_CTRL_S, &Content::actionSaveFile },
-	{ ACTION_CTRL_D, &Content::actionDuplicateLine },
-	{ ACTION_CTRL_L, &Content::actionDeleteLine },
-	{ ACTION_TABIFY, &Content::actionTabify },
-	{ ACTION_UNTABIFY, &Content::actionUntabify },
 };
 
 const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Content::calledCommands = {
@@ -65,7 +62,7 @@ const std::map<std::string, void(Content::*)(int&, int&)> Content::instantComman
 	{ COMMAND_COPY_WORD_BACK, &Content::actionCopyWordBack },
 };
 
-const std::map<char, void(Content::*)(int&, int&, int&, int&)> Content::visualCommands = {
+const std::map<int, void(Content::*)(int&, int&, int&, int&)> Content::visualCommands = {
 	{ ACTION_COPY_SELECTION, &Content::actionCopySelection },
 	{ ACTION_PASTE_SELECTION, &Content::actionPasteSelection },
 	{ ACTION_REMOVE, &Content::actionDeleteSelection },
@@ -652,12 +649,14 @@ void Content::actionUntabify(int& posX, int& posY)
 
 void Content::actionPageUp(int& posX, int& posY)
 {
-	posY = min(posY + PAGE_UP_DOWN_SIZE, this->content.size() - 1);
+	posY = max(posY - PAGE_UP_DOWN_SIZE, 0);
+	posX = min(this->content[posY].size(), posX);
 }
 
 void Content::actionPageDown(int& posX, int& posY)
 {
-	posY = max(posY - PAGE_UP_DOWN_SIZE, 0);
+	posY = min(posY + PAGE_UP_DOWN_SIZE, this->content.size() - 1);
+	posX = min(this->content[posY].size(), posX);
 }
 
 void Content::actionSaveFile(int& posX, int& posY)

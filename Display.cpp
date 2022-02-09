@@ -166,15 +166,9 @@ std::string Display::padToLine(std::string line, short width) const
 	return result;
 }
 
-void Display::callAction(char x)
+void Display::callAction(int x)
 {
 	this->commandOutput = "";
-
-	if (x == -32 or x == 224 or x == 0) { // Next is utils
-		this->lastKeys = "a";
-		this->lastKeys[0] = NEXT_IS_UTILS;
-		return;
-	}
 
 	if (x == ACTION_START_FIND) { // Ctrl + F for find
 		this->lastKeys = std::string(1, BEGIN_CALLED_COMMAND) + COMMAND_FIND + ' ';
@@ -219,9 +213,6 @@ void Display::callAction(char x)
 		if (x == FIND_NEXT || x == ACTION_ENTER) {
 			this->commandOutput = this->c.runCommand(COMMAND_FIND, this->posX, this->posY);
 		}
-		else if (x != NEXT_IS_UTILS && x != NULL) {
-			this->c.setState(DEAFULT);
-		}
 		return;
 	}
 	if (this->c.isInFindState()) { // Find and replace
@@ -232,19 +223,12 @@ void Display::callAction(char x)
 			this->c.setState(FIND_AND_REPLACE_F);
 			this->commandOutput = this->c.runCommand(COMMAND_FIND_AND_REPLACE, this->posX, this->posY);
 		}
-		else if (x != NEXT_IS_UTILS && x != NULL) {
-			this->c.setState(DEAFULT);
-		}
 		return;
 	}
 	if (this->c.getState() == COMMAND) { // Command mode
 		// Leave cmd mode
 		if (this->lastKeys.size() == 0 && x == EXIT_CMD_MODE) {
 			this->c.setState(DEAFULT);
-		}
-		// let the program know that a weird key was pressed
-		else if (this->lastKeys.size() > 0 && this->lastKeys[this->lastKeys.size() - 1] == NEXT_IS_UTILS) {
-			this->lastKeys = this->lastKeys.substr(0, this->lastKeys.size() - 1);
 		}
 		else if (x == ACTION_ENTER) {
 			this->c.setState(DEAFULT);
@@ -271,10 +255,6 @@ void Display::callAction(char x)
 		else if (x == ACTION_REMOVE && this->lastKeys.size() > 0) {
 			this->lastKeys = this->lastKeys.substr(0, this->lastKeys.size() - 1);
 		}
-		// let the program know that a weird key was pressed 
-		else if (x == NEXT_IS_UTILS || x == NULL) {
-			this->lastKeys += NEXT_IS_UTILS;
-		}
 		// Normal character
 		else if (Helper::isPrintable(x)) {
 			this->lastKeys += x;
@@ -299,13 +279,6 @@ void Display::callAction(char x)
 	if (Content::oneClickActions.count(x)) { // One click actions
 		auto f = Content::oneClickActions.find(x);
 		(this->c.*(f->second))(this->posX, this->posY);
-	}
-	else if (this->lastKeys.size() > 0 && this->lastKeys[0] == NEXT_IS_UTILS) { // Util actions
-		this->lastKeys = "";
-		if (Content::utilActions.count(x)) {
-			auto f = Content::utilActions.find(x);
-			(this->c.*(f->second))(this->posX, this->posY);
-		}
 	}
 	else if (Helper::isPrintable(x)) { // A normal character
 		this->c.actionWrite(this->posX, this->posY, x);

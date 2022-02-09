@@ -26,7 +26,7 @@ public:
 	Display(std::string fname);
 	void show() const;
 	std::string padToLine(std::string line, short width) const;
-	void callAction(char x);
+	void callAction(int x);
 
 
 };

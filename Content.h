@@ -107,11 +107,10 @@ public:
 	std::string runCommand(std::string command, int& posX, int& posY);
 
 
-	static const std::map<char, void (Content::*)(int&, int&)> utilActions; 
-	static const std::map<char, void (Content::*)(int&, int&)> oneClickActions; 
+	static const std::map<int, void (Content::*)(int&, int&)> oneClickActions; 
 
 	static const std::map<std::string, void(Content::*)(int&, int&)> instantCommands;
-	static const std::map<char, void(Content::*)(int&, int&, int&, int&)> visualCommands;
+	static const std::map<int, void(Content::*)(int&, int&, int&, int&)> visualCommands;
 	static const std::map<std::string, std::string (Content::*)(std::string, int&, int&)> calledCommands; 
 	//{ACTION_CTRL_S, Content::actionSave},
 };
