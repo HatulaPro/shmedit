@@ -29,3 +29,21 @@ void ConsoleUtils::getTerminalSize(HANDLE hConsole, short* x, short* y)
 	*y = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 }
 
+std::string ConsoleUtils::getClipboardText()
+{
+	if (!OpenClipboard(nullptr)) return "";
+
+	HANDLE hData = GetClipboardData(CF_TEXT);
+	if (hData == nullptr) return "";
+
+	char* pszText = static_cast<char*>(GlobalLock(hData));
+	if (pszText == nullptr) return "";
+
+	std::string text(pszText);
+
+	GlobalUnlock(hData);
+	CloseClipboard();
+	
+	return text;
+}
+

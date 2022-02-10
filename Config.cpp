@@ -28,6 +28,7 @@ std::map<int, OneClickAction> Config::oneClickActions = {
 	{ACTION_GOTO_START_LINE, {"JumpToLineStart", &Content::actionJumpToLineStart}},
 	{ACTION_PAGE_UP, {"PageUp", &Content::actionPageUp}},
 	{ACTION_PAGE_DOWN, {"PageDown", &Content::actionPageDown}},
+	{ACTION_PASTE_CLIPBOARD, {"PasteClipboard", &Content::actionPasteFromClipboard}},
 };
 
 const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Config::calledCommands = {
@@ -40,7 +41,8 @@ const std::map<std::string, void (Content::*)(int&, int&)> Config::instantComman
 	{COMMAND_SAVE, &Content::actionSaveFile},
 	{COMMAND_QUIT, &Content::actionQuit},
 	{COMMAND_QUIT_AND_SAVE, &Content::actionQuitAndSave},
-	{COMMAND_PASTE, &Content::actionPaste},
+	{COMMAND_PASTE, &Content::actionPaste} ,
+	{COMMAND_PASTE_CLIPBOARD,& Content::actionPasteFromClipboard},
 	{COMMAND_DELETE_WORD, &Content::actionDeleteWord},
 	{COMMAND_REMOVE_WORD, &Content::actionRemoveWord},
 	{COMMAND_DELETE_LINE, &Content::actionDeleteLine},
@@ -103,6 +105,7 @@ bool Config::parse(std::string fileName)
 		key = Config::getKeybind(value);
 		if (!key) continue;
 
+		// Handling oneClickActions:
 		for (auto f = Config::oneClickActions.begin(); f != Config::oneClickActions.end(); f++) {
 			if (f->second.first == funcName) {
 				if (Config::oneClickActions.find(key) == Config::oneClickActions.end()) {
@@ -115,6 +118,8 @@ bool Config::parse(std::string fileName)
 				}
 			}
 		}
+
+		// Handling visualCommands:
 		for (auto f = Config::visualCommands.begin(); f != Config::visualCommands.end(); f++) {
 			if (f->second.first == funcName) {
 				if (Config::visualCommands.find(key) == Config::visualCommands.end()) {

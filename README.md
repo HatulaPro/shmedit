@@ -24,6 +24,7 @@ A text editor program for windows.
     - `Ctrl + Left`, `Ctrl + Right`: Move one whole word to that direction.
     - `Alt + Up`, `Alt + Down`: Move current line up/down.
     - `Ctrl + S`: Save file.
+    - `Ctrl + V`: Paste from clipboard.
     - `Ctrl + Enter`: Leave current line and start a new one.
     - `Ctrl + D`: Duplicate current line.
     - `Ctrl + L`: Delete current line.
@@ -95,6 +96,7 @@ A text editor program for windows.
     - `dl`: Deletes the current line and saves its contents in `mem`. 
     - `db`: Removes the last word and saves its contents in `mem`. 
     - `p`: Pastes the last word from `mem`.
+    - `P`: Pastes from your clipboard.
     - `w`: Moves one word to the left.
     - `b`: Moves one word to the right.
     - `ta`: Tabify line.
@@ -118,7 +120,7 @@ A text editor program for windows.
     - Use a `#` for comments.
     - Possible action names:
       ```
-      Newline, InstantNewline, Remove, RemoveWord, SaveFile, DuplicateLine, DeleteLine, Tabify, Untabify, Delete, DeleteWord, MoveLeft, MoveRight, MoveUp, MoveDown, MoveWordRight, MoveWordLeft, MoveLineUp, MoveLineDown, JumpToLineEnd, JumpToLineStart, PageUp, PageDown, VisualCopy, VisualPaste, VisualDelete, VisualTabify, VisualUntabify, VisualMoveLeft, VisualMoveRight, VisualMoveUp, VisualMoveDown, VisualJumpToLineEnd, VisualJumpToLineStart, VisualMoveWordRight, VisualMoveWordLeft, VisualMoveLineUp, VisualMoveLineDown, VisualSelectLines, VisualPageUp, VisualPageDown
+      Newline, InstantNewline, Remove, RemoveWord, SaveFile, DuplicateLine, DeleteLine, Tabify, Untabify, Delete, DeleteWord, MoveLeft, MoveRight, MoveUp, MoveDown, MoveWordRight, MoveWordLeft, MoveLineUp, MoveLineDown, JumpToLineEnd, JumpToLineStart, PageUp, PageDown, PasteClipboard, VisualCopy, VisualPaste, VisualDelete, VisualTabify, VisualUntabify, VisualMoveLeft, VisualMoveRight, VisualMoveUp, VisualMoveDown, VisualJumpToLineEnd, VisualJumpToLineStart, VisualMoveWordRight, VisualMoveWordLeft, VisualMoveLineUp, VisualMoveLineDown, VisualSelectLines, VisualPageUp, VisualPageDown
       ```
     
     ### Specifying Keys:

@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include <chrono>
 #include "Config.h"
+#include "helpers/ConsoleUtils.h"
 
 
 
@@ -368,6 +369,18 @@ void Content::actionCopyWordBack(int& posX, int& posY)
 	this->commandInfo = this->content[posY].substr(posX - count, count);
 }
 
+void Content::actionPasteFromClipboard(int& posX, int& posY)
+{
+	std::string text = ConsoleUtils::getClipboardText();
+	if (!text.size()) return;
+
+	std::string tmp = this->commandInfo;
+	this->commandInfo = text;
+	this->actionPaste(posX, posY);
+	this->commandInfo = tmp;
+	this->wasEdited = true;
+}
+
 void Content::actionCopySelection(int& posX, int& posY, int& startX, int& startY)
 {
 	if (posY == startY) {
@@ -469,7 +482,7 @@ void Content::actionUntabifySelection(int& posX, int& posY, int& startX, int& st
 {
 	for (size_t i = startY; i <= posY; i++) {
 		size_t count = 0;
-		
+
 		while (count < this->content[i].size() && isspace(this->content[i][count]) && count < TAB_SIZE) count++;
 
 		if (count > 0) {
@@ -705,13 +718,19 @@ std::string Content::commandFindAndReplace(std::string command, int& posX, int& 
 void Content::actionPaste(int& posX, int& posY)
 {
 	if (!this->commandInfo.size()) return;
-	
+
+	bool gotSlashR = false;
 	for (size_t i = 0; i < this->commandInfo.size(); i++) {
-		if (commandInfo[i] == '\n') {
+		if (commandInfo[i] == '\r') {
+			gotSlashR = true;
+		}
+		else if (gotSlashR && commandInfo[i] == '\n') {
 			this->actionEnterNoSpacing(posX, posY);
+			gotSlashR = false;
 		}
 		else {
 			this->actionWrite(posX, posY, commandInfo[i]);
+			gotSlashR = false;
 		}
 	}
 }

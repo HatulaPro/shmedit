@@ -45,6 +45,7 @@ public:
 	void setState(int state);
 	bool getEditStatus() const;
 
+	// One click actions:
 	void actionDelete(int& posX, int& posY);
 	void actionDeleteWord(int& posX, int& posY);
 	void actionMoveLineUp(int& posX, int& posY);
@@ -68,19 +69,17 @@ public:
 	void actionUntabify(int& posX, int& posY);
 	void actionPageUp(int& posX, int& posY);
 	void actionPageDown(int& posX, int& posY);
-
 	void actionSaveFile(int& posX, int& posY);
-
-
 	void actionQuit(int& posX, int& posY);
 	void actionQuitAndSave(int& posX, int& posY);
 	void actionPaste(int& posX, int& posY);
 	void actionDeleteLine(int& posX, int& posY);
-
 	void actionCopyWord(int& posX, int& posY);
 	void actionCopyLine(int& posX, int& posY);
 	void actionCopyWordBack(int& posX, int& posY);
+	void actionPasteFromClipboard(int& posX, int& posY);
 
+	// Visual Commands:
 	void actionCopySelection(int& posX, int& posY, int& startX, int& startY);
 	void actionPasteSelection(int& posX, int& posY, int& startX, int& startY);
 	void actionDeleteSelection(int& posX, int& posY, int& startX, int& startY);
@@ -100,7 +99,7 @@ public:
 	void actionPageUpSelection(int& posX, int& posY, int& startX, int& startY);
 	void actionPageDownSelection(int& posX, int& posY, int& startX, int& startY);
 
-
+	// Commands:
 	std::string commandOpen(std::string command, int& posX, int& posY);
 	std::string commandFind(std::string command, int& posX, int& posY);
 	std::string commandFindAndReplace(std::string command, int& posX, int& posY);
