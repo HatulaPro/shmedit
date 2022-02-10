@@ -36,8 +36,8 @@ A text editor program for windows.
     - `Ctrl + C`: Start command mode.
     - `Ctrl + F`: The command 'f: ' will be set, to allow users to get to `find` mode more easily.
     - `Ctrl + R`: The command 'fr: ' will be set, to allow users to get to `find&rep` mode more easily.
-    - `Ctrl + V`: Switches to `visual` mode.
-      + When in `visual` mode, you'll have two cursors. A static one (set to the location where you pressed `Ctrl + V`), and a dynamic one, which you can control.
+    - `Ctrl + B`: Switches to `visual` mode.
+      + When in `visual` mode, you'll have two cursors. A static one (set to the location where you pressed `Ctrl + B`), and a dynamic one, which you can control.
       + Controlling the `visual` mode dynamic cursor is done in the same way as normally, altough other modes are not available.
       + Visual mode functions:
         - `c`: Copy selection.
@@ -108,41 +108,43 @@ A text editor program for windows.
     - `cw`: Copy the last word to `mem`.
     
   ## Config File:
-- All configurations are still under development and there might be changes in the future.
-- The config file can only be used to change certain keybinds (for now).
-- The syntax is very simple. Every line must be of the following form: 
-  ```
-  ActionName:KEY
-  ```
-- Lines that do not follow that form will be ignored (there is no feedback yet). 
-- Use a `#` for comments.
-- Possible action names:
-  Newline, InstantNewline, Remove, RemoveWord, SaveFile, DuplicateLine, DeleteLine, Tabify, Untabify, Delete, DeleteWord, MoveLeft, MoveRight, MoveUp, MoveDown, MoveWordRight, MoveWordLeft, MoveLineUp, MoveLineDown, JumpToLineEnd, JumpToLineStart, PageUp, PageDown
-
-### Specifying Keys:
-  - Use `^` to specify Ctrl.
-    ```
-    MoveLeft:^L
-    ```
-    Would set the `MoveLeft` button to `Ctrl + L`
-  - Use `@` to specify Alt.
-    ```
-    MoveLeft:@UP
-    ```
-    Would set the `MoveLeft` button to `Alt + UP`
-  - Use `*` to specify function key.
-    ```
-    MoveLeft:*UP
-    ```
-    Would set the `MoveLeft` button to `FN + UP`
-  
-  - `Enter`: Enter key.
-  - `Tab`: Tab key.
-  - `Del`: Delete key.
-  - `LEFT`, `RIGHT`, `UP`, `DOWN`: Arrow keys.
-  - `Del`: Delete key.
-  + Other available options (Must be combined with some prefix) : `]`, `\`, `[`
+    - All configurations are still under development and there might be changes in the future.
+    - The config file can only be used to change certain keybinds (for now).
+    - The syntax is very simple. Every line must be of the following form: 
+      ```
+      ActionName:KEY
+      ```
+    - Lines that do not follow that form will be ignored (there is no feedback yet). 
+    - Use a `#` for comments.
+    - Possible action names:
+      ```
+      Newline, InstantNewline, Remove, RemoveWord, SaveFile, DuplicateLine, DeleteLine, Tabify, Untabify, Delete, DeleteWord, MoveLeft, MoveRight, MoveUp, MoveDown, MoveWordRight, MoveWordLeft, MoveLineUp, MoveLineDown, JumpToLineEnd, JumpToLineStart, PageUp, PageDown, VisualCopy, VisualPaste, VisualDelete, VisualTabify, VisualUntabify, VisualMoveLeft, VisualMoveRight, VisualMoveUp, VisualMoveDown, VisualJumpToLineEnd, VisualJumpToLineStart, VisualMoveWordRight, VisualMoveWordLeft, VisualMoveLineUp, VisualMoveLineDown, VisualSelectLines, VisualPageUp, VisualPageDown
+      ```
+    
+    ### Specifying Keys:
+      - Use `^` to specify Ctrl.
+        ```
+        MoveLeft:^L
+        ```
+        Would set the `MoveLeft` button to `Ctrl + L`
+      - Use `@` to specify Alt.
+        ```
+        MoveLeft:@UP
+        ```
+        Would set the `MoveLeft` button to `Alt + UP`
+      - Use `*` to specify function key.
+        ```
+        MoveLeft:*UP
+        ```
+        Would set the `MoveLeft` button to `FN + UP`
       
+      - `Enter`: Enter key.
+      - `Tab`: Tab key.
+      - `Del`: Delete key.
+      - `LEFT`, `RIGHT`, `UP`, `DOWN`: Arrow keys.
+      - `Del`: Delete key.
+      + Other available options (Must be combined with some prefix) : `]`, `\`, `[`
+          
       
     
 ## Future Features:

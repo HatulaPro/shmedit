@@ -57,27 +57,27 @@ const std::map<std::string, void (Content::*)(int&, int&)> Config::instantComman
 	{COMMAND_COPY_WORD_BACK, &Content::actionCopyWordBack},
 };
 
-const std::map<int, void (Content::*)(int&, int&, int&, int&)> Config::visualCommands = {
-	{ACTION_COPY_SELECTION, &Content::actionCopySelection},
-	{ACTION_PASTE_SELECTION, &Content::actionPasteSelection},
-	{ACTION_REMOVE, &Content::actionDeleteSelection},
-	{ACTION_REMOVE_SELECTION, &Content::actionDeleteSelection},
-	{ACTION_REMOVE_SELECTION_ALT, &Content::actionDeleteSelection},
-	{ACTION_TABIFY, &Content::actionTabifySelection},
-	{ACTION_UNTABIFY, &Content::actionUntabifySelection},
-	{ACTION_MOVE_LEFT, &Content::actionLeftKeySelection},
-	{ACTION_MOVE_RIGHT, &Content::actionRightKeySelection},
-	{ACTION_MOVE_UP, &Content::actionUpKeySelection},
-	{ACTION_MOVE_DOWN, &Content::actionDownKeySelection},
-	{ACTION_GOTO_END_LINE, &Content::actionJumpToLineEndSelection},
-	{ACTION_GOTO_START_LINE, &Content::actionJumpToLineStartSelection},
-	{ACTION_MOVE_WORD_RIGHT, &Content::actionWordRightSelection},
-	{ACTION_MOVE_WORD_LEFT, &Content::actionWordLeftSelection},
-	{ACTION_MOVE_LINE_UP, &Content::actionMoveLineUpSelection},
-	{ACTION_MOVE_LINE_DOWN, &Content::actionMoveLineDownSelection},
-	{ACTION_SELECT_LINES, &Content::actionSelectLinesSelection},
-	{ACTION_PAGE_UP, &Content::actionPageUpSelection},
-	{ACTION_PAGE_DOWN, &Content::actionPageDownSelection},
+std::map<int, VisualAction> Config::visualCommands = {
+	{ACTION_COPY_SELECTION, {"VisualCopy", &Content::actionCopySelection}},
+	{ACTION_PASTE_SELECTION, {"VisualPaste", &Content::actionPasteSelection}},
+	{ACTION_REMOVE, {"VisualDelete", &Content::actionDeleteSelection} },
+	{ACTION_REMOVE_SELECTION, {"VisualDelete", &Content::actionDeleteSelection}},
+	{ACTION_REMOVE_SELECTION_ALT, {"VisualDelete", &Content::actionDeleteSelection}},
+	{ACTION_TABIFY, {"VisualTabify", &Content::actionTabifySelection}},
+	{ACTION_UNTABIFY, {"VisualUntabify", &Content::actionUntabifySelection}},
+	{ACTION_MOVE_LEFT, {"VisualMoveLeft", &Content::actionLeftKeySelection}},
+	{ ACTION_MOVE_RIGHT, {"VisualMoveRight", &Content::actionRightKeySelection }},
+	{ACTION_MOVE_UP, {"VisualMoveUp", &Content::actionUpKeySelection}},
+	{ ACTION_MOVE_DOWN, {"VisualMoveDown", &Content::actionDownKeySelection }},
+	{ ACTION_GOTO_END_LINE, {"VisualJumpToLineEnd", &Content::actionJumpToLineEndSelection }},
+	{ ACTION_GOTO_START_LINE, {"VisualJumpToLineStart", &Content::actionJumpToLineStartSelection }},
+	{ACTION_MOVE_WORD_RIGHT, {"VisualMoveWordRight", &Content::actionWordRightSelection}},
+	{ACTION_MOVE_WORD_LEFT, {"VisualMoveWordLeft", &Content::actionWordLeftSelection}},
+	{ACTION_MOVE_LINE_UP, {"VisualMoveLineUp", &Content::actionMoveLineUpSelection}},
+	{ ACTION_MOVE_LINE_DOWN, {"VisualMoveLineDown", &Content::actionMoveLineDownSelection }},
+	{ACTION_SELECT_LINES, {"VisualSelectLines", &Content::actionSelectLinesSelection}},
+	{ACTION_PAGE_UP, {"VisualPageUp", &Content::actionPageUpSelection}},
+	{ ACTION_PAGE_DOWN, {"VisualPageDown", &Content::actionPageDownSelection }},
 };
 
 bool Config::parse(std::string fileName)
@@ -115,6 +115,18 @@ bool Config::parse(std::string fileName)
 				}
 			}
 		}
+		for (auto f = Config::visualCommands.begin(); f != Config::visualCommands.end(); f++) {
+			if (f->second.first == funcName) {
+				if (Config::visualCommands.find(key) == Config::visualCommands.end()) {
+					Config::visualCommands[key] = f->second;
+				}
+				else {
+					auto tmp = Config::visualCommands[key];
+					Config::visualCommands[key] = f->second;
+					Config::visualCommands[f->first] = tmp;
+				}
+			}
+		}
 	}
 
 	return true;
@@ -136,7 +148,7 @@ int Config::getKeybind(std::string value)
 	}
 	else if (value == "Del") {
 		return 21216;
-	} 
+	}
 	else if (value == "^Del") {
 		return 37600;
 	}

@@ -210,7 +210,7 @@ void Display::callAction(int x)
 		}
 		if (Config::visualCommands.count(x)) { // All visual commands
 			auto f = Config::visualCommands.find(x);
-			(this->c.*(f->second))(this->posX, this->posY, this->startX, this->startY);
+			(this->c.*(f->second.second))(this->posX, this->posY, this->startX, this->startY);
 		}
 		return;
 	}
