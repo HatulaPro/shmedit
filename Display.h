@@ -16,7 +16,6 @@ private:
 
 	std::string commandOutput;
 	std::string lastKeys;
-	int cmdCount = 0;
 
 	void showTopBar(short width, bool wasEdited) const;
 
@@ -25,7 +24,6 @@ private:
 public:
 	Display(std::string fname);
 	void show() const;
-	std::string padToLine(std::string line, short width) const;
 	void callAction(int x);
 
 

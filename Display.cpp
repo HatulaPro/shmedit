@@ -26,7 +26,7 @@ void Display::showTopBar(short width, bool wasEdited) const
 	Colorizers c;
 	c.push_back(timeColor);
 	c.push_back(fileColor);
-	std::cout << this->padToLine(Helper::colorize(timeString + mid + fileTitle, c), width);
+	std::cout << Helper::padToLine(Helper::colorize(timeString + mid + fileTitle, c), width);
 }
 
 Display::Display(std::string fname) : c(fname) {
@@ -86,7 +86,7 @@ void Display::show() const
 						c.push_back(visualCursorColor);
 					}
 					c.push_back(cursorColor);
-					std::cout << this->padToLine(Helper::colorize(line, c), width);
+					std::cout << Helper::padToLine(Helper::colorize(line, c), width);
 				}
 				// Not offset
 				else {
@@ -107,7 +107,7 @@ void Display::show() const
 						c.push_back(visualCursorColor);
 					}
 					c.push_back(cursorColor);
-					std::cout << this->padToLine(Helper::colorize(line, c), width);
+					std::cout << Helper::padToLine(Helper::colorize(line, c), width);
 				}
 			}
 			// Normal line
@@ -125,14 +125,14 @@ void Display::show() const
 						c.push_back(visualCursorColor);
 					}
 				}
-				std::cout << this->padToLine(Helper::colorize(line, c), width);
+				std::cout << Helper::padToLine(Helper::colorize(line, c), width);
 			}
 		}
 		count++;
 	}
 	// When content is too short
 	while (count < height - NON_CONTENT_LINES) {
-		std::cout << this->padToLine(" ", width);
+		std::cout << Helper::padToLine(" ", width);
 		count++;
 	}
 
@@ -153,22 +153,12 @@ void Display::show() const
 	if (this->c.getState() == COMMAND) {
 		c.push_back(commandCursor);
 	}
-	std::cout << this->padToLine(Helper::colorize(commandString + commandData + ' ', c), width);
-	std::cout << this->padToLine(this->commandOutput, width);
+	std::cout << Helper::padToLine(Helper::colorize(commandString + commandData + ' ', c), width);
+	std::cout << Helper::padToLine(this->commandOutput, width);
 
 	// Reset cursor position
 
 	ConsoleUtils::setCursorPosition(this->hConsole, this->cursorPosition);
-}
-
-std::string Display::padToLine(std::string line, short width) const
-{
-	std::string result = line;
-	size_t end = line.size();
-	while (Helper::getDisplayLength(result, 0, end) > width) end--;
-	result = result.substr(0, end);
-	result.insert(result.end(), width - Helper::getDisplayLength(result), ' ');
-	return result;
 }
 
 void Display::callAction(int x)

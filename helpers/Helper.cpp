@@ -175,6 +175,16 @@ bool Helper::insStrCompare(std::string a, std::string b)
 	return a == b;
 }
 
+std::string Helper::padToLine(std::string line, short width)
+{
+	std::string result = line;
+	size_t end = line.size();
+	while (Helper::getDisplayLength(result, 0, end) > width) end--;
+	result = result.substr(0, end);
+	result.insert(result.end(), width - Helper::getDisplayLength(result), ' ');
+	return result;
+}
+
 int Helper::getNextKey()
 {
 	char key = _getch();

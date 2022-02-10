@@ -39,6 +39,7 @@ public:
 	static bool isAlphanumeric(char c);
 	static std::string trim(std::string s);
 	static bool insStrCompare(std::string a, std::string b);
+	static std::string padToLine(std::string line, short width);
 
 	static int getNextKey();
 };
