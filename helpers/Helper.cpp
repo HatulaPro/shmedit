@@ -7,6 +7,7 @@
 #include <string>
 #include <ctype.h>
 #include <conio.h>
+#include "../Content.h"
 
 #define STD_OUTPUT_HANDLE -11
 
@@ -177,7 +178,7 @@ bool Helper::insStrCompare(std::string a, std::string b)
 
 std::string Helper::padToLine(std::string line, short width)
 {
-	std::string result = line;
+	std::string result = Helper::replace(line, "\t", std::string(TAB_SIZE, ' '));
 	size_t end = line.size();
 	while (Helper::getDisplayLength(result, 0, end) > width) end--;
 	result = result.substr(0, end);
