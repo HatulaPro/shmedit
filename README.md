@@ -35,6 +35,7 @@ A text editor program for windows.
     
     - `Ctrl + U`: Switch to default mode.
     - `Ctrl + C`: Start command mode.
+    - `Ctrl + O`: The command 'o: ' will be set, to allow users to open files more easily.
     - `Ctrl + F`: The command 'f: ' will be set, to allow users to get to `find` mode more easily.
     - `Ctrl + R`: The command 'fr: ' will be set, to allow users to get to `find&rep` mode more easily.
     - `Ctrl + B`: Switches to `visual` mode.

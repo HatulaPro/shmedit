@@ -118,6 +118,11 @@ void Content::callAction(int x, std::string& lastKeys, std::string& commandOutpu
 		this->setState(VISUAL);
 		return;
 	}
+	if (x == ACTION_START_OPEN) { // Ctrl + O for find
+		lastKeys = std::string(1, BEGIN_CALLED_COMMAND) + COMMAND_OPEN + ' ';
+		this->setState(COMMAND);
+		return;
+	}
 	else if (x == ACTION_START_COMMAND) { // Starting command
 		this->setState(COMMAND);
 		lastKeys = "";
