@@ -19,9 +19,11 @@ Content::Content(std::string c)
 		if (Helper::insStrCompare(c, i)) {
 			this->fileName = i;
 			setContent(i);
+			this->wasEdited = false;
 			return;
 		}
 	}
+	this->wasEdited = true;
 	this->fileName = c;
 	setContent(c);
 }
@@ -765,7 +767,6 @@ void Content::actionQuitAndSave()
 std::string Content::commandOpen(std::string command)
 {
 	*this = Content(command);
-	this->wasEdited = true;
 	return "Opened " + command;
 }
 
