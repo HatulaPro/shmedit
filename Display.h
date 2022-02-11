@@ -7,12 +7,6 @@
 class Display {
 private:
 	Content c;
-	
-	int posX;
-	int posY;
-
-	int startX = -1;
-	int startY = -1;
 
 	std::string commandOutput;
 	std::string lastKeys;

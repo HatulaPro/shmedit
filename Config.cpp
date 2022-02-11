@@ -31,13 +31,13 @@ std::map<int, OneClickAction> Config::oneClickActions = {
 	{ACTION_PASTE_CLIPBOARD, {"PasteClipboard", &Content::actionPasteFromClipboard}},
 };
 
-const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> Config::calledCommands = {
+const std::map<std::string, std::string(Content::*)(std::string)> Config::calledCommands = {
 	{COMMAND_OPEN, &Content::commandOpen},
 	{COMMAND_FIND, &Content::commandFind},
 	{COMMAND_FIND_AND_REPLACE, &Content::commandFindAndReplace},
 };
 
-const std::map<std::string, void (Content::*)(int&, int&)> Config::instantCommands = {
+const std::map<std::string, void (Content::*)()> Config::instantCommands = {
 	{COMMAND_SAVE, &Content::actionSaveFile},
 	{COMMAND_QUIT, &Content::actionQuit},
 	{COMMAND_QUIT_AND_SAVE, &Content::actionQuitAndSave},

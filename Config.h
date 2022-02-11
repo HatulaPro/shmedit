@@ -4,8 +4,8 @@
 #include <string>
 
 // A pair of string name and a oneClickAction function.
-typedef std::pair<std::string, void (Content::*)(int&, int&)> OneClickAction;
-typedef std::pair<std::string, void (Content::*)(int&, int&, int&, int&)> VisualAction;
+typedef std::pair<std::string, void (Content::*)()> OneClickAction;
+typedef std::pair<std::string, void (Content::*)()> VisualAction;
 
 class Config {
 public:
@@ -15,6 +15,6 @@ public:
 	static std::map<int, OneClickAction> oneClickActions;
 	static std::map<int, VisualAction> visualCommands;
 
-	static const std::map<std::string, void(Content::*)(int&, int&)> instantCommands;
-	static const std::map<std::string, std::string(Content::*)(std::string, int&, int&)> calledCommands;
+	static const std::map<std::string, void(Content::*)()> instantCommands;
+	static const std::map<std::string, std::string(Content::*)(std::string)> calledCommands;
 };
