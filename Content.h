@@ -89,6 +89,9 @@ public:
 	void actionCopyWordBack();
 	void actionPasteFromClipboard();
 
+	void openNextFile();
+	void openPreviousFile();
+
 	// Visual Commands:
 	void actionCopySelection();
 	void actionPasteSelection();

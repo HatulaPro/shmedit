@@ -29,6 +29,8 @@ std::map<int, OneClickAction> Config::oneClickActions = {
 	{ACTION_PAGE_UP, {"PageUp", &Content::actionPageUp}},
 	{ACTION_PAGE_DOWN, {"PageDown", &Content::actionPageDown}},
 	{ACTION_PASTE_CLIPBOARD, {"PasteClipboard", &Content::actionPasteFromClipboard}},
+	{ACTION_OPEN_NEXT_FILE, {"OpenNextFile", &Content::openNextFile}},
+	{ACTION_OPEN_PREV_FILE, {"OpenPrevFile", &Content::openPreviousFile}},
 };
 
 const std::map<std::string, std::string(Content::*)(std::string)> Config::calledCommands = {
@@ -180,6 +182,12 @@ int Config::getKeybind(std::string value)
 	}
 	else if (value == "@DOWN") {
 		return 40960;
+	}
+	else if (value == "@RIGHT") {
+		return 40192;
+	}
+	else if (value == "@LEFT") {
+		return 39680;
 	}
 	else if (value == "Rem") {
 		return 8;

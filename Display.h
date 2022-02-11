@@ -22,6 +22,8 @@ public:
 	~Display();
 
 	void open(std::string fname);
+	void openNext();
+	void openPrev();
 	void closeActiveContent();
 
 	void show() const;

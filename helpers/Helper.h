@@ -15,6 +15,7 @@ enum Style {
 	VISUAL_STYLE,
 	FIND_HIGHLIGHTING,
 	LINE_NUMBER,
+	DIMMED,
 };
 
 typedef struct Colorizer {

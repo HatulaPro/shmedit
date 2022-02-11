@@ -515,6 +515,16 @@ void Content::actionPasteFromClipboard()
 	this->wasEdited = true;
 }
 
+void Content::openNextFile()
+{
+	this->display.openNext();
+}
+
+void Content::openPreviousFile()
+{
+	this->display.openPrev();
+}
+
 void Content::actionCopySelection()
 {
 	if (posY == startY) {

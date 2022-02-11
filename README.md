@@ -49,6 +49,7 @@ A text editor program for windows.
         - `Alt + Down`: Move selection one line down.
         - `Ctrl + L`: Select select lines from start to end.
   
+    - `Alt + Right`, `Alt + Left`: Change edited file.
   
   - ### Commands:
     After starting command mode (`Ctrl + C`), you can start writing commands. The editor will parse and run them.

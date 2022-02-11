@@ -20,16 +20,18 @@ void Display::showTopBar(short width, bool wasEdited) const
 	std::string timeString = Helper::getTimeString();
 	Colorizer timeColor = { 0, timeString.size(), MAGENTA };
 	std::string mid(2 * width / 5, ' ');
-	std::string fileTitle = std::string(wasEdited ? "*" : "") + this->contents[this->activeContent]->getFileName();
+	std::string fileTitle = Helper::padToLine(std::string(wasEdited ? "*" : "") + this->contents[this->activeContent]->getFileName(), 16);
 	Colorizer fileColor = { timeString.size() + mid.size(), fileTitle.size(), BLUE };
 
-	std::string otherFiles(10, ' ');
-	for (size_t i = 0; i < this->contents.size(); i++) {
-		if (i != this->activeContent) {
-			otherFiles += (this->contents[i]->getEditStatus() ? "*" : "") + this->contents[i]->getFileName() + '|';
+	std::string otherFiles(12, ' ');
+	//otherFiles += '(' + std::to_string(this->contents.size()) + ')';
+	for (size_t i = this->contents.size() - 1; i != 0; i--) {
+		size_t index = (this->activeContent + i) % this->contents.size();
+		if (index != this->activeContent) {
+			otherFiles += (this->contents[index]->getEditStatus() ? "*" : "") + this->contents[index]->getFileName() + '|';
 		}
 	}
-	Colorizer otherFilesColor = { timeString.size() + mid.size() + fileTitle.size(), otherFiles.size(), WHITE };
+	Colorizer otherFilesColor = { timeString.size() + mid.size() + fileTitle.size(), otherFiles.size(), DIMMED };
 
 	std::string topBarContents = timeString + mid + fileTitle + otherFiles;
 	if (Helper::getDisplayLength(topBarContents) > width) {
@@ -72,14 +74,27 @@ void Display::open(std::string fname)
 	this->activeContent = this->contents.size() - 1;
 }
 
+void Display::openNext()
+{
+	this->activeContent++;
+	this->activeContent = this->activeContent % this->contents.size();
+}
+
+void Display::openPrev()
+{
+	this->activeContent += this->contents.size() - 1;
+	this->activeContent = this->activeContent % this->contents.size();
+}
+
 void Display::closeActiveContent()
 {
 	if (this->contents.size() == 1) {
 		system("cls");
 		exit(0);
 	}
-	delete this->contents[this->activeContent];
+	// delete this->contents[this->activeContent];
 	this->contents.erase(this->contents.begin() + this->activeContent);
+	this->activeContent = min(max(this->activeContent - 1, 0), this->contents.size());
 }
 
 void Display::show() const
