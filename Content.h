@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include "KeyBinds.h"
+#include "Display.h"
 #include <stack>
 #define TAB_SIZE 4
 
@@ -19,6 +20,7 @@ enum STATE
 
 class Content {
 private:
+	Display& display;
 	std::vector<std::string> content;
 	std::string fileName;
 	bool wasEdited = false;
@@ -33,7 +35,7 @@ private:
 	int startX;
 	int startY;
 public:
-	Content(std::string c);
+	Content(std::string c, Display& d);
 	void setContent(std::string c);
 	std::vector<std::string> getLines() const;
 	std::string getLine(size_t index) const;

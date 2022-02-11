@@ -20,28 +20,75 @@ void Display::showTopBar(short width, bool wasEdited) const
 	std::string timeString = Helper::getTimeString();
 	Colorizer timeColor = { 0, timeString.size(), MAGENTA };
 	std::string mid(2 * width / 5, ' ');
-	std::string fileTitle = std::string(wasEdited ? "*" : "") + this->c.getFileName();
+	std::string fileTitle = std::string(wasEdited ? "*" : "") + this->contents[this->activeContent]->getFileName();
 	Colorizer fileColor = { timeString.size() + mid.size(), fileTitle.size(), BLUE };
+
+	std::string otherFiles(10, ' ');
+	for (size_t i = 0; i < this->contents.size(); i++) {
+		if (i != this->activeContent) {
+			otherFiles += (this->contents[i]->getEditStatus() ? "*" : "") + this->contents[i]->getFileName() + '|';
+		}
+	}
+	Colorizer otherFilesColor = { timeString.size() + mid.size() + fileTitle.size(), otherFiles.size(), WHITE };
+
+	std::string topBarContents = timeString + mid + fileTitle + otherFiles;
+	if (Helper::getDisplayLength(topBarContents) > width) {
+		topBarContents = topBarContents.substr(0, width - 3) + "...";
+		otherFilesColor.count = width - (timeString.size() + mid.size() + fileTitle.size());
+	}
 
 	Colorizers c;
 	c.push_back(timeColor);
 	c.push_back(fileColor);
-	std::cout << Helper::padToLine(Helper::colorize(timeString + mid + fileTitle, c), width);
+	c.push_back(otherFilesColor);
+	std::cout << Helper::padToLine(Helper::colorize(topBarContents, c), width);
 }
 
-Display::Display(std::string fname) : c(fname) {
+Display::Display(std::string fname) {
+	this->contents.push_back(new Content(fname, *this));
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	ConsoleUtils::hideCursor(this->hConsole);
 	ConsoleUtils::getCursorPosition(this->hConsole, this->cursorPosition);
 }
 
+Display::~Display()
+{
+	for (size_t i = 0; i < this->contents.size(); i++) {
+		delete this->contents[i];
+	}
+}
+
+void Display::open(std::string fname)
+{
+	Content* c = new Content(fname, *this);
+	for (size_t i = 0; i < this->contents.size(); i++) {
+		if (c->getFileName() == this->contents[i]->getFileName()) {
+			this->activeContent = i;
+			delete c;
+			return;
+		}
+	}
+	this->contents.push_back(c);
+	this->activeContent = this->contents.size() - 1;
+}
+
+void Display::closeActiveContent()
+{
+	if (this->contents.size() == 1) {
+		system("cls");
+		exit(0);
+	}
+	delete this->contents[this->activeContent];
+	this->contents.erase(this->contents.begin() + this->activeContent);
+}
+
 void Display::show() const
 {
 	int posX, posY, startX, startY;
-	this->c.getCursorPositions(posX, posY, startX, startY);
+	this->contents[this->activeContent]->getCursorPositions(posX, posY, startX, startY);
 
 
-	std::vector<std::string> content = this->c.getLines();
+	std::vector<std::string> content = this->contents[this->activeContent]->getLines();
 	int count = 0;
 
 	// Getting terminal dimensions
@@ -50,7 +97,7 @@ void Display::show() const
 	ConsoleUtils::getTerminalSize(this->hConsole, &width, &height);
 	short effectiveHeight = height - NON_CONTENT_LINES;
 
-	this->showTopBar(width, this->c.getEditStatus());
+	this->showTopBar(width, this->contents[this->activeContent]->getEditStatus());
 
 	int offset = max(0, posX - (width / 2));
 	Colorizer lineNumberColor = { 0, LINE_NUMBER_SIZE, LINE_NUMBER };
@@ -77,11 +124,11 @@ void Display::show() const
 
 					c.push_back(lineNumberColor);
 					c.push_back(offsetLineColor);
-					if (this->c.getState() == FIND) {
+					if (this->contents[this->activeContent]->getState() == FIND) {
 						cursorColor.style = FIND_HIGHLIGHTING;
-						cursorColor.count = this->c.getCommandInfo().size();
+						cursorColor.count = this->contents[this->activeContent]->getCommandInfo().size();
 					}
-					else if (this->c.getState() == VISUAL) {
+					else if (this->contents[this->activeContent]->getState() == VISUAL) {
 						Colorizer visualCursorColor = { LINE_NUMBER_SIZE + sizeof(LINE_OFFSET_STR) - 1, width / 2, VISUAL_STYLE }; // First cursor
 						if (startY == posY && startX > posX - (width / 2)) {
 							visualCursorColor.begin = cursorLocation - posX + startX;
@@ -98,11 +145,11 @@ void Display::show() const
 					Colorizers c;
 					c.push_back(lineNumberColor);
 					Colorizer cursorColor = { posX + LINE_NUMBER_SIZE + 1, 1, CURSOR };
-					if (this->c.isInFindState()) {
+					if (this->contents[this->activeContent]->isInFindState()) {
 						cursorColor.style = FIND_HIGHLIGHTING;
-						cursorColor.count = this->c.getCommandInfo().size();
+						cursorColor.count = this->contents[this->activeContent]->getCommandInfo().size();
 					}
-					else if (this->c.getState() == VISUAL) {
+					else if (this->contents[this->activeContent]->getState() == VISUAL) {
 						Colorizer visualCursorColor = { LINE_NUMBER_SIZE + 1, posX, VISUAL_STYLE }; // First cursor
 						if (startY == posY) {
 							visualCursorColor.begin += startX;
@@ -119,7 +166,7 @@ void Display::show() const
 				std::string line = lineNumber + ' ' + *i;
 				Colorizers c;
 				c.push_back(lineNumberColor);
-				if (this->c.getState() == VISUAL) {
+				if (this->contents[this->activeContent]->getState() == VISUAL) {
 					if (count + startIndex == startY) {
 						Colorizer visualCursorColor = { startX + LINE_NUMBER_SIZE + 1, i->size() - startX, VISUAL_STYLE }; // First cursor
 						c.push_back(visualCursorColor);
@@ -141,11 +188,11 @@ void Display::show() const
 	}
 
 	// Bottom line:
-	std::string commandString = this->c.getStateString();
+	std::string commandString = this->contents[this->activeContent]->getStateString();
 	Colorizer commandStringColor = { 0, commandString.size() - 1, MAGENTA };
-	std::string commandData = this->c.getCommandArgs(lastKeys);
+	std::string commandData = this->contents[this->activeContent]->getCommandArgs(lastKeys);
 	Style commandArgsStyle = commandData.size() && commandData[0] == BEGIN_CALLED_COMMAND ? WHITE : BACKGROUND;
-	if (this->c.isInFindState()) {
+	if (this->contents[this->activeContent]->isInFindState()) {
 		commandArgsStyle = WHITE;
 	}
 
@@ -154,7 +201,7 @@ void Display::show() const
 	Colorizers c;
 	c.push_back(commandStringColor);
 	c.push_back(commandArgsColor);
-	if (this->c.getState() == COMMAND) {
+	if (this->contents[this->activeContent]->getState() == COMMAND) {
 		c.push_back(commandCursor);
 	}
 	std::cout << Helper::padToLine(Helper::colorize(commandString + commandData + ' ', c), width);
@@ -167,7 +214,7 @@ void Display::show() const
 
 void Display::callAction(int x)
 {
-	this->c.callAction(x, this->lastKeys, this->commandOutput);
+	this->contents[this->activeContent]->callAction(x, this->lastKeys, this->commandOutput);
 }
 
 

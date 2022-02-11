@@ -13,7 +13,7 @@
 
 
 
-Content::Content(std::string c)
+Content::Content(std::string c, Display& d) : display(d)
 {
 	for (auto i : FilesUtil::getFilesInDirectory(c)) {
 		if (Helper::insStrCompare(c, i)) {
@@ -758,20 +758,19 @@ void Content::actionWordLeft()
 
 void Content::actionQuit()
 {
-	system("cls");
-	exit(0);
+	this->display.closeActiveContent();
 }
 
 void Content::actionQuitAndSave()
 {
 	this->actionSaveFile();
-	system("cls");
-	exit(0);
+	this->display.closeActiveContent();
 }
 
 std::string Content::commandOpen(std::string command)
 {
-	*this = Content(command);
+	this->display.open(command);
+	//*this = Content(command);
 	return "Opened " + command;
 }
 

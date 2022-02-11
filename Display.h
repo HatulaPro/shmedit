@@ -1,12 +1,14 @@
+#pragma once
 #include <iostream>
 #include <vector>
-#include "Content.h"
 #include "Windows.h"
 
+class Content;
 
 class Display {
 private:
-	Content c;
+	std::vector<Content*> contents;
+	size_t activeContent = 0;
 
 	std::string commandOutput;
 	std::string lastKeys;
@@ -17,6 +19,11 @@ private:
 	COORD cursorPosition;
 public:
 	Display(std::string fname);
+	~Display();
+
+	void open(std::string fname);
+	void closeActiveContent();
+
 	void show() const;
 	void callAction(int x);
 
