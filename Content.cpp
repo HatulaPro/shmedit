@@ -91,7 +91,7 @@ std::string Content::getCommandArgs(std::string lastKeys) const
 		return this->commandInfo + '~' + this->commandInfo2;
 	}
 	else if (this->state == VISUAL) {
-		return "#";
+		return "";
 	}
 	throw std::exception("Unkown state");
 }

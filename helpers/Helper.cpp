@@ -28,7 +28,7 @@ std::string Helper::colorize(std::string text, int style)
 	case RED:
 		return "\033[31m" + text + "\033[0m";
 	case BLUE:
-		return "\033[34m" + text + "\033[0m";
+		return "\033[34;1m" + text + "\033[0m";
 	case MAGENTA:
 		return "\033[35m" + text + "\033[0m";
 	case CURSOR:
@@ -46,26 +46,14 @@ std::string Helper::colorize(std::string text, int style)
 	}
 }
 
-std::string Helper::colorize(std::string text, Colorizers colorizers)
+std::string Helper::colorize(std::vector<std::string> text, std::vector<Style> styles)
 {
-	if (colorizers.size() == 0) {
-		return text;
+	if (text.size() != styles.size()) throw std::exception("Invalid colorizers lengths.");
+	std::string result;
+	for (size_t i = 0; i < text.size(); i++) {
+		result += Helper::colorize(text[i], styles[i]);
 	}
-
-	std::string result = text.substr(0, colorizers[0].begin);
-	int minus = colorizers[0].begin;
-	if (colorizers[0].begin == 0) {
-		minus = 0;
-	}
-	result += Helper::colorize(text.substr(colorizers[0].begin, colorizers[0].count), colorizers[0].style);
-	
-	Colorizers copy;
-	for (size_t i = 1; i < colorizers.size(); i++) {
-		Colorizer c = { colorizers[i].begin - colorizers[0].count - minus, colorizers[i].count, colorizers[i].style };
-		copy.push_back(c);
-	}
-
-	return result + Helper::colorize(text.substr(colorizers[0].begin + colorizers[0].count), copy);
+	return result;
 }
 
 std::string Helper::setCursor(std::string line, int x)
