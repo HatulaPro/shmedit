@@ -25,6 +25,8 @@ public:
 	void openNext();
 	void openPrev();
 	void closeActiveContent();
+	void closeAll();
+	void saveAll();
 
 	void show() const;
 	void callAction(int x);

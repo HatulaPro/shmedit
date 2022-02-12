@@ -83,6 +83,9 @@ A text editor program for windows.
       cmd| :fr StrToLookFor~StrToBeReplacedWith
       ```
     
+    - `ext`: Exits the editor. *Warning*: This command does not save any file!  
+    - `sext`: Saves all edited files and exits the editor.  
+    
     - `<Integer>`: Type any integer and then `Enter` to jump to that line. For example, the following command will move the cursor to line 45:
     
       ```
@@ -90,10 +93,10 @@ A text editor program for windows.
       ```      
     
     #### Instant commands:    
-    - `s`: Save file.
+    - `sav`: Save file.
     - `u`, `Enter`: Exit cmd mode.
-    - `q`: Saves and quits the editor. 
-    - `Q`: Quits the editor. Warning: This command does not save the contents of the file.
+    - `q`: Saves and quits the active file. 
+    - `Q`: Quits the active file. *Warning*: This command does not save the contents of the file.
     - `dw`: Deletes the next word and saves its contents in `mem`. 
     - `dl`: Deletes the current line and saves its contents in `mem`. 
     - `db`: Removes the last word and saves its contents in `mem`. 

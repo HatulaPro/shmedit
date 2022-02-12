@@ -780,8 +780,20 @@ void Content::actionQuitAndSave()
 std::string Content::commandOpen(std::string command)
 {
 	this->display.open(command);
-	//*this = Content(command);
 	return "Opened " + command;
+}
+
+std::string Content::commandExit(std::string command)
+{
+	this->display.closeAll();
+	throw std::exception("Unreachable");
+}
+
+std::string Content::commandSaveAndExit(std::string command)
+{
+	this->display.saveAll();
+	this->display.closeAll();
+	throw std::exception("Unreachable");
 }
 
 std::string Content::commandFind(std::string command)

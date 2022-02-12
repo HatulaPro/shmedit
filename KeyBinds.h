@@ -38,8 +38,10 @@
 
 #define BEGIN_CALLED_COMMAND ':'
 
-#define COMMAND_SAVE "s"
+#define COMMAND_SAVE "sav"
 #define COMMAND_OPEN "o"
+#define COMMAND_EXIT "ext"
+#define COMMAND_SAVE_AND_EXIT "sext"
 #define COMMAND_FIND "f"
 #define COMMAND_FIND_AND_REPLACE "fr"
 #define COMMAND_QUIT "Q"

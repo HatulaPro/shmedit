@@ -80,13 +80,24 @@ void Display::openPrev()
 
 void Display::closeActiveContent()
 {
-	if (this->contents.size() == 1) {
-		system("cls");
-		exit(0);
-	}
+	if (this->contents.size() == 1) this->closeAll();
 	// delete this->contents[this->activeContent];
 	this->contents.erase(this->contents.begin() + this->activeContent);
 	this->activeContent = min(max(this->activeContent - 1, 0), this->contents.size());
+}
+
+void Display::closeAll()
+{
+	while (true) {
+		system("cls");
+		exit(0);
+	}
+}
+
+void Display::saveAll()
+{
+	for (auto c : this->contents) c->actionSaveFile();
+	this->closeAll();
 }
 
 void Display::show() const
