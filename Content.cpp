@@ -864,15 +864,13 @@ void Content::actionPaste()
 	bool gotSlashR = false;
 	for (size_t i = 0; i < this->commandInfo.size(); i++) {
 		if (commandInfo[i] == '\r') {
-			gotSlashR = true;
+			continue;
 		}
-		else if (gotSlashR && commandInfo[i] == '\n') {
+		else if (commandInfo[i] == '\n') {
 			this->actionEnterNoSpacing();
-			gotSlashR = false;
 		}
 		else {
 			this->actionWrite(commandInfo[i]);
-			gotSlashR = false;
 		}
 	}
 }
