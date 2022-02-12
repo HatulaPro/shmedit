@@ -116,6 +116,7 @@ public:
 	std::string commandOpen(std::string command);
 	std::string commandExit(std::string command);
 	std::string commandSaveAndExit(std::string command);
+	std::string commandRenameFile(std::string command);
 	std::string commandFind(std::string command);
 	std::string commandFindAndReplace(std::string command);
 	std::string runCommand(std::string command);

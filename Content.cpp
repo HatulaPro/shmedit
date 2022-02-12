@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <ctype.h>
+#include <errno.h>
 #include <chrono>
 #include "Config.h"
 #include "helpers/ConsoleUtils.h"
@@ -794,6 +795,21 @@ std::string Content::commandSaveAndExit(std::string command)
 	this->display.saveAll();
 	this->display.closeAll();
 	throw std::exception("Unreachable");
+}
+
+std::string Content::commandRenameFile(std::string command)
+{
+	char err[256] = {};
+	command = Helper::trim(command);
+	if (rename(this->fileName.c_str(), command.c_str()) == 0) {
+		this->fileName = command;
+		this->actionSaveFile();
+		return "File name changed";
+	}
+	else {
+		strerror_s(err, errno);
+		return std::string("Error: ") + err;
+	}
 }
 
 std::string Content::commandFind(std::string command)

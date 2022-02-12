@@ -70,6 +70,11 @@ A text editor program for windows.
       ```
       cmd| :o myfile.txt
       ```
+    - `mv <new file name>`: Changes the name of the file.
+    
+      ```
+      cmd| :mv newfilename.txt
+      ```
     
     - `f <str>`: Starts `find` mode. Press `Enter` or `n` to find the next instance of `<str>`, or any other key to go back to deafult mode.
     

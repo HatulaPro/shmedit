@@ -37,6 +37,7 @@ std::map<int, OneClickAction> Config::oneClickActions = {
 const std::map<std::string, std::string(Content::*)(std::string)> Config::calledCommands = {
   {COMMAND_OPEN, &Content::commandOpen},
   {COMMAND_EXIT, &Content::commandExit},
+  {COMMAND_RENAME_FILE, &Content::commandRenameFile},
   {COMMAND_SAVE_AND_EXIT, &Content::commandSaveAndExit},
   {COMMAND_FIND, &Content::commandFind},
   {COMMAND_FIND_AND_REPLACE, &Content::commandFindAndReplace},
