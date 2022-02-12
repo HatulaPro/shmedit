@@ -34,7 +34,7 @@ void Content::setContent(std::string c)
 	std::stringstream cc(FilesUtil::readFile(c).c_str());
 	this->content = std::vector<std::string>();
 	while (std::getline(cc, tmp, '\n')) {
-		this->content.push_back(Helper::replace(tmp, "\t", "  "));
+		this->content.push_back(Helper::replace(tmp, "\t", std::string(TAB_SIZE, ' ')));
 	}
 
 	if (this->content.size() == 0) {

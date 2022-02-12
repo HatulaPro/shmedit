@@ -83,7 +83,7 @@ void Display::closeActiveContent()
 	if (this->contents.size() == 1) this->closeAll();
 	// delete this->contents[this->activeContent];
 	this->contents.erase(this->contents.begin() + this->activeContent);
-	this->activeContent = min(max(this->activeContent - 1, 0), this->contents.size());
+	this->activeContent = min(max(this->activeContent - 1, 0), this->contents.size() - 1);
 }
 
 void Display::closeAll()

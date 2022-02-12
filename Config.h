@@ -14,7 +14,7 @@ public:
 
   static std::map<int, OneClickAction> oneClickActions;
   static std::map<int, VisualAction> visualCommands;
+  static std::map<std::string, void(Content::*)()> instantCommands;
 
-  static const std::map<std::string, void(Content::*)()> instantCommands;
   static const std::map<std::string, std::string(Content::*)(std::string)> calledCommands;
 };

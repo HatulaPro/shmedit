@@ -152,6 +152,16 @@ A text editor program for windows.
       - `Del`: Delete key.
       + Other available options (Must be combined with some prefix) : `]`, `\`, `[`
           
+    ### Changing Instant Commands:
+     - The syntax must be of the following form: 
+     - All new command names must start with a capital letter. 
+     ```
+     NewName=InstantCommand
+     ```
+     - That is how you would set "D" to remove words:
+     ```
+     D=dw
+     ```
       
     
 ## Future Features:
