@@ -12,7 +12,7 @@
 #include "Config.h"
 
 #define LINE_NUMBER_SIZE 4
-#define NON_CONTENT_LINES 3
+#define NON_CONTENT_LINES 4
 #define LINE_OFFSET_STR " << "
 
 void Display::showTopBar(short width, bool wasEdited) const
@@ -209,7 +209,7 @@ void Display::show() const
 
 
 	// Reset cursor position
-	ConsoleUtils::setCursorPosition(0, 0);
+	ConsoleUtils::setCursorPosition(1, 1);
 }
 
 void Display::callAction(int x)
