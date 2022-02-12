@@ -107,39 +107,43 @@ void Display::show() const
 	this->showTopBar(width, this->contents[this->activeContent]->getEditStatus());
 
 	int offset = max(0, posX - (width / 2));
+	int state = this->contents[this->activeContent]->getState();
+	bool isInFindState = this->contents[this->activeContent]->isInFindState();
 
 	// Aligning to top/bottom
 	int startIndex = max(min(posY - (effectiveHeight / 2), (int)content.size() - effectiveHeight), 0);
 
+
 	for (auto i = content.begin() + startIndex; i != content.begin() + min(startIndex + height, (int)content.size()); i++) {
-		if (count < height - NON_CONTENT_LINES) {
+		std::vector<std::string> strs;
+		std::vector<Style> styles;
+		int lineIndex = count + startIndex;
+		if (count < effectiveHeight) {
 			// For every line in content (that is inside the view)
-			std::string lineNumber = std::to_string(count + startIndex);
-			lineNumber.insert(lineNumber.end(), LINE_NUMBER_SIZE - Helper::getDisplayLength(lineNumber), ' ');
+			std::string lineNumber = std::to_string(lineIndex);
+			lineNumber += std::string(LINE_NUMBER_SIZE - Helper::getDisplayLength(lineNumber), ' ');
 
 			// If cursor in line
-			if (count + startIndex == posY) {
+			if (lineIndex == posY) {
 				// If line is offset
 				if (posX > width - LINE_NUMBER_SIZE - sizeof(LINE_OFFSET_STR) + 1) {
 					std::string line = i->substr(offset);
 					size_t cursorLocation = width / 2;
 					Style cursorStyle = CURSOR;
 					std::string beforeCursor = line.substr(0, cursorLocation);
-					std::string visualCursor;
 					std::string cursor(1, line[cursorLocation]);
 					std::string afterCursor = line.size() > cursorLocation ? line.substr(cursorLocation + 1) : "";
-					if (this->contents[this->activeContent]->getState() == FIND) {
+
+					styles = StylesVector(LINE_NUMBER, RESET, WHITE, RESET, cursorStyle, RESET);
+					if (state == VISUAL) {
+						styles[3] = VISUAL_STYLE;
+					}
+					else if (isInFindState) {
 						cursorStyle = FIND_HIGHLIGHTING;
 						cursor = line.substr(cursorLocation, this->contents[this->activeContent]->getCommandInfo().size());
 						afterCursor = afterCursor.substr(cursor.size() - 1);
-						std::cout << Helper::padToLine(Helper::colorize(StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor), StylesVector(LINE_NUMBER, RESET, WHITE, RESET, cursorStyle, RESET)), width);
 					}
-					else if (this->contents[this->activeContent]->getState() == VISUAL) {
-						std::cout << Helper::padToLine(Helper::colorize(StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor), StylesVector(LINE_NUMBER, RESET, WHITE, VISUAL_STYLE, CURSOR, RESET)), width);
-					}
-					else {
-						std::cout << Helper::padToLine(Helper::colorize(StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor), StylesVector(LINE_NUMBER, RESET, WHITE, RESET, cursorStyle, RESET)), width);
-					}
+					strs = StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor);
 				}
 				// Not offset
 				else {
@@ -149,12 +153,12 @@ void Display::show() const
 					std::string cursor(1, (*i)[posX]);
 					std::string afterCursor = i->size() > posX ? i->substr(posX + 1) : "";
 
-					if (this->contents[this->activeContent]->isInFindState()) {
+					if (isInFindState) {
 						cursorStyle = FIND_HIGHLIGHTING;
 						cursor = i->substr(posX, this->contents[this->activeContent]->getCommandInfo().size());
 						afterCursor = afterCursor.substr(cursor.size() - 1);
 					}
-					else if (this->contents[this->activeContent]->getState() == VISUAL) {
+					else if (state == VISUAL) {
 						if (startY == posY) {
 							visualCursor = i->substr(startX, posX - startX);
 							cursor = std::string(1, (*i)[posX]);
@@ -165,33 +169,31 @@ void Display::show() const
 							visualCursor = i->substr(0, posX);
 						}
 					}
-					std::cout << Helper::padToLine(Helper::colorize(StringsVector(lineNumber, " ", beforeCursor, visualCursor, cursor, afterCursor, " "), StylesVector(LINE_NUMBER, RESET, RESET, VISUAL_STYLE, cursorStyle, RESET, RESET)), width);
+					strs = StringsVector(lineNumber, " ", beforeCursor, visualCursor, cursor, afterCursor, " ");
+					styles = StylesVector(LINE_NUMBER, RESET, RESET, VISUAL_STYLE, cursorStyle, RESET, RESET);
 				}
 			}
-			// Normal line
+			// Cursor not in line
 			else {
-				if (this->contents[this->activeContent]->getState() == VISUAL) {
-					if (count + startIndex == startY) {
-						std::string beforeCursor = i->substr(0, startX);
-						std::string afterCursor = i->substr(startX);
-						std::cout << Helper::padToLine(Helper::colorize(StringsVector(lineNumber, " ", beforeCursor, afterCursor), StylesVector(LINE_NUMBER, RESET, RESET, VISUAL_STYLE)), width);
+				strs = StringsVector(lineNumber, " ", *i);
+				styles = StylesVector(LINE_NUMBER, RESET, RESET);
+				if (state == VISUAL) {
+					if (lineIndex == startY) {
+						strs[2] = i->substr(0, startX);
+						strs.push_back(i->substr(startX));
+						styles.push_back(VISUAL_STYLE);
 					}
-					else if (count + startIndex > startY && count + startIndex < posY) {
-						std::cout << Helper::padToLine(Helper::colorize(StringsVector(lineNumber, " ", *i), StylesVector(LINE_NUMBER, RESET, VISUAL_STYLE)), width);
+					else if (lineIndex > startY && lineIndex < posY) {
+						styles[2] = VISUAL_STYLE;
 					}
-					else {
-						std::cout << Helper::padToLine(Helper::colorize(StringsVector(lineNumber, " ", *i), StylesVector(LINE_NUMBER, RESET, RESET)), width);
-					}
-				}
-				else {
-					std::cout << Helper::padToLine(Helper::colorize(StringsVector(lineNumber, " ", *i), StylesVector(LINE_NUMBER, RESET, RESET)), width);
 				}
 			}
+			std::cout << Helper::padToLine(Helper::colorize(strs, styles), width);
 		}
 		count++;
 	}
 	// When content is too short
-	while (count < height - NON_CONTENT_LINES) {
+	while (count < effectiveHeight) {
 		std::cout << Helper::padToLine(" ", width);
 		count++;
 	}
