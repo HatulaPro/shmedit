@@ -49,7 +49,7 @@ void Display::showTopBar(short width, bool wasEdited) const
 Display::Display(std::string fname) {
 	this->contents.push_back(new Content(fname, *this));
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	ConsoleUtils::hideCursor(this->hConsole);
+	ConsoleUtils::hideCursor();
 	ConsoleUtils::getCursorPosition(this->hConsole, this->cursorPosition);
 }
 
@@ -224,7 +224,7 @@ void Display::show() const
 
 	// Reset cursor position
 
-	ConsoleUtils::setCursorPosition(this->hConsole, this->cursorPosition);
+	ConsoleUtils::setCursorPosition(0, 0);
 }
 
 void Display::callAction(int x)

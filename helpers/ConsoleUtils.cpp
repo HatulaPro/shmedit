@@ -1,11 +1,9 @@
 #include "ConsoleUtils.h"
+#include <iostream>
 
-void ConsoleUtils::hideCursor(HANDLE hConsole)
+void ConsoleUtils::hideCursor()
 {
-	CONSOLE_CURSOR_INFO lpCursor;
-	lpCursor.bVisible = false;
-	lpCursor.dwSize = 100;
-	SetConsoleCursorInfo(hConsole, &lpCursor);
+	std::cout << "\033[?25l";
 }
 void ConsoleUtils::getCursorPosition(HANDLE hConsole, COORD& pcoord)
 {
@@ -13,9 +11,9 @@ void ConsoleUtils::getCursorPosition(HANDLE hConsole, COORD& pcoord)
 	GetConsoleScreenBufferInfo(hConsole, &info);
 	pcoord = info.dwCursorPosition;
 }
-void ConsoleUtils::setCursorPosition(HANDLE hConsole, COORD coord)
+void ConsoleUtils::setCursorPosition(int x, int y)
 {
-	SetConsoleCursorPosition(hConsole, coord);
+	std::cout << "\033[" << y << ';' << x << 'H';
 }
 
 
