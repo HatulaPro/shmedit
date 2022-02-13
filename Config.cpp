@@ -88,6 +88,12 @@ std::map<int, VisualAction> Config::visualCommands = {
   {ACTION_PAGE_DOWN, {"VisualPageDown", &Content::actionPageDownSelection}},
 };
 
+std::map<std::string, int> Config::settings = {
+	{"USE_TABS", 1},
+	{"TAB_SIZE", 4},
+};
+
+
 bool Config::parse(std::string fileName)
 {
 	std::stringstream s(FilesUtil::readFile(fileName).c_str());

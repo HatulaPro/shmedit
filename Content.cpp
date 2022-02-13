@@ -35,7 +35,7 @@ void Content::setContent(std::string c)
 	std::stringstream cc(FilesUtil::readFile(c).c_str());
 	this->content = std::vector<std::string>();
 	while (std::getline(cc, tmp, '\n')) {
-		this->content.push_back(Helper::replace(tmp, "\t", std::string(TAB_SIZE, ' ')));
+		this->content.push_back(tmp);
 	}
 
 	if (this->content.size() == 0) {
@@ -350,7 +350,7 @@ void Content::actionEnterNoSpacing()
 void Content::actionEnterNewline()
 {
 	int spaceCount = 0;
-	while (spaceCount < this->content[posY].size() && this->content[posY][spaceCount] == ' ') spaceCount += TAB_SIZE;
+	while (spaceCount < this->content[posY].size() && this->content[posY][spaceCount] == ' ') spaceCount += Config::settings["TAB_SIZE"];
 	posY += 1;
 	this->content.insert(this->content.begin() + posY, std::string(spaceCount, ' '));
 	posX = spaceCount;
@@ -394,14 +394,6 @@ void Content::actionRemoveWord()
 
 void Content::actionWrite(char character)
 {
-	if (character == '\t') {
-		for (int i = 0; i < TAB_SIZE; i++) {
-			this->content[posY].insert(this->content[posY].begin() + posX, ' ');
-		}
-		posX += TAB_SIZE;
-		this->wasEdited = true;
-		return;
-	}
 	this->content[posY].insert(this->content[posY].begin() + posX, character);
 	posX += 1;
 	this->wasEdited = true;
@@ -618,7 +610,12 @@ void Content::actionJumpToLineStartSelection()
 void Content::actionTabifySelection()
 {
 	for (size_t i = startY; i <= posY; i++) {
-		this->content[i] = "    " + this->content[i];
+		if (Config::settings["USE_TABS"]) {
+			this->content[i] = '\t' + this->content[i];
+		}
+		else {
+			this->content[i] = std::string(Config::settings["TAB_SIZE"], ' ') + this->content[i];
+		}
 	}
 	this->wasEdited = true;
 }
@@ -626,9 +623,14 @@ void Content::actionTabifySelection()
 void Content::actionUntabifySelection()
 {
 	for (size_t i = startY; i <= posY; i++) {
+		if (this->content[i].size() > 0 && this->content[i][0] == '\t') {
+			this->content[i] = this->content[i].substr(1);
+			this->wasEdited = true;
+			continue;
+		}
 		size_t count = 0;
 
-		while (count < this->content[i].size() && isspace(this->content[i][count]) && count < TAB_SIZE) count++;
+		while (count < this->content[i].size() && isspace(this->content[i][count]) && count < Config::settings["TAB_SIZE"]) count++;
 
 		if (count > 0) {
 			if (i == startY) {
@@ -722,8 +724,13 @@ void Content::actionTabify()
 
 void Content::actionUntabify()
 {
+	if (this->content[posY].size() > 0 && this->content[posY][0] == '\t') {
+		this->content[posY] = this->content[posY].substr(1);
+		this->wasEdited = true;
+		return;
+	}
 	size_t count = 0;
-	while (count < this->content[posY].size() && isspace(this->content[posY][count]) && count < TAB_SIZE) count++;
+	while (count < this->content[posY].size() && isspace(this->content[posY][count]) && count < Config::settings["TAB_SIZE"]) count++;
 
 	if (count > 0) {
 		posX = max(posX - (int)count, 0);

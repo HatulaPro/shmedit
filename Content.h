@@ -5,7 +5,6 @@
 #include "KeyBinds.h"
 #include "Display.h"
 #include <stack>
-#define TAB_SIZE 4
 
 enum STATE
 {
@@ -16,7 +15,6 @@ enum STATE
 	FIND_AND_REPLACE_R,
 	VISUAL,
 };
-
 
 class Content {
 private:

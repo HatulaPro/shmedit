@@ -1,3 +1,5 @@
+#include "../Config.h"
+
 #include <string>
 #include <vector>
 #include "Windows.h"

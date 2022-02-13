@@ -10,7 +10,6 @@
 #include <map>
 #include <thread>
 #include "Config.h"
-
 #define LINE_NUMBER_SIZE 4
 #define NON_CONTENT_LINES 4
 #define LINE_OFFSET_STR " << "

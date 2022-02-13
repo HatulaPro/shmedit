@@ -1,5 +1,5 @@
 #include "Helper.h"
-#include "../KeyBinds.h"
+#include "../Content.h"
 
 #include <algorithm>
 #include <chrono>
@@ -7,7 +7,6 @@
 #include <string>
 #include <ctype.h>
 #include <conio.h>
-#include "../Content.h"
 
 #define STD_OUTPUT_HANDLE -11
 
@@ -168,12 +167,10 @@ bool Helper::insStrCompare(std::string a, std::string b)
 
 std::string Helper::padToLine(std::string line, short width)
 {
-	std::string result = Helper::replace(line, "\t", std::string(TAB_SIZE, ' '));
+	line = Helper::replace(line, "\t", std::string(Config::settings["TAB_SIZE"], ' '));
 	size_t end = line.size();
-	while (Helper::getDisplayLength(result, 0, end) > width) end--;
-	result = result.substr(0, end);
-	result.insert(result.end(), width - Helper::getDisplayLength(result), ' ');
-	return result;
+	while (Helper::getDisplayLength(line, 0, end) > width) end--;
+	return line.substr(0, end) + std::string(width - Helper::getDisplayLength(line), ' ');
 }
 
 int Helper::getNextKey()
