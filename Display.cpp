@@ -147,7 +147,7 @@ void Display::show() const
 					styles = StylesVector(LINE_NUMBER, RESET, WHITE, RESET, cursorStyle, RESET);
 					strs = StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor);
 					if (isInFindState) {
-						cursorStyle = FIND_HIGHLIGHTING;
+						styles[4] = FIND_HIGHLIGHTING;
 						cursor = line.substr(cursorLocation, this->contents[this->activeContent]->getCommandInfo().size());
 						afterCursor = afterCursor.substr(cursor.size() - 1);
 						strs = StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor);

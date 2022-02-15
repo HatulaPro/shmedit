@@ -79,7 +79,7 @@ std::string Content::getCommandInfo() const
 
 std::string Content::getCommandArgs(std::string lastKeys) const
 {
-	if (this->state == DEAFULT) {
+	if (this->state == DEFAULT) {
 		return "";
 	}
 	else if (this->state == COMMAND) {
@@ -130,14 +130,14 @@ void Content::callAction(int x, std::string& lastKeys, std::string& commandOutpu
 		return;
 	}
 	else if (x == ACTION_START_DEAFULT) { // Starting default
-		this->setState(DEAFULT);
+		this->setState(DEFAULT);
 		lastKeys = "";
 		return;
 	}
 
 	if (this->getState() == VISUAL) { // Visual mode
 		if (x == EXIT_CMD_MODE || x == ACTION_NEWLINE) {
-			this->setState(DEAFULT);
+			this->setState(DEFAULT);
 		}
 		if (Config::visualCommands.count(x)) { // All visual commands
 			auto f = Config::visualCommands.find(x);
@@ -149,6 +149,9 @@ void Content::callAction(int x, std::string& lastKeys, std::string& commandOutpu
 		if (x == FIND_NEXT || x == ACTION_NEWLINE) {
 			commandOutput = this->runCommand(COMMAND_FIND);
 		}
+		else {
+			this->state = DEFAULT;
+		}
 		return;
 	}
 	if (this->isInFindState()) { // Find and replace
@@ -159,15 +162,18 @@ void Content::callAction(int x, std::string& lastKeys, std::string& commandOutpu
 			this->setState(FIND_AND_REPLACE_F);
 			commandOutput = this->runCommand(COMMAND_FIND_AND_REPLACE);
 		}
+		else {
+			this->state = DEFAULT;
+		}
 		return;
 	}
 	if (this->getState() == COMMAND) { // Command mode
 		// Leave cmd mode
 		if (lastKeys.size() == 0 && x == EXIT_CMD_MODE) {
-			this->setState(DEAFULT);
+			this->setState(DEFAULT);
 		}
 		else if (x == ACTION_NEWLINE) {
-			this->setState(DEAFULT);
+			this->setState(DEFAULT);
 			// No command
 			if (!lastKeys.size()) return;
 
@@ -241,7 +247,7 @@ bool Content::isInFindState() const
 
 std::string Content::getStateString() const
 {
-	if (this->state == DEAFULT) {
+	if (this->state == DEFAULT) {
 		return "key| ";
 	}
 	else if (this->state == COMMAND) {
@@ -563,10 +569,10 @@ void Content::actionLeftKeySelection()
 {
 	this->actionLeftKey();
 	if (posY < startY) {
-		this->state = DEAFULT;
+		this->state = DEFAULT;
 	}
 	else if (posY == startY && posX < startX) {
-		this->state = DEAFULT;
+		this->state = DEFAULT;
 	}
 }
 
@@ -579,10 +585,10 @@ void Content::actionUpKeySelection()
 {
 	this->actionUpKey();
 	if (posY < startY) {
-		this->state = DEAFULT;
+		this->state = DEFAULT;
 	}
 	else if (posY == startY && posX < startX) {
-		this->state = DEAFULT;
+		this->state = DEFAULT;
 	}
 }
 
@@ -600,10 +606,10 @@ void Content::actionJumpToLineStartSelection()
 {
 	this->actionJumpToLineStart();
 	if (posY < startY) {
-		this->state = DEAFULT;
+		this->state = DEFAULT;
 	}
 	else if (posY == startY && posX < startX) {
-		this->state = DEAFULT;
+		this->state = DEFAULT;
 	}
 }
 
@@ -651,10 +657,10 @@ void Content::actionWordLeftSelection()
 {
 	this->actionWordLeft();
 	if (posY < startY) {
-		this->state = DEAFULT;
+		this->state = DEFAULT;
 	}
 	else if (posY == startY && posX < startX) {
-		this->state = DEAFULT;
+		this->state = DEFAULT;
 	}
 }
 
@@ -846,7 +852,7 @@ std::string Content::commandFind(std::string command)
 			return "Found in " + std::to_string(posY) + ':' + std::to_string(posX);
 		}
 	}
-	this->state = DEAFULT;
+	this->state = DEFAULT;
 	return "String not found.";
 }
 
@@ -861,7 +867,7 @@ std::string Content::commandFindAndReplace(std::string command)
 		this->state = FIND_AND_REPLACE_F;
 		return "Found.";
 	}
-	else if (this->state == DEAFULT) {
+	else if (this->state == DEFAULT) {
 		size_t index = command.find_first_of('~');
 		if (index == std::string::npos) {
 			return "'~' sign not found. Can not parse request.";

@@ -8,7 +8,7 @@
 
 enum STATE
 {
-	DEAFULT,
+	DEFAULT,
 	COMMAND,
 	FIND,
 	FIND_AND_REPLACE_F,
@@ -23,7 +23,7 @@ private:
 	std::string fileName;
 	bool wasEdited = false;
 
-	int state = DEAFULT;
+	int state = DEFAULT;
 
 	std::string commandInfo;
 	std::string commandInfo2;
