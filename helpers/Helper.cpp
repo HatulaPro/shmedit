@@ -45,13 +45,40 @@ std::string Helper::colorize(std::string text, int style)
 	}
 }
 
-std::string Helper::colorize(std::vector<std::string> text, std::vector<Style> styles)
+std::string Helper::colorize(std::vector<std::string> text, std::vector<Style> styles, short width)
 {
 	if (text.size() != styles.size()) throw std::exception("Invalid colorizers lengths.");
 	std::string result;
+	size_t totalSize = 0;
 	for (size_t i = 0; i < text.size(); i++) {
-		result += Helper::colorize(text[i], styles[i]);
+		totalSize += text[i].size();
 	}
+
+	if (width > totalSize) {
+		for (size_t i = 0; i < text.size(); i++) {
+			result += Helper::colorize(text[i], styles[i]);
+		}
+		result += std::string(width - totalSize, ' ');
+	}
+	else {
+		// XXXXXXXXXXX
+		// AAAAABBBBBCCCCCCCCC
+		size_t index = 1;
+		do {
+			text[text.size() - index] = text[text.size() - index].substr(0, text[text.size() - index].size() - totalSize + width);
+			totalSize = 0;
+			for (size_t i = 0; i < text.size(); i++) {
+				totalSize += text[i].size();
+			}
+			index++;
+		} while (totalSize > width);
+
+		for (size_t i = 0; i < text.size(); i++) {
+			result += Helper::colorize(text[i], styles[i]);
+		}
+
+	}
+
 	return result;
 }
 
@@ -76,19 +103,26 @@ std::string Helper::setCursor(std::string line, int x)
 size_t Helper::getDisplayLength(std::string str, size_t begin, size_t end)
 {
 	size_t s = 0;
+	size_t inStyleCount = 0;
 	bool inStyle = false;
 	size_t finishLine = min(end, str.size());
 	for (size_t i = begin; i < finishLine; i++) {
 		if (str[i] == '\033') {
 			inStyle = true;
+			inStyleCount = 1;
 		}
-		else if (inStyle && str[i] == 'm') {
+		else if (inStyle && isalpha(str[i])) {
 			inStyle = false;
+			inStyleCount = 0;
 		}
 		else if (!inStyle) {
 			s += 1;
 		}
+		else {
+			inStyleCount++;
+		}
 	}
+	if (inStyle) s += inStyleCount;
 	return s;
 }
 
@@ -106,7 +140,7 @@ size_t Helper::getDisplayIndex(std::string str, size_t index)
 		if (str[i] == '\033') {
 			inStyle = true;
 		}
-		else if (inStyle && str[i] == 'm') {
+		else if (inStyle && isalpha(str[i])) {
 			inStyle = false;
 		}
 		else if (!inStyle) {
@@ -170,6 +204,8 @@ std::string Helper::padToLine(std::string line, short width)
 	line = Helper::replace(line, "\t", std::string(Config::settings["TAB_SIZE"], ' '));
 	size_t end = line.size();
 	while (Helper::getDisplayLength(line, 0, end) > width) end--;
+	//std::string decolorized = Helper::decolorize(line);
+
 	return line.substr(0, end) + std::string(width - Helper::getDisplayLength(line), ' ');
 }
 

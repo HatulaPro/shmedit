@@ -28,7 +28,7 @@ class Helper {
 public:
 	
 	static std::string colorize(std::string text, int style);
-	static std::string colorize(std::vector<std::string> text, std::vector<Style> styles);
+	static std::string colorize(std::vector<std::string> text, std::vector<Style> styles, short width);
 	static std::string setCursor(std::string line, int x);
 	static size_t getDisplayLength(std::string str, size_t begin = 0, size_t end = std::string::npos);
 	static size_t getDisplayIndex(std::string str, size_t index);

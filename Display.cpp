@@ -34,7 +34,7 @@ void Display::showTopBar(short width, bool wasEdited) const
 		topBarContents = topBarContents.substr(0, width - 3) + "...";
 	}
 
-	std::cout << Helper::padToLine(Helper::colorize(StringsVector(timeString, mid, fileTitle, filePadding, otherFiles), StylesVector(MAGENTA, RESET, BLUE, RESET, DIMMED)), width);
+	std::cout << Helper::padToLine(Helper::colorize(StringsVector(timeString, mid, fileTitle, filePadding, otherFiles), StylesVector(MAGENTA, RESET, BLUE, RESET, DIMMED), width), width);
 }
 
 Display::Display(std::string fname) {
@@ -145,15 +145,25 @@ void Display::show() const
 					std::string afterCursor = line.size() > cursorLocation ? line.substr(cursorLocation + 1) : "";
 
 					styles = StylesVector(LINE_NUMBER, RESET, WHITE, RESET, cursorStyle, RESET);
-					if (state == VISUAL) {
-						styles[3] = VISUAL_STYLE;
-					}
-					else if (isInFindState) {
+					strs = StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor);
+					if (isInFindState) {
 						cursorStyle = FIND_HIGHLIGHTING;
 						cursor = line.substr(cursorLocation, this->contents[this->activeContent]->getCommandInfo().size());
 						afterCursor = afterCursor.substr(cursor.size() - 1);
+						strs = StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor);
 					}
-					strs = StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor);
+					else if (state == VISUAL) {
+						if (startX < offset) {
+							styles[3] = VISUAL_STYLE;
+						}
+						else {
+							std::string visualCursor = line.substr(cursorLocation - posX + startX, posX - startX);
+							beforeCursor = line.substr(0, cursorLocation - posX + startX);
+
+							styles = StylesVector(LINE_NUMBER, RESET, WHITE, RESET, VISUAL_STYLE, cursorStyle, RESET);
+							strs = StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, visualCursor, cursor, afterCursor + " ");
+						}
+					}
 				}
 				// Not offset
 				else {
@@ -198,7 +208,7 @@ void Display::show() const
 					}
 				}
 			}
-			std::cout << Helper::padToLine(Helper::colorize(strs, styles), width);
+			std::cout << Helper::colorize(strs, styles, width);
 		}
 		count++;
 	}
@@ -216,7 +226,7 @@ void Display::show() const
 		commandArgsStyle = WHITE;
 	}
 
-	std::cout << Helper::padToLine(Helper::colorize(StringsVector(commandString, commandData, " "), StylesVector(MAGENTA, commandArgsStyle, this->contents[this->activeContent]->getState() == COMMAND ? CURSOR : RESET)), width);
+	std::cout << Helper::padToLine(Helper::colorize(StringsVector(commandString, commandData, " "), StylesVector(MAGENTA, commandArgsStyle, this->contents[this->activeContent]->getState() == COMMAND ? CURSOR : RESET), width), width);
 	std::cout << Helper::padToLine(this->commandOutput, width);
 
 
