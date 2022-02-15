@@ -88,6 +88,8 @@ A text editor program for windows.
       cmd| :fr StrToLookFor~StrToBeReplacedWith
       ```
     
+        + NOTE: In both `find` and `find&rep` modes, you can add a '^' at the beginning of the string you are looking for, to tell the editor to look for it up (default is down).
+    
     - `ext`: Exits the editor. *Warning*: This command does not save any file!  
     - `sext`: Saves all edited files and exits the editor.  
     

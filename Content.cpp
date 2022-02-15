@@ -835,23 +835,47 @@ std::string Content::commandFind(std::string command)
 	}
 	this->state = FIND;
 
-	if (posX < this->content[posY].size()) {
-		size_t found = this->content[posY].find(command);
-		if (found != std::string::npos && found > posX) {
+	if (command[0] == '^') {
+		// Look up:
+		std::string lookingFor = command.substr(1);
+		size_t found = this->content[posY].substr(0, posX).rfind(lookingFor);
+
+		if (found != std::string::npos) {
 			posX = found;
 			return "Found in " + std::to_string(posY) + ':' + std::to_string(posX);
+		}
+
+		for (int i = this->content.size() - 1; i >= 0; i--) {
+			size_t index = (posY + i) % this->content.size();
+			found = this->content[index].rfind(lookingFor);
+			if (found != std::string::npos) {
+				posX = found;
+				posY = index;
+				return "Found in " + std::to_string(posY) + ':' + std::to_string(posX);
+			}
+		}
+	}
+	else {
+		// Look down:
+		if (posX < this->content[posY].size()) {
+			size_t found = this->content[posY].substr(posX + 1).find(command);
+			if (found != std::string::npos) {
+				posX += found + 1;
+				return "Found in " + std::to_string(posY) + ':' + std::to_string(posX);
+			}
+		}
+
+		for (size_t i = 0; i < this->content.size(); i++) {
+			size_t index = (posY + i + 1) % this->content.size();
+			size_t found = this->content[index].find(command);
+			if (found != std::string::npos) {
+				posX = found;
+				posY = index;
+				return "Found in " + std::to_string(posY) + ':' + std::to_string(posX);
+			}
 		}
 	}
 
-	for (size_t i = 0; i < this->content.size(); i++) {
-		size_t index = (posY + i + 1) % this->content.size();
-		size_t found = this->content[index].find(command);
-		if (found != std::string::npos) {
-			posX = found;
-			posY = index;
-			return "Found in " + std::to_string(posY) + ':' + std::to_string(posX);
-		}
-	}
 	this->state = DEFAULT;
 	return "String not found.";
 }
@@ -860,9 +884,11 @@ std::string Content::commandFindAndReplace(std::string command)
 {
 	if (this->state == FIND_AND_REPLACE_R) {
 		std::string beforeTilda = this->commandInfo;
+		size_t beforeTildaSize = beforeTilda.size();
+		if (beforeTildaSize && beforeTilda[0] == '^') beforeTildaSize--;
 		std::string afterTilda = this->commandInfo2;
 
-		this->content[posY].erase(posX, beforeTilda.size());
+		this->content[posY].erase(posX, beforeTildaSize);
 		this->content[posY].insert(posX, afterTilda);
 		this->state = FIND_AND_REPLACE_F;
 		return "Found.";

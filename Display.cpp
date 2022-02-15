@@ -123,6 +123,8 @@ void Display::show() const
 	// Aligning to top/bottom
 	int startIndex = max(min(posY - (effectiveHeight / 2), (int)content.size() - effectiveHeight), 0);
 
+	size_t commandInfoSize = this->contents[this->activeContent]->getCommandInfo().size();
+	if (commandInfoSize && this->contents[this->activeContent]->getCommandInfo()[0] == '^') commandInfoSize--;
 
 	for (auto i = content.begin() + startIndex; i != content.begin() + min(startIndex + height, (int)content.size()); i++) {
 		std::vector<std::string> strs;
@@ -148,7 +150,7 @@ void Display::show() const
 					strs = StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor);
 					if (isInFindState) {
 						styles[4] = FIND_HIGHLIGHTING;
-						cursor = line.substr(cursorLocation, this->contents[this->activeContent]->getCommandInfo().size());
+						cursor = line.substr(cursorLocation, commandInfoSize);
 						afterCursor = afterCursor.substr(cursor.size() - 1);
 						strs = StringsVector(lineNumber, " ", LINE_OFFSET_STR, beforeCursor, cursor, afterCursor);
 					}
@@ -175,7 +177,7 @@ void Display::show() const
 
 					if (isInFindState) {
 						cursorStyle = FIND_HIGHLIGHTING;
-						cursor = i->substr(posX, this->contents[this->activeContent]->getCommandInfo().size());
+						cursor = i->substr(posX, commandInfoSize);
 						afterCursor = afterCursor.substr(cursor.size() - 1);
 					}
 					else if (state == VISUAL) {
