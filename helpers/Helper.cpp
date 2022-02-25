@@ -13,35 +13,39 @@
 
 
 
-std::string Helper::colorize(std::string text, int style)
+std::string Helper::colorize(std::string text, Style style)
 {
 	switch (style) {
-	case RESET:
+	case Style::RESET:
 		return "\033[0m" + text + "\033[0m";
-	case UNDERLINE:
+	case Style::UNDERLINE:
 		return "\033[4m" + text + "\033[0m";
-	case BLACK:
+	case Style::BLACK:
 		return "\033[30m" + text + "\033[0m";
-	case WHITE:
+	case Style::WHITE:
 		return "\033[37m" + text + "\033[0m";
-	case RED:
+	case Style::RED:
 		return "\033[31m" + text + "\033[0m";
-	case BLUE:
+	case Style::BLUE:
 		return "\033[34;1m" + text + "\033[0m";
-	case MAGENTA:
+	case Style::MAGENTA:
 		return "\033[35m" + text + "\033[0m";
-	case CURSOR:
+	case Style::CURSOR:
 		return "\033[42m" + text + "\033[0m";
-	case BACKGROUND:
+	case Style::BACKGROUND:
 		return "\033[104m" + text + "\033[0m";
-	case VISUAL_STYLE:
+	case Style::VISUAL_STYLE:
 		return "\033[100m" + text + "\033[0m";
-	case FIND_HIGHLIGHTING:
+	case Style::FIND_HIGHLIGHTING:
 		return "\033[101m" + text + "\033[0m";
-	case LINE_NUMBER:
+	case Style::LINE_NUMBER:
 		return "\033[46m\033[34m" + text + "\033[0m";
-	case DIMMED:
+	case Style::DIMMED:
 		return "\033[38;5;242m" + text + "\033[0m";
+	case Style::FILE_EXPLORER:
+		return "\033[48;2;15;6;23m\033[37m" + text + "\033[0m";
+	case Style::FILE_EXPLORER_ACTIVE:
+		return "\033[48;2;68;30;66m\033[37m" + text + "\033[0m";
 	}
 }
 
@@ -88,15 +92,15 @@ std::string Helper::setCursor(std::string line, int x)
 		return line;
 	}
 	if (line.size() == 0) {
-		return Helper::colorize(" ", CURSOR);
+		return Helper::colorize(" ", Style::CURSOR);
 	}
 	if (x == 0) {
-		return Helper::colorize(line.substr(0, 1), CURSOR) + line.substr(1);
+		return Helper::colorize(line.substr(0, 1), Style::CURSOR) + line.substr(1);
 	}
 	if (x == line.size()) {
-		return line + Helper::colorize(" ", CURSOR);
+		return line + Helper::colorize(" ", Style::CURSOR);
 	}
-	return line.substr(0, x) + Helper::colorize(line.substr(x, 1), CURSOR) + line.substr(x + 1);
+	return line.substr(0, x) + Helper::colorize(line.substr(x, 1), Style::CURSOR) + line.substr(x + 1);
 }
 
 

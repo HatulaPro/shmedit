@@ -16,7 +16,7 @@
 
 Content::Content(std::string c, Display& d) : display(d)
 {
-	for (auto i : FilesUtil::getFilesInDirectory(c)) {
+	for (auto i : FilesUtil::getRealFileName(c)) {
 		if (Helper::insStrCompare(c, i)) {
 			this->fileName = i;
 			setContent(i);
@@ -922,6 +922,12 @@ std::string Content::commandFindAndReplace(std::string command)
 		return "Found.";
 	}
 	return "Unreachable";
+}
+
+std::string Content::commandOpenFileExplorer(std::string command)
+{
+	this->display.openFileExplorer();
+	return "Opened.";
 }
 
 void Content::actionPaste()

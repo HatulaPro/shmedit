@@ -45,6 +45,7 @@
 #define COMMAND_RENAME_FILE "mv"
 #define COMMAND_FIND "f"
 #define COMMAND_FIND_AND_REPLACE "fr"
+#define COMMAND_OPEN_FILE_EXPLORER "exp"
 #define COMMAND_QUIT "Q"
 #define COMMAND_QUIT_AND_SAVE "q"
 #define COMMAND_PASTE "p"

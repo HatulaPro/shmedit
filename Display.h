@@ -4,6 +4,7 @@
 #include "Windows.h"
 
 class Content;
+class FileExplorer;
 
 class Display {
 private:
@@ -13,6 +14,8 @@ private:
 	std::string commandOutput;
 	std::string lastKeys;
 
+	FileExplorer* fileExplorer;
+
 	void showTopBar(short width, bool wasEdited) const;
 
 	HANDLE hConsole;
@@ -21,6 +24,8 @@ public:
 	Display(std::string fname);
 	~Display();
 
+	void openFileExplorer();
+	void closeFileExplorer();
 	void open(std::string fname);
 	void openNext();
 	void openPrev();

@@ -41,6 +41,7 @@ const std::map<std::string, std::string(Content::*)(std::string)> Config::called
   {COMMAND_SAVE_AND_EXIT, &Content::commandSaveAndExit},
   {COMMAND_FIND, &Content::commandFind},
   {COMMAND_FIND_AND_REPLACE, &Content::commandFindAndReplace},
+  {COMMAND_OPEN_FILE_EXPLORER, &Content::commandOpenFileExplorer},
 };
 
 std::map<std::string, void (Content::*)()> Config::instantCommands = {

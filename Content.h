@@ -117,6 +117,7 @@ public:
 	std::string commandRenameFile(std::string command);
 	std::string commandFind(std::string command);
 	std::string commandFindAndReplace(std::string command);
+	std::string commandOpenFileExplorer(std::string command);
 	std::string runCommand(std::string command);
 
 

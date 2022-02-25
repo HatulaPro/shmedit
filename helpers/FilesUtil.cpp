@@ -24,7 +24,16 @@ void FilesUtil::writeFile(std::string fileName, std::string content)
 	f.close();
 }
 
-std::vector<std::string> FilesUtil::getFilesInDirectory(std::string dir)
+std::string FilesUtil::getFullPath(std::string fileName)
+{
+	char filename[] = "test.txt";
+	char fullFileName[MAX_PATH];
+
+	GetFullPathNameA(fileName.c_str(), MAX_PATH, fullFileName, nullptr);
+	return fullFileName;
+}
+
+std::vector<std::string> FilesUtil::getRealFileName(std::string dir)
 {
 	std::vector<std::wstring> names;
 	std::wstring search_path(dir.begin(), dir.end());
@@ -45,4 +54,41 @@ std::vector<std::string> FilesUtil::getFilesInDirectory(std::string dir)
 		res.push_back(std::string(i.begin(), i.end()));
 	}
 	return res;
+}
+
+std::vector<std::pair<bool, std::string>> FilesUtil::getDirectoryListings(std::string directory)
+{
+	HANDLE dir;
+	WIN32_FIND_DATAA file_data;
+	
+	std::vector<std::pair<bool, std::string>> result;
+
+	if ((dir = FindFirstFileA((directory + "/*").c_str(), &file_data)) == INVALID_HANDLE_VALUE)
+		return result; 
+
+	do {
+		std::string fileName = file_data.cFileName;
+		std::string fullFileName = directory + "/" + fileName;
+		bool isDirectory = (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+
+		if (fileName[0] == '.')
+			continue;
+
+		result.push_back({ isDirectory, fileName });
+	} while (FindNextFileA(dir, &file_data));
+
+	FindClose(dir);
+	return result;
+}
+
+std::string FilesUtil::getDirectoryName(std::string fileName)
+{
+	fileName = FilesUtil::getFullPath(fileName);
+	const size_t last_slash_idx = fileName.rfind('\\');
+	if (std::string::npos != last_slash_idx)
+	{
+		return fileName.substr(0, last_slash_idx);
+	}
+
+	throw std::exception("Can't get directory name");
 }
