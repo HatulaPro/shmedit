@@ -7,6 +7,8 @@ class FileExplorer {
 private:
 	Display& display;
 	std::string currentPath;
+	std::string query;
+
 	int activeIndex;
 	std::vector<std::pair<bool, std::string>> files;
 public:

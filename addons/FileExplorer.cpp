@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include "FileExplorer.h"
 #include "../helpers/ConsoleUtils.h"
 #include "../helpers/FilesUtil.h"
@@ -25,6 +26,7 @@ void FileExplorer::show(int left, int top, int width, int height)
 	std::string prePadding(20, ' ');
 	std::string dots = "   ...";
 	std::string afterDots(width - prePadding.size() - dots.size(), ' ');
+
 	ConsoleUtils::setCursorPosition(left, top);
 	int effectiveHeight = height - 2;
 
@@ -38,13 +40,33 @@ void FileExplorer::show(int left, int top, int width, int height)
 	int count = 0;
 	for (int i = offset; count <= effectiveHeight; i++) {
 		ConsoleUtils::setCursorPosition(left, top + count + 1);
+		if (this->files.size()) {
 
-		std::string fileName;
-		if (i < this->files.size()) fileName = (this->files[i].first ? "d) " : "   ") + this->files[i].second;
-		std::string afterPadding(width - prePadding.size() - fileName.size(), ' ');
-		Style fileColor = i == this->activeIndex ? Style::FILE_EXPLORER_ACTIVE : Style::FILE_EXPLORER;
-		std::cout << Helper::colorize(StringsVector(prePadding, fileName, afterPadding), StylesVector(Style::FILE_EXPLORER, fileColor, Style::FILE_EXPLORER), width);
+			std::string fileName;
+			std::string fileType;
+			std::string queriedFileName;
+			if (i < this->files.size()) {
+				fileName = this->files[i].second;
+				fileType = (this->files[i].first ? "d) " : "   ");
+			}
+			if (this->query.size() && fileName.size()) {
+				queriedFileName = fileName.substr(0, this->query.size());
+				fileName = fileName.substr(this->query.size());
+			}
 
+			std::string afterPadding(width - prePadding.size() - fileName.size() - fileType.size() - queriedFileName.size(), ' ');
+			Style fileColor = i == this->activeIndex ? Style::FILE_EXPLORER_ACTIVE : Style::FILE_EXPLORER;
+
+			std::cout << Helper::colorize(StringsVector(prePadding, fileType, queriedFileName, fileName, afterPadding), StylesVector(Style::FILE_EXPLORER, Style::FILE_EXPLORER, Style::FIND_HIGHLIGHTING, fileColor, Style::FILE_EXPLORER), width);
+		}
+		else if (count == 0) {
+			std::string notFoundMessage = this->query.size() ? "No files found for `" + this->query + "`" : "Empty Directory";
+			std::string afterPadding(width - prePadding.size() - notFoundMessage.size(), ' ');
+			std::cout << Helper::colorize(StringsVector(prePadding, notFoundMessage, afterPadding), StylesVector(Style::FILE_EXPLORER, Style::FILE_EXPLORER, Style::FILE_EXPLORER), width);
+		}
+		else {
+			std::cout << Helper::colorize(StringsVector(std::string(width, ' ')), StylesVector(Style::FILE_EXPLORER), width);
+		}
 		count++;
 	}
 	ConsoleUtils::setCursorPosition(left, top + height - 1);
@@ -70,12 +92,12 @@ void FileExplorer::callAction(int x, std::string& lastKeys, std::string& command
 		if (this->activeIndex < 0) this->activeIndex = this->files.size() - 1;
 	}
 	else if (x == ACTION_MOVE_RIGHT || x == ACTION_NEWLINE) {
-		if (this->files[this->activeIndex].first) {
+		if (this->files.size() && this->files[this->activeIndex].first) {
 			this->setCurrentPath(this->currentPath + this->files[this->activeIndex].second);
 			this->files = FilesUtil::getDirectoryListings(this->currentPath);
 			this->activeIndex = 0;
 		}
-		else {
+		else if (this->files.size()) {
 			this->display.open(this->currentPath + this->files[this->activeIndex].second);
 			this->display.closeFileExplorer();
 		}
@@ -89,5 +111,24 @@ void FileExplorer::callAction(int x, std::string& lastKeys, std::string& command
 		for (int i = 0; i < this->files.size(); i++) {
 			if (this->files[i].second == lastFileName) this->activeIndex = i;
 		}
+	}
+	else if (Helper::isPrintable(x)) {
+		this->query += x;
+		if (this->files.size()) {
+			std::vector<std::pair<bool, std::string>> filteredFiles;
+			std::copy_if(this->files.begin(), this->files.end(), std::back_inserter(filteredFiles), [=](std::pair<bool, std::string>& f) {
+				return Helper::insStrCompare(this->query, f.second.substr(0, this->query.size()));
+			});
+			std::string lastFileName = this->files[activeIndex].second;
+			this->files = filteredFiles;
+			this->activeIndex = 0;
+			for (int i = 0; i < this->files.size(); i++) {
+				if (this->files[i].second == lastFileName) this->activeIndex = i;
+			}
+		}
+	}
+	else {
+		this->query = "";
+		this->files = FilesUtil::getDirectoryListings(this->currentPath);
 	}
 }

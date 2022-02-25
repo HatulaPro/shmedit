@@ -96,6 +96,8 @@ A text editor program for windows.
       + `Left`: Open parent directory.
       + `Right`, `Enter`: Open active file/directory.
       + `Ctrl + C`: Close.
+      
+      - Type characters freely to search for the right file. 
     
     - `ext`: Exits the editor. *Warning*: This command does not save any file!  
     - `sext`: Saves all edited files and exits the editor.  

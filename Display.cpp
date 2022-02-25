@@ -57,11 +57,13 @@ Display::~Display()
 
 void Display::openFileExplorer()
 {
+	this->lastKeys = "";
 	this->fileExplorer = new FileExplorer(*this, FilesUtil::getDirectoryName(this->contents[this->activeContent]->getFileName()));
 }
 
 void Display::closeFileExplorer()
 {
+	this->lastKeys = "";
 	if (this->fileExplorer != nullptr) {
 		delete this->fileExplorer;
 		this->fileExplorer = nullptr;
