@@ -1,10 +1,10 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <stack>
 #include <map>
 #include "KeyBinds.h"
 #include "Display.h"
-#include <stack>
 
 enum STATE
 {
@@ -16,10 +16,29 @@ enum STATE
 	VISUAL,
 };
 
+enum class HistoryAction {
+	WRITE,
+	PASTE,
+	REMOVE,
+	TABIFY,
+	UNTABIFY,
+};
+
+struct HistoryItem {
+	HistoryAction action;
+	int posX;
+	int posY;
+	int startX;
+	int startY;
+	std::string op;
+};
+
 class Content {
 private:
 	Display& display;
 	std::vector<std::string> content;
+	std::stack<HistoryItem> history;
+
 	std::string fileName;
 	bool wasEdited = false;
 
@@ -86,6 +105,7 @@ public:
 	void actionCopyLine();
 	void actionCopyWordBack();
 	void actionPasteFromClipboard();
+	void actionUndo();
 
 	void openNextFile();
 	void openPreviousFile();
@@ -119,8 +139,4 @@ public:
 	std::string commandFindAndReplace(std::string command);
 	std::string commandOpenFileExplorer(std::string command);
 	std::string runCommand(std::string command);
-
-
-	
-	//{ACTION_CTRL_S, Content::actionSave},
 };

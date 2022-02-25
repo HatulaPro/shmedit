@@ -407,6 +407,15 @@ void Content::actionRemoveWord()
 void Content::actionWrite(char character)
 {
 	this->content[posY].insert(this->content[posY].begin() + posX, character);
+
+
+	this->history.push(HistoryItem{
+				HistoryAction::WRITE,
+				this->posX,
+				this->posY,
+				-1, -1,
+				std::string(1, character)
+		});
 	posX += 1;
 	this->wasEdited = true;
 }
@@ -517,6 +526,45 @@ void Content::actionPasteFromClipboard()
 	this->commandInfo = text;
 	this->actionPaste();
 	this->commandInfo = tmp;
+	this->wasEdited = true;
+}
+
+void Content::actionUndo()
+{
+	if (this->history.empty()) return;
+	HistoryItem lastAction = this->history.top();
+	this->history.pop();
+
+	if (lastAction.action == HistoryAction::WRITE) {
+		this->content[lastAction.posY].erase(lastAction.posX, lastAction.op.size());
+		this->posX = lastAction.posX;
+		this->posY = lastAction.posY;
+		while (!this->history.empty()) {
+			lastAction = this->history.top();
+			if (lastAction.action == HistoryAction::WRITE && lastAction.posX == this->posX - 1 && lastAction.posY == this->posY && lastAction.op != " ") {
+				this->history.pop();
+				this->content[lastAction.posY].erase(lastAction.posX, lastAction.op.size());
+				this->posX = lastAction.posX;
+				this->posY = lastAction.posY;
+			}
+			else {
+				break;
+			}
+		}
+
+	}
+	else if (lastAction.action == HistoryAction::PASTE) {
+		throw std::exception("Not implemented");
+	}
+	else if (lastAction.action == HistoryAction::REMOVE) {
+		throw std::exception("Not implemented");
+	}
+	else if (lastAction.action == HistoryAction::TABIFY) {
+		throw std::exception("Not implemented");
+	}
+	else if (lastAction.action == HistoryAction::UNTABIFY) {
+		throw std::exception("Not implemented");
+	}
 	this->wasEdited = true;
 }
 
