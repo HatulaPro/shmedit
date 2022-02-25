@@ -7,9 +7,17 @@
 
 FileExplorer::FileExplorer(Display& d, std::string path) : display(d)
 {
-	this->currentPath = path;
+	this->setCurrentPath(path);
 	this->activeIndex = 0;
 	this->files = FilesUtil::getDirectoryListings(this->currentPath);
+}
+
+void FileExplorer::setCurrentPath(std::string path)
+{
+	this->currentPath = path;
+	if (this->currentPath[this->currentPath.size() - 1] != '\\' && this->currentPath[this->currentPath.size() - 1] != '/') {
+		this->currentPath += '\\';
+	}
 }
 
 void FileExplorer::show(int left, int top, int width, int height)
@@ -60,5 +68,18 @@ void FileExplorer::callAction(int x, std::string& lastKeys, std::string& command
 	else if (x == ACTION_MOVE_UP) {
 		this->activeIndex--;
 		if(this->activeIndex < 0) this->activeIndex = this->files.size() - 1;
+	}
+	else if (x == ACTION_MOVE_RIGHT) {
+		if (this->files[this->activeIndex].first) {
+			this->setCurrentPath(this->currentPath + this->files[this->activeIndex].second);
+			this->files = FilesUtil::getDirectoryListings(this->currentPath);
+			this->activeIndex = 0;
+		}
+	}
+	else if (x == ACTION_MOVE_LEFT) {
+		this->currentPath = this->currentPath.substr(0, this->currentPath.size() - 1);
+		this->setCurrentPath(this->currentPath.substr(0, this->currentPath.find_last_of("\\/")));
+        this->files = FilesUtil::getDirectoryListings(this->currentPath);
+        this->activeIndex = 0;
 	}
 }

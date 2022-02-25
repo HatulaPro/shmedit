@@ -63,12 +63,12 @@ std::vector<std::pair<bool, std::string>> FilesUtil::getDirectoryListings(std::s
 	
 	std::vector<std::pair<bool, std::string>> result;
 
-	if ((dir = FindFirstFileA((directory + "/*").c_str(), &file_data)) == INVALID_HANDLE_VALUE)
+	if ((dir = FindFirstFileA((directory + "\\*").c_str(), &file_data)) == INVALID_HANDLE_VALUE)
 		return result; 
 
 	do {
 		std::string fileName = file_data.cFileName;
-		std::string fullFileName = directory + "/" + fileName;
+		std::string fullFileName = directory + "\\" + fileName;
 		bool isDirectory = (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 
 		if (fileName[0] == '.')
