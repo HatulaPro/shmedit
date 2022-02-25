@@ -89,6 +89,13 @@ A text editor program for windows.
       ```
     
         + NOTE: In both `find` and `find&rep` modes, you can add a '^' at the beginning of the string you are looking for, to tell the editor to look for it up (default is down).
+       
+    - `exp`: Opens the file explorer addon. Use the arrow keys to navigate between the files.
+      + `Up`: Move one file up.
+      + `Down`: Move one file down.
+      + `Left`: Open parent directory.
+      + `Right`, `Enter`: Open active file/directory.
+      + `Ctrl + C`: Close.
     
     - `ext`: Exits the editor. *Warning*: This command does not save any file!  
     - `sext`: Saves all edited files and exits the editor.  

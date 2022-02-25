@@ -8,7 +8,7 @@
 
 int main() {
 
-	std::string fileName = "readme.md";
+	std::string fileName = "README.md";
 	Display d = Display(fileName);
 	Config::parse("shmedit.conf");
 	//Display d = Display("mytest.txt");

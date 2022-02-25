@@ -36,7 +36,7 @@ void Display::showTopBar(short width, bool wasEdited) const
 		topBarContents = topBarContents.substr(0, width - 3) + "...";
 	}
 
-	std::cout << Helper::padToLine(Helper::colorize(StringsVector(timeString, mid, fileTitle, filePadding, otherFiles), StylesVector(Style::MAGENTA, Style::RESET, Style::BLUE, Style::RESET, Style::DIMMED), width), width);
+	std::cout << Helper::colorize(StringsVector(timeString, mid, fileTitle, filePadding, otherFiles), StylesVector(Style::MAGENTA, Style::RESET, Style::BLUE, Style::RESET, Style::DIMMED), width);
 
 }
 
@@ -240,7 +240,7 @@ void Display::show() const
 		}
 		// When content is too short
 		while (count < effectiveHeight) {
-			std::cout << Helper::padToLine(" ", width);
+			std::cout << Helper::colorize(StringsVector(" "), StylesVector(Style::RESET), width);
 			count++;
 		}
 
@@ -252,8 +252,8 @@ void Display::show() const
 			commandArgsStyle = Style::WHITE;
 		}
 
-		std::cout << Helper::padToLine(Helper::colorize(StringsVector(commandString, commandData, " "), StylesVector(Style::MAGENTA, commandArgsStyle, this->contents[this->activeContent]->getState() == COMMAND ? Style::CURSOR : Style::RESET), width), width);
-		std::cout << Helper::padToLine(this->commandOutput, width);
+		std::cout << Helper::colorize(StringsVector(commandString, commandData, " "), StylesVector(Style::MAGENTA, commandArgsStyle, this->contents[this->activeContent]->getState() == COMMAND ? Style::CURSOR : Style::RESET), width);
+		std::cout << Helper::colorize(StringsVector(this->commandOutput), StylesVector(Style::RESET), width)<< std::endl;
 	}
 	// Reset cursor position
 	ConsoleUtils::setCursorPosition(1, 1);

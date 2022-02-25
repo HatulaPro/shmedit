@@ -69,7 +69,13 @@ std::string Content::getContent() const
 
 std::string Content::getFileName() const
 {
-	return this->fileName;
+	size_t startIndex = this->fileName.find_last_of("\\/");
+	if (startIndex == std::string::npos) {
+		return this->fileName;
+	}
+	else {
+		return this->fileName.substr(startIndex + 1);
+	}
 }
 
 std::string Content::getCommandInfo() const

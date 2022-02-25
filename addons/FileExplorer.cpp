@@ -27,9 +27,9 @@ void FileExplorer::show(int left, int top, int width, int height)
 	std::string afterDots(width - prePadding.size() - dots.size(), ' ');
 	ConsoleUtils::setCursorPosition(left, top);
 	int effectiveHeight = height - 2;
-	
+
 	int offset = max(0, this->activeIndex - effectiveHeight + 1);
-	if(offset == 0){
+	if (offset == 0) {
 		std::cout << Helper::colorize(StringsVector(std::string(width, ' ')), StylesVector(Style::FILE_EXPLORER), width);
 	}
 	else {
@@ -63,23 +63,31 @@ void FileExplorer::callAction(int x, std::string& lastKeys, std::string& command
 	}
 	else if (x == ACTION_MOVE_DOWN) {
 		this->activeIndex++;
-		if(this->activeIndex >= this->files.size()) this->activeIndex = 0;
+		if (this->activeIndex >= this->files.size()) this->activeIndex = 0;
 	}
 	else if (x == ACTION_MOVE_UP) {
 		this->activeIndex--;
-		if(this->activeIndex < 0) this->activeIndex = this->files.size() - 1;
+		if (this->activeIndex < 0) this->activeIndex = this->files.size() - 1;
 	}
-	else if (x == ACTION_MOVE_RIGHT) {
+	else if (x == ACTION_MOVE_RIGHT || x == ACTION_NEWLINE) {
 		if (this->files[this->activeIndex].first) {
 			this->setCurrentPath(this->currentPath + this->files[this->activeIndex].second);
 			this->files = FilesUtil::getDirectoryListings(this->currentPath);
 			this->activeIndex = 0;
 		}
+		else {
+			this->display.open(this->currentPath + this->files[this->activeIndex].second);
+			this->display.closeFileExplorer();
+		}
 	}
 	else if (x == ACTION_MOVE_LEFT) {
 		this->currentPath = this->currentPath.substr(0, this->currentPath.size() - 1);
-		this->setCurrentPath(this->currentPath.substr(0, this->currentPath.find_last_of("\\/")));
-        this->files = FilesUtil::getDirectoryListings(this->currentPath);
-        this->activeIndex = 0;
+		std::string lastFileName = this->currentPath.substr(this->currentPath.find_last_of("\\/") + 1);
+		this->setCurrentPath(this->currentPath.substr(0, this->currentPath.size() - lastFileName.size() - 1));
+		this->files = FilesUtil::getDirectoryListings(this->currentPath);
+
+		for (int i = 0; i < this->files.size(); i++) {
+			if (this->files[i].second == lastFileName) this->activeIndex = i;
+		}
 	}
 }

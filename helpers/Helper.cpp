@@ -55,6 +55,7 @@ std::string Helper::colorize(std::vector<std::string> text, std::vector<Style> s
 	std::string result;
 	size_t totalSize = 0;
 	for (size_t i = 0; i < text.size(); i++) {
+		text[i] = Helper::replace(text[i], "\t", std::string(Config::settings["TAB_SIZE"], ' '));
 		totalSize += text[i].size();
 	}
 
@@ -201,16 +202,6 @@ bool Helper::insStrCompare(std::string a, std::string b)
 		c = ::tolower(c);
 	});
 	return a == b;
-}
-
-std::string Helper::padToLine(std::string line, short width)
-{
-	line = Helper::replace(line, "\t", std::string(Config::settings["TAB_SIZE"], ' '));
-	size_t end = line.size();
-	while (Helper::getDisplayLength(line, 0, end) > width) end--;
-	//std::string decolorized = Helper::decolorize(line);
-
-	return line.substr(0, end) + std::string(width - Helper::getDisplayLength(line), ' ');
 }
 
 int Helper::getNextKey()
