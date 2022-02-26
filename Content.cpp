@@ -283,14 +283,33 @@ bool Content::getEditStatus() const
 
 void Content::actionDelete()
 {
-	if (posX < this->content[posY].size()) {
-		this->content[posY] = this->content[posY].substr(0, posX) + this->content[posY].substr(posX + 1);
+	if (this->posX < this->content[this->posY].size()) {
+		this->history.push(HistoryItem{
+				HistoryAction::REMOVE,
+				this->posX,
+				this->posY,
+				-1, -1,
+				std::string(1, this->content[this->posY][this->posX])
+			});
+
+		this->content[this->posY] = this->content[this->posY].substr(0, this->posX) + this->content[this->posY].substr(this->posX + 1);
 		this->wasEdited = true;
+
+
 		return;
 	}
-	else if (posY + 1 < this->content.size()) {
-		this->content[posY] += this->content[posY + 1];
-		this->content.erase(this->content.begin() + (posY)+1);
+	else if (this->posY + 1 < this->content.size()) {
+
+		this->history.push(HistoryItem{
+				HistoryAction::REMOVE,
+				this->posX,
+				this->posY,
+				-1, -1,
+				"\n"
+			});
+
+		this->content[this->posY] += this->content[this->posY + 1];
+		this->content.erase(this->content.begin() + this->posY + 1);
 		this->wasEdited = true;
 		return;
 	}
@@ -557,7 +576,23 @@ void Content::actionUndo()
 		throw std::exception("Not implemented");
 	}
 	else if (lastAction.action == HistoryAction::REMOVE) {
-		throw std::exception("Not implemented");
+		std::string current;
+		for (char ch : lastAction.op) {
+			if (ch == '\n') {
+				std::string beforeEnter = this->content[lastAction.posY].substr(0, lastAction.posX);
+				std::string afterEnter = this->content[lastAction.posY].substr(lastAction.posX);
+				this->content[lastAction.posY] = beforeEnter;
+
+				this->content.insert(this->content.begin() + lastAction.posY + 1, afterEnter);
+
+				this->content[lastAction.posY].insert(lastAction.posX, current);
+				current = "";
+			}
+			else {
+				current += ch;
+			}
+		}
+		this->content[lastAction.posY].insert(lastAction.posX, current);
 	}
 	else if (lastAction.action == HistoryAction::TABIFY) {
 		throw std::exception("Not implemented");
@@ -990,14 +1025,14 @@ void Content::actionPaste()
 
 	bool gotSlashR = false;
 	for (size_t i = 0; i < this->commandInfo.size(); i++) {
-		if (commandInfo[i] == '\r') {
+		if (this->commandInfo[i] == '\r') {
 			continue;
 		}
-		else if (commandInfo[i] == '\n') {
+		else if (this->commandInfo[i] == '\n') {
 			this->actionEnterNoSpacing();
 		}
 		else {
-			this->actionWrite(commandInfo[i]);
+			this->actionWrite(this->commandInfo[i]);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 # Shmedit
-A text editor program for windows.
+  text editor program for windows.
 
 ## Warning:
   I have no idea what I'm doing, and I am not responsible for what might happen as a result of you using it.
