@@ -317,7 +317,7 @@ void Content::actionDelete()
 
 void Content::actionDeleteWord()
 {
-	if (posX == this->content[posY].size()) {
+	if (this->posX == this->content[this->posY].size()) {
 		this->actionDelete();
 		return;
 	}
@@ -328,17 +328,44 @@ void Content::actionDeleteWord()
 		count++;
 	}
 	this->commandInfo = this->content[posY].substr(posX, count);
+
+	this->history.push(HistoryItem{
+				HistoryAction::REMOVE,
+				this->posX,
+				this->posY,
+				-1, -1,
+				this->commandInfo
+		});
+
 	this->content[posY].erase(posX, count);
 	this->wasEdited = true;
 }
 
 void Content::actionMoveLineUp()
 {
-	if (posY > 0) {
-		std::string tmp = this->content[posY];
-		this->content.erase(this->content.begin() + (posY));
-		this->content.insert(this->content.begin() + (posY)-1, tmp);
-		(posY)--;
+	if (this->posY > 0) {
+		std::string tmp = this->content[this->posY];
+		this->content.erase(this->content.begin() + this->posY);
+
+		this->history.push(HistoryItem{
+				HistoryAction::REMOVE,
+				0,
+				this->posY,
+				-1, -1,
+				tmp + '\n'
+			});
+
+		this->content.insert(this->content.begin() + this->posY - 1, tmp);
+
+		this->history.push(HistoryItem{
+				HistoryAction::WRITE,
+				0,
+				this->posY - 1,
+				-1, -1,
+				tmp + '\n',
+			});
+
+		this->posY--;
 		this->wasEdited = true;
 	}
 }
@@ -555,16 +582,26 @@ void Content::actionUndo()
 	this->history.pop();
 
 	if (lastAction.action == HistoryAction::WRITE) {
-		this->content[lastAction.posY].erase(lastAction.posX, lastAction.op.size());
-		this->posX = lastAction.posX;
-		this->posY = lastAction.posY;
-		while (!this->history.empty()) {
+		while (true) {
+			size_t count = 0;
+			for (char ch : lastAction.op) {
+				if (ch == '\n') {
+					this->content[lastAction.posY] = this->content[lastAction.posY].substr(0, lastAction.posX) + this->content[lastAction.posY + 1];
+					this->content.erase(this->content.begin() + lastAction.posY + 1);
+					count = 0;
+				}
+				else {
+					count++;
+				}
+			}
+			this->content[lastAction.posY].erase(lastAction.posX, count);
+			this->posX = lastAction.posX;
+			this->posY = lastAction.posY;
+
+			if (this->history.empty()) break;
 			lastAction = this->history.top();
 			if (lastAction.action == HistoryAction::WRITE && lastAction.posX == this->posX - 1 && lastAction.posY == this->posY && lastAction.op != " ") {
 				this->history.pop();
-				this->content[lastAction.posY].erase(lastAction.posX, lastAction.op.size());
-				this->posX = lastAction.posX;
-				this->posY = lastAction.posY;
 			}
 			else {
 				break;
