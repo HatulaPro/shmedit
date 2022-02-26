@@ -7,8 +7,7 @@
 
 ## Why Make It?
   I like vim. I like Visual Studio Code. I'm just taking features that I like from both worlds.
-  You might even find it useful, so have at it. 
-  
+  You might even find it useful, so have at it.  
 
 ## Documentation:
   - Notice that Shmedit is still in development, so many useful features (such as copy & paste) do not exist yet.

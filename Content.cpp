@@ -673,9 +673,6 @@ void Content::actionUndo()
 		}
 
 	}
-	else if (lastAction.action == HistoryAction::PASTE) {
-		throw std::exception("Not implemented");
-	}
 	else if (lastAction.action == HistoryAction::REMOVE) {
 		do {
 			this->posX = lastAction.posX;
@@ -683,11 +680,17 @@ void Content::actionUndo()
 			std::string current;
 			for (char ch : lastAction.op) {
 				if (ch == '\n') {
-					std::string beforeEnter = this->content[lastAction.posY].substr(0, lastAction.posX);
-					std::string afterEnter = this->content[lastAction.posY].substr(lastAction.posX);
-					this->content[lastAction.posY] = beforeEnter;
+					std::string beforeEnter; 
+					std::string afterEnter; 
+					auto insertAt = this->content.end();
+					if (this->content.size() > lastAction.posY) {
+						std::string beforeEnter = this->content[lastAction.posY].substr(0, lastAction.posX);
+						std::string afterEnter = this->content[lastAction.posY].substr(lastAction.posX);
+						this->content[lastAction.posY] = beforeEnter;
+						insertAt = this->content.begin() + lastAction.posY + 1;
+					}
 
-					this->content.insert(this->content.begin() + lastAction.posY + 1, afterEnter);
+					this->content.insert(insertAt, afterEnter);
 
 					this->content[lastAction.posY].insert(lastAction.posX, current);
 					current = "";
@@ -1001,14 +1004,14 @@ void Content::actionUntabify()
 
 void Content::actionPageUp()
 {
-	posY = max(posY - PAGE_UP_DOWN_SIZE, 0);
-	posX = min(this->content[posY].size(), posX);
+	this->posY = max(this->posY - PAGE_UP_DOWN_SIZE, 0);
+	this->posX = min(this->content[this->posY].size(), this->posX);
 }
 
 void Content::actionPageDown()
 {
-	posY = min(posY + PAGE_UP_DOWN_SIZE, this->content.size() - 1);
-	posX = min(this->content[posY].size(), posX);
+	this->posY = min(this->posY + PAGE_UP_DOWN_SIZE, this->content.size() - 1);
+	this->posX = min(this->content[this->posY].size(), this->posX);
 }
 
 void Content::actionSaveFile()
@@ -1187,6 +1190,14 @@ void Content::actionPaste()
 {
 	if (!this->commandInfo.size()) return;
 
+	this->history.push(HistoryItem{
+				HistoryAction::WRITE,
+				this->posX,
+				this->posY,
+				-1, -1,
+				this->commandInfo
+		});
+
 	bool gotSlashR = false;
 	for (size_t i = 0; i < this->commandInfo.size(); i++) {
 		if (this->commandInfo[i] == '\r') {
@@ -1194,9 +1205,11 @@ void Content::actionPaste()
 		}
 		else if (this->commandInfo[i] == '\n') {
 			this->actionEnterNoSpacing();
+			this->history.pop();
 		}
 		else {
 			this->actionWrite(this->commandInfo[i]);
+			this->history.pop();
 		}
 	}
 }
@@ -1204,9 +1217,16 @@ void Content::actionPaste()
 void Content::actionDeleteLine()
 {
 	this->wasEdited = true;
+	this->history.push(HistoryItem{
+				HistoryAction::REMOVE,
+				0,
+				this->posY,
+				-1, -1,
+				this->content[this->posY] + '\n'
+		});
 	if (this->content.size() == 1) {
 		this->content[0] = "";
-		posX = 0;
+		this->posX = 0;
 		return;
 	}
 	this->commandInfo = this->content[posY] + '\n';

@@ -18,7 +18,6 @@ enum STATE
 
 enum class HistoryAction {
 	WRITE,
-	PASTE,
 	REMOVE,
 	LINES_UP,
 	LINES_DOWN,
@@ -94,7 +93,6 @@ public:
 	void actionDuplicateLine();
 	void actionJumpToLineEnd();
 	void actionJumpToLineStart();
-
 	void actionTabify();
 	void actionUntabify();
 	void actionPageUp();
