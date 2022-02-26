@@ -32,7 +32,7 @@
     - `Ctrl + ]`: Tabify line.
     - `Ctrl + [`: Untabify line.
     
-    - `Ctrl + Z`: Undo. Only works after writing using the keyboard for now.
+    - `Ctrl + Z`: Undo. *Warning*: Called commands are not undo-able.
     - `Ctrl + U`: Switch to default mode.
     - `Ctrl + C`: Start command mode.
     - `Ctrl + O`: The command 'o: ' will be set, to allow users to open files more easily.
