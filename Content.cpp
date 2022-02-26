@@ -720,10 +720,16 @@ void Content::actionUndo()
 		this->history.pop();
 	}
 	else if (lastAction.action == HistoryAction::TABIFY) {
-		throw std::exception("Not implemented");
+		this->posX = lastAction.posX;
+		this->posY = lastAction.posY;
+		this->actionUntabify();
+		this->history.pop();
 	}
 	else if (lastAction.action == HistoryAction::UNTABIFY) {
-		throw std::exception("Not implemented");
+		this->posX = lastAction.posX;
+		this->posY = lastAction.posY;
+		this->actionTabify();
+		this->history.pop();
 	}
 	else {
 		throw std::exception("Unreachable");
@@ -953,23 +959,41 @@ void Content::actionJumpToLineStart()
 
 void Content::actionTabify()
 {
-	this->content[posY] = "    " + this->content[posY];
+	std::string spaces = Config::settings["USE_TABS"] ? "\t" : "    ";
+	this->content[this->posY] = spaces + this->content[this->posY];
+	this->posX += spaces.size();
+	this->history.push(HistoryItem{
+				HistoryAction::TABIFY,
+				this->posX,
+				this->posY,
+				-1, -1,
+				spaces
+		});
+
 	this->wasEdited = true;
 }
 
 void Content::actionUntabify()
 {
-	if (this->content[posY].size() > 0 && this->content[posY][0] == '\t') {
-		this->content[posY] = this->content[posY].substr(1);
+	this->history.push(HistoryItem{
+				HistoryAction::UNTABIFY,
+				this->posX,
+				this->posY,
+				-1, -1,
+				""
+		});
+	if (this->content[this->posY].size() > 0 && this->content[this->posY][0] == '\t') {
+		this->content[this->posY] = this->content[this->posY].substr(1);
+		if(this->posX > 0) this->posX -= 1;
 		this->wasEdited = true;
 		return;
 	}
 	size_t count = 0;
-	while (count < this->content[posY].size() && isspace(this->content[posY][count]) && count < Config::settings["TAB_SIZE"]) count++;
+	while (count < this->content[this->posY].size() && isspace(this->content[this->posY][count]) && count < Config::settings["TAB_SIZE"]) count++;
 
 	if (count > 0) {
-		posX = max(posX - (int)count, 0);
-		this->content[posY] = this->content[posY].substr(count);
+		this->posX = max(this->posX - (int)count, 0);
+		this->content[this->posY] = this->content[posY].substr(count);
 		this->wasEdited = true;
 		return;
 	}
