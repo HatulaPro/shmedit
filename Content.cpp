@@ -677,33 +677,16 @@ void Content::actionUndo()
 		do {
 			this->posX = lastAction.posX;
 			this->posY = lastAction.posY;
-			std::string current;
-			for (char ch : lastAction.op) {
-				if (ch == '\n') {
-					std::string beforeEnter; 
-					std::string afterEnter; 
-					auto insertAt = this->content.end();
-					if (this->content.size() > lastAction.posY) {
-						std::string beforeEnter = this->content[lastAction.posY].substr(0, lastAction.posX);
-						std::string afterEnter = this->content[lastAction.posY].substr(lastAction.posX);
-						this->content[lastAction.posY] = beforeEnter;
-						insertAt = this->content.begin() + lastAction.posY + 1;
-					}
+			std::string tmp = this->commandInfo;
+			this->commandInfo = lastAction.op;
+			this->actionPaste();
+			this->history.pop();
+			this->commandInfo = tmp;
 
-					this->content.insert(insertAt, afterEnter);
-
-					this->content[lastAction.posY].insert(lastAction.posX, current);
-					current = "";
-				}
-				else {
-					current += ch;
-				}
-			}
-			this->content[lastAction.posY].insert(lastAction.posX, current);
 			if (this->history.empty()) break;
 
 			lastAction = this->history.top();
-			if (lastAction.action == HistoryAction::REMOVE && (lastAction.posX == this->posX || lastAction.posX - this->posX == 1) && lastAction.posY == lastAction.posY && lastAction.op.find(" ") == std::string::npos) {
+			if (lastAction.action == HistoryAction::REMOVE && (lastAction.posX == this->posX || lastAction.posX - this->posX == -1) && lastAction.posY == lastAction.posY && lastAction.op.find(" ") == std::string::npos) {
 				this->history.pop();
 			}
 			else {
@@ -725,13 +708,27 @@ void Content::actionUndo()
 	else if (lastAction.action == HistoryAction::TABIFY) {
 		this->posX = lastAction.posX;
 		this->posY = lastAction.posY;
-		this->actionUntabify();
+		if (lastAction.startX != -1) {
+			this->startX = lastAction.startX;
+			this->startY = lastAction.startY;
+			this->actionUntabifySelection();
+		}
+		else {
+			this->actionUntabify();
+		}
 		this->history.pop();
 	}
 	else if (lastAction.action == HistoryAction::UNTABIFY) {
 		this->posX = lastAction.posX;
 		this->posY = lastAction.posY;
-		this->actionTabify();
+		if (lastAction.startX != -1) {
+			this->startX = lastAction.startX;
+			this->startY = lastAction.startY;
+			this->actionTabifySelection();
+		}
+		else {
+			this->actionTabify();
+		}
 		this->history.pop();
 	}
 	else {
@@ -752,15 +749,15 @@ void Content::openPreviousFile()
 
 void Content::actionCopySelection()
 {
-	if (posY == startY) {
-		this->commandInfo = this->content[posY].substr(startX, posX - startX);
+	if (this->posY == this->startY) {
+		this->commandInfo = this->content[this->posY].substr(this->startX, this->posX - this->startX);
 		return;
 	}
-	this->commandInfo = this->content[startY].substr(startX) + '\n';
-	for (size_t i = startY + 1; i < posY; i++) {
+	this->commandInfo = this->content[this->startY].substr(this->startX) + '\n';
+	for (size_t i = this->startY + 1; i < this->posY; i++) {
 		this->commandInfo += this->content[i] + '\n';
 	}
-	this->commandInfo += this->content[posY].substr(0, posX);
+	this->commandInfo += this->content[this->posY].substr(0, this->posX);
 }
 
 void Content::actionPasteSelection()
@@ -770,24 +767,48 @@ void Content::actionPasteSelection()
 
 void Content::actionDeleteSelection()
 {
-	if (posY == startY) {
-		this->content[posY].erase(startX, posX - startX);
-		if (startX == this->content[posY].size()) startX--;
-		posX = startX + 1;
+	if (this->posY == startY) {
+		std::string tmp = this->content[this->posY].substr(this->startX, this->posX - this->startX);
+		this->content[this->posY].erase(this->startX, this->posX - this->startX);
+		if (this->startX == this->content[this->posY].size()) this->startX--;
+
+		this->history.push(HistoryItem{
+				HistoryAction::REMOVE,
+				this->startX,
+				this->posY,
+				-1, -1,
+				tmp
+			});
+
+		this->posX = this->startX + 1;
 		this->wasEdited = true;
 		return;
 	}
 
-	this->content[startY] = this->content[startY].substr(0, startX) + this->content[posY].substr(posX);
-	if (startY + 1 < posY) {
-		this->content.erase(this->content.begin() + startY + 1, this->content.begin() + posY + 1);
+	std::string toDelete = this->content[this->startY].substr(this->startX) + '\n';
+	for (size_t i = this->startY + 1; i < this->posY; i++) {
+		toDelete += this->content[i] + '\n';
+	}
+	toDelete += this->content[this->posY].substr(0, this->posX);
+
+	this->history.push(HistoryItem{
+				HistoryAction::REMOVE,
+				this->startX,
+				this->startY,
+				-1, -1,
+				toDelete
+		});
+
+	this->content[this->startY] = this->content[this->startY].substr(0, this->startX) + this->content[this->posY].substr(this->posX);
+	if (this->startY + 1 < this->posY) {
+		this->content.erase(this->content.begin() + this->startY + 1, this->content.begin() + this->posY + 1);
 	}
 	else {
-		this->content.erase(this->content.begin() + posY);
+		this->content.erase(this->content.begin() + this->posY);
 	}
-	posY = startY;
-	if (startX == this->content[posY].size() && startX > 0) startX--;
-	posX = startX + 1;
+	this->posY = this->startY;
+	if (this->startX == this->content[this->posY].size() && this->startX > 0) this->startX--;
+	this->posX = this->startX + 1;
 	this->wasEdited = true;
 }
 
@@ -849,12 +870,29 @@ void Content::actionTabifySelection()
 			this->content[i] = std::string(Config::settings["TAB_SIZE"], ' ') + this->content[i];
 		}
 	}
+	this->history.push(HistoryItem{
+				HistoryAction::TABIFY,
+				this->posX,
+				this->posY,
+				this->startX,
+				this->startY,
+				""
+		});
+
 	this->wasEdited = true;
 }
 
 void Content::actionUntabifySelection()
 {
-	for (size_t i = startY; i <= posY; i++) {
+	this->history.push(HistoryItem{
+				HistoryAction::UNTABIFY,
+				this->posX,
+				this->posY,
+				this->startX,
+				this->startY,
+				""
+		});
+	for (size_t i = this->startY; i <= this->posY; i++) {
 		if (this->content[i].size() > 0 && this->content[i][0] == '\t') {
 			this->content[i] = this->content[i].substr(1);
 			this->wasEdited = true;
@@ -865,8 +903,8 @@ void Content::actionUntabifySelection()
 		while (count < this->content[i].size() && isspace(this->content[i][count]) && count < Config::settings["TAB_SIZE"]) count++;
 
 		if (count > 0) {
-			if (i == startY) {
-				startX = max(startX - (int)count, 0);
+			if (i == this->startY) {
+				this->startX = max(this->startX - (int)count, 0);
 			}
 			this->content[i] = this->content[i].substr(count);
 			this->wasEdited = true;
@@ -987,7 +1025,7 @@ void Content::actionUntabify()
 		});
 	if (this->content[this->posY].size() > 0 && this->content[this->posY][0] == '\t') {
 		this->content[this->posY] = this->content[this->posY].substr(1);
-		if(this->posX > 0) this->posX -= 1;
+		if (this->posX > 0) this->posX -= 1;
 		this->wasEdited = true;
 		return;
 	}
