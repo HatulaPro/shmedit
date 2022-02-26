@@ -697,12 +697,28 @@ void Content::actionUndo()
 	}
 	else if (lastAction.action == HistoryAction::LINES_UP) {
 		this->posY = lastAction.posY;
-		this->actionMoveLineDown();
+		this->posX = lastAction.posX;
+		if (lastAction.startY != -1) {
+			this->startY = lastAction.startY;
+			this->startX = lastAction.startX;
+			this->actionMoveLineDownSelection();
+		}
+		else {
+			this->actionMoveLineDown();
+		}
 		this->history.pop();
 	}
 	else if (lastAction.action == HistoryAction::LINES_DOWN) {
 		this->posY = lastAction.posY;
-		this->actionMoveLineUp();
+		this->posX = lastAction.posX;
+		if (lastAction.startY != -1) {
+			this->startY = lastAction.startY;
+			this->startX = lastAction.startX;
+			this->actionMoveLineUpSelection();
+		}
+		else {
+			this->actionMoveLineUp();
+		}
 		this->history.pop();
 	}
 	else if (lastAction.action == HistoryAction::TABIFY) {
@@ -930,26 +946,44 @@ void Content::actionWordLeftSelection()
 
 void Content::actionMoveLineUpSelection()
 {
-	if (startY == 0) return;
-	if (posY == startY) this->actionMoveLineUp();
-	std::string tmp = this->content[startY - 1];
-	this->content.erase(this->content.begin() + startY - 1);
-	this->content.insert(this->content.begin() + posY, tmp);
-	startY--;
-	posY--;
+	if (this->startY == 0) return;
+
+
+	std::string tmp = this->content[this->startY - 1];
+	this->content.erase(this->content.begin() + this->startY - 1);
+	this->content.insert(this->content.begin() + this->posY, tmp);
+	this->startY--;
+	this->posY--;
+	
+	this->history.push(HistoryItem{
+				HistoryAction::LINES_UP,
+				this->posX,
+				this->posY,
+				this->startX,
+				this->startY,
+				""
+		});
 	this->wasEdited = true;
 }
 
 void Content::actionMoveLineDownSelection()
 {
-	if (posY == this->content.size() - 1) return;
-	if (posY == startY) this->actionMoveLineDown();
+	if (this->posY == this->content.size() - 1) return;
 
-	std::string tmp = this->content[posY + 1];
-	this->content.erase(this->content.begin() + posY + 1);
-	this->content.insert(this->content.begin() + startY, tmp);
-	startY++;
-	posY++;
+
+	std::string tmp = this->content[this->posY + 1];
+	this->content.erase(this->content.begin() + this->posY + 1);
+	this->content.insert(this->content.begin() + this->startY, tmp);
+	this->startY++;
+	this->posY++;
+	this->history.push(HistoryItem{
+				HistoryAction::LINES_DOWN,
+				this->posX,
+				this->posY,
+				this->startX,
+				this->startY,
+				""
+		});
 	this->wasEdited = true;
 }
 
