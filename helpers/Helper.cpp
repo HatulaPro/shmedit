@@ -43,7 +43,7 @@ std::string Helper::colorize(std::string text, Style style)
 	case Style::DIMMED:
 		return "\033[38;5;242m" + text + "\033[0m";
 	case Style::FILE_EXPLORER:
-		return "\033[48;2;15;6;23m\033[37m" + text + "\033[0m";
+		return "\033[48;2;6;6;46m\033[37m" + text + "\033[0m";
 	case Style::FILE_EXPLORER_ACTIVE:
 		return "\033[48;2;68;30;66m\033[37m" + text + "\033[0m";
 	}
