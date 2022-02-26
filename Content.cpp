@@ -348,23 +348,14 @@ void Content::actionMoveLineUp()
 		this->content.erase(this->content.begin() + this->posY);
 
 		this->history.push(HistoryItem{
-				HistoryAction::REMOVE,
-				0,
-				this->posY,
-				-1, -1,
-				tmp + '\n'
-			});
-
-		this->content.insert(this->content.begin() + this->posY - 1, tmp);
-
-		this->history.push(HistoryItem{
-				HistoryAction::WRITE,
+				HistoryAction::LINES_UP,
 				0,
 				this->posY - 1,
 				-1, -1,
-				tmp + '\n',
+				""
 			});
 
+		this->content.insert(this->content.begin() + this->posY - 1, tmp);
 		this->posY--;
 		this->wasEdited = true;
 	}
@@ -372,11 +363,20 @@ void Content::actionMoveLineUp()
 
 void Content::actionMoveLineDown()
 {
-	if (posY < this->content.size() - 1) {
-		std::string tmp = this->content[posY];
-		this->content.erase(this->content.begin() + (posY));
-		this->content.insert(this->content.begin() + (posY)+1, tmp);
-		(posY)++;
+	if (this->posY < this->content.size() - 1) {
+		std::string tmp = this->content[this->posY];
+
+		this->history.push(HistoryItem{
+				HistoryAction::LINES_DOWN,
+				0,
+				this->posY + 1,
+				-1, -1,
+				""
+			});
+
+		this->content.erase(this->content.begin() + this->posY);
+		this->content.insert(this->content.begin() + this->posY + 1, tmp);
+		this->posY++;
 		this->wasEdited = true;
 	}
 }
@@ -645,11 +645,24 @@ void Content::actionUndo()
 
 		} while (true);
 	}
+	else if (lastAction.action == HistoryAction::LINES_UP) {
+		this->posY = lastAction.posY;
+		this->actionMoveLineDown();
+		this->history.pop();
+	}
+	else if (lastAction.action == HistoryAction::LINES_DOWN) {
+		this->posY = lastAction.posY;
+		this->actionMoveLineUp();
+		this->history.pop();
+	}
 	else if (lastAction.action == HistoryAction::TABIFY) {
 		throw std::exception("Not implemented");
 	}
 	else if (lastAction.action == HistoryAction::UNTABIFY) {
 		throw std::exception("Not implemented");
+	}
+	else {
+		throw std::exception("Unreachable");
 	}
 	this->wasEdited = true;
 }

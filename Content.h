@@ -20,6 +20,8 @@ enum class HistoryAction {
 	WRITE,
 	PASTE,
 	REMOVE,
+	LINES_UP,
+	LINES_DOWN,
 	TABIFY,
 	UNTABIFY,
 };
