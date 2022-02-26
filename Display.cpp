@@ -42,6 +42,7 @@ void Display::showTopBar(short width, bool wasEdited) const
 
 Display::Display(std::string fname) : addon(nullptr) {
 	this->contents.push_back(new Content(fname, *this));
+	this->setActiveContent(0);
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	ConsoleUtils::hideCursor();
 	ConsoleUtils::getCursorPosition(this->hConsole, this->cursorPosition);
@@ -53,6 +54,12 @@ Display::~Display()
 		delete this->contents[i];
 	}
 	this->closeFileExplorer();
+}
+
+void Display::setActiveContent(size_t index)
+{
+	this->activeContent = index % this->contents.size();
+	ConsoleUtils::setConsoleName("Shmedit | " + this->contents[this->activeContent]->getFileName());
 }
 
 void Display::openFileExplorer()
@@ -75,33 +82,30 @@ void Display::open(std::string fname)
 	Content* c = new Content(fname, *this);
 	for (size_t i = 0; i < this->contents.size(); i++) {
 		if (c->getFileName() == this->contents[i]->getFileName()) {
-			this->activeContent = i;
+			this->setActiveContent(i);
 			delete c;
 			return;
 		}
 	}
 	this->contents.push_back(c);
-	this->activeContent = this->contents.size() - 1;
+	this->setActiveContent(this->contents.size() - 1);
 }
 
 void Display::openNext()
 {
-	this->activeContent++;
-	this->activeContent = this->activeContent % this->contents.size();
+	this->setActiveContent(this->activeContent + 1);
 }
 
 void Display::openPrev()
 {
-	this->activeContent += this->contents.size() - 1;
-	this->activeContent = this->activeContent % this->contents.size();
+	this->setActiveContent(this->contents.size() - 1);
 }
 
 void Display::closeActiveContent()
 {
 	if (this->contents.size() == 1) this->closeAll();
-	// delete this->contents[this->activeContent];
 	this->contents.erase(this->contents.begin() + this->activeContent);
-	this->activeContent = min(max(this->activeContent - 1, 0), this->contents.size() - 1);
+	this->setActiveContent(min(max(this->activeContent - 1, 0), this->contents.size() - 1));
 }
 
 void Display::closeAll()
@@ -255,7 +259,7 @@ void Display::show() const
 		}
 
 		std::cout << Helper::colorize(StringsVector(commandString, commandData, " "), StylesVector(Style::MAGENTA, commandArgsStyle, this->contents[this->activeContent]->getState() == COMMAND ? Style::CURSOR : Style::RESET), width);
-		std::cout << Helper::colorize(StringsVector(this->commandOutput), StylesVector(Style::RESET), width)<< std::endl;
+		std::cout << Helper::colorize(StringsVector(this->commandOutput), StylesVector(Style::RESET), width) << std::endl;
 	}
 	// Reset cursor position
 	ConsoleUtils::setCursorPosition(1, 1);

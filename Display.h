@@ -26,6 +26,7 @@ public:
 	Display(std::string fname);
 	~Display();
 
+	void setActiveContent(size_t index);
 	void openFileExplorer();
 	void closeFileExplorer();
 	void open(std::string fname);

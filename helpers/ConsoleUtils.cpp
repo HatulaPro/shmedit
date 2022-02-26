@@ -11,6 +11,10 @@ void ConsoleUtils::getCursorPosition(HANDLE hConsole, COORD& pcoord)
 	GetConsoleScreenBufferInfo(hConsole, &info);
 	pcoord = info.dwCursorPosition;
 }
+void ConsoleUtils::setConsoleName(std::string consoleName)
+{
+	SetConsoleTitleA(consoleName.c_str());
+}
 void ConsoleUtils::setCursorPosition(int x, int y)
 {
 	std::cout << "\033[" << y << ';' << x << 'H';
