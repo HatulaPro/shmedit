@@ -16,16 +16,15 @@
 
 Content::Content(std::string c, Display& d) : display(d)
 {
+	this->fileName = c;
 	for (auto i : FilesUtil::getRealFileName(c)) {
-		if (Helper::insStrCompare(c, i)) {
-			this->fileName = i;
+		if (Helper::insStrCompare(this->getFileName(), i)) {
 			setContent(i);
 			this->wasEdited = false;
 			return;
 		}
 	}
 	this->wasEdited = true;
-	this->fileName = c;
 	setContent(c);
 }
 

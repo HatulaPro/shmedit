@@ -6,7 +6,7 @@
 #include "../helpers/FilesUtil.h"
 #include "../helpers/Helper.h"
 
-FileExplorer::FileExplorer(Display& d, std::string path) : display(d)
+FileExplorer::FileExplorer(Display& d, std::string path) : Addon(d)
 {
 	this->setCurrentPath(path);
 	this->activeIndex = 0;

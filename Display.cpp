@@ -40,7 +40,7 @@ void Display::showTopBar(short width, bool wasEdited) const
 
 }
 
-Display::Display(std::string fname) : fileExplorer(nullptr) {
+Display::Display(std::string fname) : addon(nullptr) {
 	this->contents.push_back(new Content(fname, *this));
 	this->hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	ConsoleUtils::hideCursor();
@@ -58,15 +58,15 @@ Display::~Display()
 void Display::openFileExplorer()
 {
 	this->lastKeys = "";
-	this->fileExplorer = new FileExplorer(*this, FilesUtil::getDirectoryName(this->contents[this->activeContent]->getFileName()));
+	this->addon = new FileExplorer(*this, FilesUtil::getDirectoryName(this->contents[this->activeContent]->getFileName()));
 }
 
 void Display::closeFileExplorer()
 {
 	this->lastKeys = "";
-	if (this->fileExplorer != nullptr) {
-		delete this->fileExplorer;
-		this->fileExplorer = nullptr;
+	if (this->addon != nullptr) {
+		delete this->addon;
+		this->addon = nullptr;
 	}
 }
 
@@ -133,8 +133,8 @@ void Display::show() const
 	ConsoleUtils::getTerminalSize(this->hConsole, &width, &height);
 	short effectiveHeight = height - NON_CONTENT_LINES;
 
-	if (this->fileExplorer != nullptr) {
-		this->fileExplorer->show(10, 5, width - 20, effectiveHeight - 5);
+	if (this->addon != nullptr) {
+		this->addon->show(10, 5, width - 20, effectiveHeight - 5);
 	}
 	else {
 
@@ -263,8 +263,8 @@ void Display::show() const
 
 void Display::callAction(int x)
 {
-	if (this->fileExplorer != nullptr) {
-		this->fileExplorer->callAction(x, this->lastKeys, this->commandOutput);
+	if (this->addon != nullptr) {
+		this->addon->callAction(x, this->lastKeys, this->commandOutput);
 	}
 	else {
 		this->contents[this->activeContent]->callAction(x, this->lastKeys, this->commandOutput);

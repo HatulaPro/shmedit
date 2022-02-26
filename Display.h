@@ -2,8 +2,10 @@
 #include <iostream>
 #include <vector>
 #include "Windows.h"
+#include "addons/Addon.h"
 
 class Content;
+class Addon;
 class FileExplorer;
 
 class Display {
@@ -14,7 +16,7 @@ private:
 	std::string commandOutput;
 	std::string lastKeys;
 
-	FileExplorer* fileExplorer;
+	Addon* addon;
 
 	void showTopBar(short width, bool wasEdited) const;
 

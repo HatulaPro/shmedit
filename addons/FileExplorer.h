@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
+#include "Addon.h"
 
 class Display;
 
-class FileExplorer {
+class FileExplorer : public Addon {
 private:
-	Display& display;
 	std::string currentPath;
 	std::string query;
 
