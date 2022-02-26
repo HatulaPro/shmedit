@@ -91,10 +91,10 @@ public:
 	void actionDownKey();
 	void actionWordRight();
 	void actionWordLeft();
-
 	void actionDuplicateLine();
 	void actionJumpToLineEnd();
 	void actionJumpToLineStart();
+
 	void actionTabify();
 	void actionUntabify();
 	void actionPageUp();

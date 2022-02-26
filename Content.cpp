@@ -924,19 +924,31 @@ void Content::actionPageDownSelection()
 
 void Content::actionDuplicateLine()
 {
-	this->content.insert(this->content.begin() + posY, this->content[posY]);
-	posY++;
+	this->content.insert(this->content.begin() + this->posY, this->content[this->posY]);
+
+	this->history.push(HistoryItem{
+				HistoryAction::WRITE,
+				0,
+				this->posY,
+				-1, -1,
+				this->content[this->posY] + '\n'
+		});
+
+	this->posY++;
 	this->wasEdited = true;
 }
 
 void Content::actionJumpToLineEnd()
 {
-	posX = this->content[posY].size();
+	this->posX = this->content[this->posY].size();
 }
 
 void Content::actionJumpToLineStart()
 {
-	posX = 0;
+	int initial = this->posX;
+	this->posX = 0;
+	while (this->posX < this->content[this->posY].size() && isspace(this->content[this->posY][this->posX])) this->posX++;
+	if (initial <= this->posX) this->posX = 0;
 }
 
 void Content::actionTabify()
