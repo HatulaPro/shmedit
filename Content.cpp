@@ -576,23 +576,37 @@ void Content::actionUndo()
 		throw std::exception("Not implemented");
 	}
 	else if (lastAction.action == HistoryAction::REMOVE) {
-		std::string current;
-		for (char ch : lastAction.op) {
-			if (ch == '\n') {
-				std::string beforeEnter = this->content[lastAction.posY].substr(0, lastAction.posX);
-				std::string afterEnter = this->content[lastAction.posY].substr(lastAction.posX);
-				this->content[lastAction.posY] = beforeEnter;
+		do {
+			this->posX = lastAction.posX;
+			this->posY = lastAction.posY;
+			std::string current;
+			for (char ch : lastAction.op) {
+				if (ch == '\n') {
+					std::string beforeEnter = this->content[lastAction.posY].substr(0, lastAction.posX);
+					std::string afterEnter = this->content[lastAction.posY].substr(lastAction.posX);
+					this->content[lastAction.posY] = beforeEnter;
 
-				this->content.insert(this->content.begin() + lastAction.posY + 1, afterEnter);
+					this->content.insert(this->content.begin() + lastAction.posY + 1, afterEnter);
 
-				this->content[lastAction.posY].insert(lastAction.posX, current);
-				current = "";
+					this->content[lastAction.posY].insert(lastAction.posX, current);
+					current = "";
+				}
+				else {
+					current += ch;
+				}
+			}
+			this->content[lastAction.posY].insert(lastAction.posX, current);
+			if (this->history.empty()) break;
+
+			lastAction = this->history.top();
+			if (lastAction.action == HistoryAction::REMOVE && lastAction.posX == this->posX && lastAction.posY == lastAction.posY && lastAction.op.find(" ") == std::string::npos) {
+				this->history.pop();
 			}
 			else {
-				current += ch;
+				break;
 			}
-		}
-		this->content[lastAction.posY].insert(lastAction.posX, current);
+
+		} while (true);
 	}
 	else if (lastAction.action == HistoryAction::TABIFY) {
 		throw std::exception("Not implemented");
