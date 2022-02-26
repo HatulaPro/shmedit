@@ -81,8 +81,9 @@ public:
 	void actionMoveLineUp();
 	void actionMoveLineDown();
 	void actionEnter();
-	void actionEnterNoSpacing();
+	void actionEnterNoSpacing(); // TODO: Will there be somthing weird when pasting?
 	void actionEnterNewline();
+
 	void actionRemove();
 	void actionRemoveWord();
 	void actionLeftKey();

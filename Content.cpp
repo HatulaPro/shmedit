@@ -383,35 +383,70 @@ void Content::actionMoveLineDown()
 
 void Content::actionEnter()
 {
-	std::string beforeEnter = this->content[posY].substr(0, posX);
+	std::string beforeEnter = this->content[this->posY].substr(0, this->posX);
 	int spaceCount = 0;
 	while (spaceCount < beforeEnter.size() && beforeEnter[spaceCount] == ' ') spaceCount += 2;
-	std::string afterEnter = this->content[posY].substr(posX);
-	this->content[posY] = beforeEnter;
-	posY += 1;
-	this->content.insert(this->content.begin() + posY, std::string(spaceCount, ' ') + afterEnter);
-	posX = spaceCount;
+	std::string afterEnter = this->content[this->posY].substr(this->posX);
+	this->content[this->posY] = beforeEnter;
+	std::string spaces(spaceCount, ' ');
+	this->history.push(HistoryItem{
+				HistoryAction::WRITE,
+				this->posX,
+				this->posY,
+				-1, -1,
+				'\n' + spaces
+		});
+
+	this->posY += 1;
+	this->content.insert(this->content.begin() + this->posY, spaces + afterEnter);
+	this->posX = spaceCount;
 	this->wasEdited = true;
 }
 
 void Content::actionEnterNoSpacing()
 {
-	std::string beforeEnter = this->content[posY].substr(0, posX);
-	std::string afterEnter = this->content[posY].substr(posX);
-	this->content[posY] = beforeEnter;
-	posY += 1;
-	this->content.insert(this->content.begin() + posY, afterEnter);
-	posX = 0;
+	std::string beforeEnter = this->content[this->posY].substr(0, this->posX);
+	std::string afterEnter = this->content[this->posY].substr(this->posX);
+	this->content[this->posY] = beforeEnter;
+
+	this->history.push(HistoryItem{
+				HistoryAction::WRITE,
+				this->posX,
+				this->posY,
+				-1, -1,
+				"\n"
+		});
+
+	this->posY += 1;
+	this->content.insert(this->content.begin() + this->posY, afterEnter);
+	this->posX = 0;
 	this->wasEdited = true;
 }
 
 void Content::actionEnterNewline()
 {
 	int spaceCount = 0;
-	while (spaceCount < this->content[posY].size() && this->content[posY][spaceCount] == ' ') spaceCount += Config::settings["TAB_SIZE"];
-	posY += 1;
-	this->content.insert(this->content.begin() + posY, std::string(spaceCount, ' '));
-	posX = spaceCount;
+	std::string spaces;
+	if (Config::settings["USE_TABS"]) {
+		while (spaceCount < this->content[this->posY].size() && this->content[this->posY][spaceCount] == '\t') spaceCount++;
+		spaces = std::string(spaceCount, '\t');
+	}
+	else {
+		while (spaceCount < this->content[this->posY].size() && this->content[this->posY][spaceCount] == ' ') spaceCount += Config::settings["TAB_SIZE"];
+		spaces = std::string(spaceCount, ' ');
+	}
+
+	this->history.push(HistoryItem{
+				HistoryAction::WRITE,
+				(int)this->content[this->posY].size(),
+				this->posY,
+				-1, -1,
+				"\n" + spaces
+		});
+	this->posY += 1;
+	this->posX = spaceCount;
+
+	this->content.insert(this->content.begin() + this->posY, spaces);
 	this->wasEdited = true;
 }
 
