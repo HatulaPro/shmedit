@@ -83,7 +83,6 @@ public:
 	void actionEnter();
 	void actionEnterNoSpacing(); // TODO: Will there be somthing weird when pasting?
 	void actionEnterNewline();
-
 	void actionRemove();
 	void actionRemoveWord();
 	void actionLeftKey();
@@ -92,6 +91,7 @@ public:
 	void actionDownKey();
 	void actionWordRight();
 	void actionWordLeft();
+
 	void actionDuplicateLine();
 	void actionJumpToLineEnd();
 	void actionJumpToLineStart();

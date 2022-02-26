@@ -452,36 +452,65 @@ void Content::actionEnterNewline()
 
 void Content::actionRemove()
 {
-	if (posX > 0) {
-		std::string beforeRemove = this->content[posY].substr(0, posX - 1);
-		std::string afterRemove = this->content[posY].substr(posX);
-		this->content[posY] = beforeRemove + afterRemove;
-		posX -= 1;
+	if (this->posX > 0) {
+		std::string beforeRemove = this->content[this->posY].substr(0, this->posX - 1);
+		std::string afterRemove = this->content[this->posY].substr(this->posX);
+
+		this->history.push(HistoryItem{
+				HistoryAction::REMOVE,
+				this->posX - 1,
+				this->posY,
+				-1, -1,
+				std::string(1, this->content[this->posY][this->posX - 1])
+			});
+
+
+		this->content[this->posY] = beforeRemove + afterRemove;
+		this->posX -= 1;
 		this->wasEdited = true;
 	}
-	else if (posY > 0) {
-		posX = this->content[posY - 1].size();
-		this->content[posY - 1] += this->content[posY];
-		this->content.erase(this->content.begin() + posY);
-		posY -= 1;
+	else if (this->posY > 0) {
+		this->posX = this->content[this->posY - 1].size();
+		this->content[this->posY - 1] += this->content[this->posY];
+
+
+		this->content.erase(this->content.begin() + this->posY);
+		this->posY -= 1;
+
+		this->history.push(HistoryItem{
+				HistoryAction::REMOVE,
+				this->posX,
+				this->posY,
+				-1, -1,
+				"\n"
+			});
 		this->wasEdited = true;
 	}
 }
 
 void Content::actionRemoveWord()
 {
-	if (posX == 0) {
+	if (this->posX == 0) {
 		this->actionRemove();
 		return;
 	}
-	bool firstType = Helper::isAlphanumeric(this->content[posY][posX - 1]);
+	bool firstType = Helper::isAlphanumeric(this->content[this->posY][this->posX - 1]);
 	int count = 0;
-	while (posX - count >= 1 && Helper::isAlphanumeric(this->content[posY][posX - count - 1]) == firstType) {
+	while (this->posX - count >= 1 && Helper::isAlphanumeric(this->content[this->posY][this->posX - count - 1]) == firstType) {
 		count++;
 	}
-	this->commandInfo = this->content[posY].substr(posX - count, count);
-	this->content[posY].erase(posX - count, count);
-	posX -= count;
+	this->commandInfo = this->content[this->posY].substr(this->posX - count, count);
+	this->content[this->posY].erase(this->posX - count, count);
+	this->posX -= count;
+
+	this->history.push(HistoryItem{
+				HistoryAction::REMOVE,
+				this->posX,
+				this->posY,
+				-1, -1,
+				this->commandInfo
+		});
+
 	this->wasEdited = true;
 }
 
@@ -671,7 +700,7 @@ void Content::actionUndo()
 			if (this->history.empty()) break;
 
 			lastAction = this->history.top();
-			if (lastAction.action == HistoryAction::REMOVE && lastAction.posX == this->posX && lastAction.posY == lastAction.posY && lastAction.op.find(" ") == std::string::npos) {
+			if (lastAction.action == HistoryAction::REMOVE && (lastAction.posX == this->posX || lastAction.posX - this->posX == 1) && lastAction.posY == lastAction.posY && lastAction.op.find(" ") == std::string::npos) {
 				this->history.pop();
 			}
 			else {
