@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include "Addon.h"
 
 class Display;
@@ -8,7 +9,7 @@ class Display;
 class WordCompleter : public Addon {
 
 private:
-	std::vector<std::string> words;
+	std::unordered_set<std::string> words;
 	
 	std::vector<std::string> getWords(std::string prefix) const;
 

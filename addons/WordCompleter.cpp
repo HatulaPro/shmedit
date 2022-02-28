@@ -17,10 +17,10 @@ std::vector<std::string> WordCompleter::getWords(std::string prefix) const
 
 WordCompleter::WordCompleter(Display& d) : Addon(d)
 {
-	this->words.push_back("hello");
-	this->words.push_back("help me");
-	this->words.push_back("test");
-	this->words.push_back("12346");
+	this->words.insert("hello");
+	this->words.insert("help me");
+	this->words.insert("test");
+	this->words.insert("12346");
 }
 
 void WordCompleter::show(int left, int top, int width, int height)
