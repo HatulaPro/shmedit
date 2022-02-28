@@ -7,6 +7,7 @@
 class Content;
 class Addon;
 class FileExplorer;
+class WordCompleter;
 
 class Display {
 private:
@@ -28,7 +29,8 @@ public:
 
 	void setActiveContent(size_t index);
 	void openFileExplorer();
-	void closeFileExplorer();
+	void openWordCompleter();
+	void closeAddon();
 	void open(std::string fname);
 	void openNext();
 	void openPrev();

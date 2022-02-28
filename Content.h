@@ -107,9 +107,9 @@ public:
 	void actionCopyWordBack();
 	void actionPasteFromClipboard();
 	void actionUndo();
-
 	void openNextFile();
 	void openPreviousFile();
+	void actionOpenCompleteWord();
 
 	// Visual Commands:
 	void actionCopySelection();

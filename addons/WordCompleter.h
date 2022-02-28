@@ -1,20 +1,20 @@
 #pragma once
 #include <string>
+#include <vector>
 #include "Addon.h"
 
 class Display;
 
-class FileExplorer : public Addon {
+class WordCompleter : public Addon {
+
 private:
-	std::string currentPath;
-	std::string query;
+	std::vector<std::string> words;
+	
+	std::vector<std::string> getWords(std::string prefix) const;
 
-	int activeIndex;
-	std::vector<std::pair<bool, std::string>> files;
 public:
-	FileExplorer(Display& d, std::string path);
+	WordCompleter(Display& d);
 
-	void setCurrentPath(std::string path);
 	void show(int left, int top, int width, int height);
 	void callAction(int x, std::string& lastKeys, std::string& commandOutput);
 	AddonType type();

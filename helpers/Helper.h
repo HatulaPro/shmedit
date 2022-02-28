@@ -43,3 +43,4 @@ public:
 
 	static int getNextKey();
 };
+

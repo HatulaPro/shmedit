@@ -33,6 +33,7 @@ std::map<int, OneClickAction> Config::oneClickActions = {
   {ACTION_OPEN_NEXT_FILE, {"OpenNextFile", &Content::openNextFile}},
   {ACTION_OPEN_PREV_FILE, {"OpenPrevFile", &Content::openPreviousFile}},
   {ACTION_UNDO, {"Undo", &Content::actionUndo}},
+  {ACTION_COMPLETE_WORD, {"CompleteWord", &Content::actionOpenCompleteWord}},
 };
 
 const std::map<std::string, std::string(Content::*)(std::string)> Config::calledCommands = {

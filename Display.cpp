@@ -1,5 +1,6 @@
 #include "Display.h"
 #include "addons/FileExplorer.h"
+#include "addons/WordCompleter.h"
 #include "helpers/Helper.h"
 #include "helpers/FilesUtil.h"
 #include "helpers/ConsoleUtils.h"
@@ -53,7 +54,7 @@ Display::~Display()
 	for (size_t i = 0; i < this->contents.size(); i++) {
 		delete this->contents[i];
 	}
-	this->closeFileExplorer();
+	this->closeAddon();
 }
 
 void Display::setActiveContent(size_t index)
@@ -68,7 +69,12 @@ void Display::openFileExplorer()
 	this->addon = new FileExplorer(*this, FilesUtil::getDirectoryName(this->contents[this->activeContent]->getFileName()));
 }
 
-void Display::closeFileExplorer()
+void Display::openWordCompleter()
+{
+	this->addon = new WordCompleter(*this);
+}
+
+void Display::closeAddon()
 {
 	this->lastKeys = "";
 	if (this->addon != nullptr) {
@@ -137,21 +143,28 @@ void Display::show() const
 	ConsoleUtils::getTerminalSize(this->hConsole, &width, &height);
 	short effectiveHeight = height - NON_CONTENT_LINES;
 
+	this->showTopBar(width, this->contents[this->activeContent]->getEditStatus());
+
+	int offset = max(0, posX - (width / 2));
+	int state = this->contents[this->activeContent]->getState();
+	bool isInFindState = this->contents[this->activeContent]->isInFindState();
+	bool isOffset = posX > width - LINE_NUMBER_SIZE - sizeof(LINE_OFFSET_STR) + 1;
+	// Aligning to top/bottom
+	int startIndex = max(min(posY - (effectiveHeight / 2), (int)content.size() - effectiveHeight), 0);
+
 	if (this->addon != nullptr) {
-		this->addon->show(10, 5, width - 20, effectiveHeight - 5);
+		if (this->addon->type() == AddonType::FileExplorer) {
+			this->addon->show(10, 5, width - 20, effectiveHeight - 5);
+		}
+		else if (this->addon->type() == AddonType::WordCompleter) {
+			// offset: width/2 + 10
+			// not offset: posX + 10
+			int left = isOffset ? width / 2 + LINE_NUMBER_SIZE + sizeof(LINE_OFFSET_STR) + 1 : posX + 10;
+			if (left + 30 > width) left -= 30;
+			this->addon->show(left, posY - startIndex + 2, 30, 7);
+		}
 	}
 	else {
-
-
-
-		this->showTopBar(width, this->contents[this->activeContent]->getEditStatus());
-
-		int offset = max(0, posX - (width / 2));
-		int state = this->contents[this->activeContent]->getState();
-		bool isInFindState = this->contents[this->activeContent]->isInFindState();
-
-		// Aligning to top/bottom
-		int startIndex = max(min(posY - (effectiveHeight / 2), (int)content.size() - effectiveHeight), 0);
 
 		size_t commandInfoSize = this->contents[this->activeContent]->getCommandInfo().size();
 		if (commandInfoSize && this->contents[this->activeContent]->getCommandInfo()[0] == '^') commandInfoSize--;
@@ -168,7 +181,7 @@ void Display::show() const
 				// If cursor in line
 				if (lineIndex == posY) {
 					// If line is offset
-					if (posX > width - LINE_NUMBER_SIZE - sizeof(LINE_OFFSET_STR) + 1) {
+					if (isOffset) {
 						std::string line = i->substr(offset);
 						size_t cursorLocation = width / 2;
 						Style cursorStyle = Style::CURSOR;

@@ -762,6 +762,11 @@ void Content::openPreviousFile()
 	this->display.openPrev();
 }
 
+void Content::actionOpenCompleteWord()
+{
+	this->display.openWordCompleter();
+}
+
 void Content::actionCopySelection()
 {
 	if (this->posY == this->startY) {

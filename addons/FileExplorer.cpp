@@ -81,7 +81,7 @@ void FileExplorer::show(int left, int top, int width, int height)
 void FileExplorer::callAction(int x, std::string& lastKeys, std::string& commandOutput)
 {
 	if (x == ACTION_START_COMMAND) {
-		this->display.closeFileExplorer();
+		this->display.closeAddon();
 	}
 	else if (x == ACTION_MOVE_DOWN) {
 		this->activeIndex++;
@@ -99,7 +99,7 @@ void FileExplorer::callAction(int x, std::string& lastKeys, std::string& command
 		}
 		else if (this->files.size()) {
 			this->display.open(this->currentPath + this->files[this->activeIndex].second);
-			this->display.closeFileExplorer();
+			this->display.closeAddon();
 		}
 	}
 	else if (x == ACTION_MOVE_LEFT) {
@@ -131,4 +131,9 @@ void FileExplorer::callAction(int x, std::string& lastKeys, std::string& command
 		this->query = "";
 		this->files = FilesUtil::getDirectoryListings(this->currentPath);
 	}
+}
+
+AddonType FileExplorer::type()
+{
+	return AddonType::FileExplorer;
 }
