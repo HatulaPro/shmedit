@@ -63,6 +63,11 @@ void Display::setActiveContent(size_t index)
 	ConsoleUtils::setConsoleName("Shmedit | " + this->contents[this->activeContent]->getFileName());
 }
 
+Content* Display::getActiveContent()
+{
+	return this->contents[this->activeContent];
+}
+
 void Display::openFileExplorer()
 {
 	this->lastKeys = "";
@@ -71,7 +76,12 @@ void Display::openFileExplorer()
 
 void Display::openWordCompleter()
 {
-	this->addon = new WordCompleter(*this);
+	try {
+		this->addon = new WordCompleter(*this);
+	}
+	catch(std::exception& e) {
+		this->closeAddon();
+	}
 }
 
 void Display::closeAddon()

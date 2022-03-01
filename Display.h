@@ -28,6 +28,7 @@ public:
 	~Display();
 
 	void setActiveContent(size_t index);
+	Content* getActiveContent();
 	void openFileExplorer();
 	void openWordCompleter();
 	void closeAddon();
