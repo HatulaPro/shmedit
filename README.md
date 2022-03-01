@@ -1,5 +1,5 @@
 # Shmedit
-  text editor program for windows.
+  text editor program for windows. 
 
 ## Warning:
   I have no idea what I'm doing, and I am not responsible for what might happen as a result of you using it.
@@ -34,6 +34,7 @@
     
     - `Ctrl + Z`: Undo. *Warning*: Called commands are not undo-able.
     - `Ctrl + U`: Switch to default mode.
+    - `Ctrl + N`: Complete word. Press `Up` or `Down` to change the current word, and enter to write. Any other key to cancel.
     - `Ctrl + C`: Start command mode.
     - `Ctrl + O`: The command 'o: ' will be set, to allow users to open files more easily.
     - `Ctrl + F`: The command 'f: ' will be set, to allow users to get to `find` mode more easily.

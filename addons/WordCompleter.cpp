@@ -35,22 +35,22 @@ WordCompleter::WordCompleter(Display& d) : Addon(d)
 	while (posX > 0 && Helper::isAlphanumeric(line[posX])) posX--;
 	std::stringstream s(line.substr(posX));
 	s >> this->prefix;
+	while (this->prefix.size() > 1 && !Helper::isAlphanumeric(this->prefix[this->prefix.size() - 1])) this->prefix = this->prefix.substr(0, this->prefix.size() - 1);
 	if (!this->prefix.size() || !Helper::isAlphanumeric(this->prefix[0])) {
 		throw std::exception("No word to complete");
 	}
-
-	this->words.insert("hello");
-	this->words.insert("helpmeaaaaaaaaaaa");
-	this->words.insert("h1");
-	this->words.insert("h2");
-	this->words.insert("h3");
-	this->words.insert("h4");
-	this->words.insert("h5");
-	this->words.insert("h6");
-	this->words.insert("test");
-	this->words.insert("12346");
+	std::string tmp;
+	for (auto line : c->getLines()) {
+		s = std::stringstream(line);
+		while (s >> tmp) {
+			while (tmp.size() > 1 && !Helper::isAlphanumeric(tmp[tmp.size() - 1])) tmp = tmp.substr(0, tmp.size() - 1);
+			this->words.insert(tmp);
+		}
+	}
 
 	this->activeWords = this->getWords(this->prefix);
+
+	if (!this->activeWords.size()) throw std::exception("No words");
 }
 
 void WordCompleter::show(int left, int top, int width, int height)
